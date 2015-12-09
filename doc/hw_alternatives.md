@@ -14,7 +14,6 @@ http://gps-tracker-review.toptenreviews.com/pocketfinder-review.html
 Uno de los 5 mejores GPS paraautomovil
 http://www.ebay.com/gds/Top-5-Car-Tracking-Devices-/10000000177678162/g.html
 http://www.ebay.com/itm/GL-200-GPS-Tracker-Spark-Nano-Enduro-Pro-Personal-Mini-GPS-/181460659133?pt=US_Tracking_Devices&hash=item2a3fe5ebbd
-	
 
 * Micro GPS Tracker Only LBS Tracking Demand X005 Thinkrace | us$12
 El dispositivo con las caracteristicas mínimas para implementar el sistema, de menor costo.
