@@ -20,14 +20,12 @@ El dispositivo con las caracteristicas mínimas para implementar el sistema, de 
 No cuenta con plataforma de desarrollo propia, por lo que se harán pruebas con plataformas de terceros
 http://www.alibaba.com/product-detail/Small-GPS-LocatorTracking-Demand-Mini-Body_1794987787.html
 
-* Meitrack GPS Tracker with Free Tracking Platform 
-
+* Meitrack GPS Tracker with Free Tracking Platform
 Este es un rastreador GPS que busqué en Alibaba, el precio de este mismo es variable, recordar que estos sitios se manejan a través de la negociación, la cantidad mínima de compra es de 50 unidades, me parece que podría ser apto para trabajadores si es que se logra acoplar a la ropa, o bien mediante otra forma de llevarlo puesto, además no pesa casi nada (70g) y es pequeñísimo (7,7cm x 4,7cm).
 Contiene un plataforma de rastreo gratuita segun dice:
 http://www.alibaba.com/product-detail/Meitrack-GPS-Tracker-with-Free-Tracking_452361195.html?spm=a2700.7724838.30.1.6Q75wm
 
 * Gps personal tracker with tamper proof with voice surveillance tracking device
-
 Este es otro rastreador GPS que busqué en Alibaba, tiene un tamaño de (6,1cm x 4,9cm), y un peso de 173g aprox.
 Además viene con un cinturón, y me pareció novedosa la forma en que lo equipan.
 http://www.alibaba.com/product-detail/gps-personal-tracker-with-tamper-proof_60365073676.html?spm=a2700.7724838.30.283.GvO9Ta	
