@@ -29,3 +29,9 @@ http://www.alibaba.com/product-detail/Meitrack-GPS-Tracker-with-Free-Tracking_45
 Este es otro rastreador GPS que busqué en Alibaba, tiene un tamaño de (6,1cm x 4,9cm), y un peso de 173g aprox.
 Además viene con un cinturón, y me pareció novedosa la forma en que lo equipan.
 http://www.alibaba.com/product-detail/gps-personal-tracker-with-tamper-proof_60365073676.html?spm=a2700.7724838.30.283.GvO9Ta	
+Alternativas de GPS/GSM trackers
+=========================================
+este es una buena opcion de dispositivo...
+debemos buscar algo similar a esto.
+http://www.alarmagsm.cl/seguridad_personal/gpp101-gps-guardia-en-vivo-seguimiento-remoto-con-gsm-y-gps-alto-rendimiento/
+
