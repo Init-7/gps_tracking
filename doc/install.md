@@ -2,9 +2,8 @@ Pasos instalación de Traccar (en Centos 7)
 =========================================
 	
 * instalar JAVA
-'''
-~$ su -c "yum install java-1.8.0-openjdk"
-'''
+
+> ~$ su -c "yum install java-1.8.0-openjdk"
 
 * descarga instalador:
   ~$ wget https://github.com/tananaev/traccar/releases/download/v3.3/traccar-linux-64-3.3.zip
