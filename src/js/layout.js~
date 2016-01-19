@@ -1,0 +1,442 @@
+dojo.require("dijit.layout.AccordionContainer");
+dojo.require("dijit.layout.BorderContainer");
+dojo.require("dijit.layout.ContentPane");
+
+dojo.require("dijit.form.Button");
+dojo.require("dijit.form.ComboBox");
+dojo.require("dijit.form.DateTextBox");
+dojo.require("dijit.form.FilteringSelect");
+dojo.require("dijit.form.Form");
+dojo.require("dijit.form.Select");
+dojo.require("dijit.form.HorizontalRuleLabels");
+
+dojo.require("dojox.form.RangeSlider");
+dojo.require("dojox.form.DropDownSelect");
+dojo.require("dojox.form.CheckedMultiSelect");
+
+dojo.require("dojo.domReady!");
+dojo.require("dojo.parser");
+dojo.require("dojo.number");
+dojo.require("dojo.data.ObjectStore");
+dojo.require("dojo.store.Memory");
+
+dojo.require("esri.map");
+dojo.require("esri.layers.FeatureLayer");
+dojo.require("esri.layers.agsdynamic");
+dojo.require("esri.renderer");
+dojo.require("esri.dijit.Legend");
+dojo.require("esri.dijit.Popup");
+dojo.require("esri.dijit.PopupTemplate");
+dojo.require("esri.dijit.analysis.ExtractData");
+
+dojo.require("esri.toolbars.draw");
+dojo.require("esri.tasks.query");
+
+//one global for persistent accidentes variables
+var filtro = {};
+filtro.where = "1=1";
+filtro.obtener = "<b>Obtener datos filtrados:</b>";
+
+
+/*-----------------------------------------------------------------------------------------*/
+/*  ------------------------------         INIT()          ------------------------------  */
+/*-----------------------------------------------------------------------------------------*/
+
+function init() {
+	var urlAccidentes;
+	filtro.outFields = ["*"]
+
+	//URL del servicio
+	filtro.urlCapa = "http://152.74.223.110/gesitran/rest/services/Recorridos_TP/Recorridos_TP_GC/MapServer/0";
+	filtro.urlserv = "http://152.74.223.110/gesitran/rest/services/Recorridos_TP/Recorridos_TP_GC/MapServer";
+
+	esri.config.defaults.io.proxyUrl = "/proxy";
+	filtro.map = new esri.Map(
+		"map", 
+		{basemap: "streets",center: [-73.57, -36.51],zoom: 13,slider: false,logo: false}
+		);
+
+	dojo.connect(filtro.map, "onClick", consultaPunto);
+	dojo.connect(filtro.map, "onKeyDown", escClosesPopup);
+
+	//agregamos todas las capas del servicio al mapa
+	filtro.DynMapServLayer = new esri.layers.ArcGISDynamicMapServiceLayer(filtro.urlserv, {"id": "acc","opacity": 0.7});
+
+	//activamos la capa [0] como visible
+	filtro.DynMapServLayer.setVisibleLayers([0]);
+
+	//creamos renderer
+	setRenderer();
+
+	//add the layer to the map
+	filtro.map.addLayer(filtro.DynMapServLayer);
+
+	//Generamos formulario de seleccion
+	Slct();
+	
+	//crear DIV
+	getCreate();
+	
+	/*FILTROS*/
+	dojo.connect(dijit.byId("planta"), "onChange", actFiltros);
+	dojo.connect(dijit.byId("sector"), "onChange", actFiltros);
+	dojo.connect(dijit.byId("centro"), "onChange", actFiltros);
+
+	/*Botones de popup*/
+	dojo.connect(
+		dijit.byId("previous"), 
+		"onClick", 
+		function() {
+			filtro.map.infoWindow.selectPrevious();
+			var intero=parseInt(filtro.map.infoWindow.valueOf().selectedIndex)+1;
+			dijit.byId("fieldsContent").set("content", filtro.map.infoWindow.getSelectedFeature().getContent());
+			dojo.byId("featureCount").innerHTML = intero + " de " + filtro.map.infoWindow.features.length +" Recorridos(s) seleccionado(s)";
+			}
+		);
+	dojo.connect(
+		dijit.byId("next"), 
+		"onClick", 
+		function() {;
+			filtro.map.infoWindow.selectNext();
+			var intero=parseInt(filtro.map.infoWindow.valueOf().selectedIndex)+1
+			dijit.byId("fieldsContent").set("content", filtro.map.infoWindow.getSelectedFeature().getContent());
+			dojo.byId("featureCount").innerHTML = intero + " de " + filtro.map.infoWindow.features.length +" Recorridos(s) seleccionado(s)";
+			}
+		);
+		
+	var gp = new esri.tasks.Geoprocessor("http://152.74.223.110/gesitran/rest/services/Geoprocesos/ExtraerDatos_sinc/GPServer/ExtraerDatos");
+	gp.setOutputSpatialReference({wkid: 102100});
+	/*fin*/
+	}
+	
+	
+/*-----------------------------------------------------------------------------------------*/
+/*  ------------------------------       Mapa Inicial      ------------------------------  */
+/*-----------------------------------------------------------------------------------------*/
+
+//bajar
+function downloadCSV(results)  {
+	console.log(results[0]);
+	window.location = results[0].value.url;
+}
+function downloadXLS(results)  {
+	console.log(results[1]);
+	window.location = results[1].value.url;
+}
+//mostrar Puntos en el mapa
+function setRenderer() {
+	//colores Primarios
+	var inColor = new dojo.Color([0, 0, 0, 0]);//incolor
+	
+	var redColor = new dojo.Color([255, 0, 0, 1]);//Red fill #FF0000
+	var greenColor = new dojo.Color([0, 255, 0, 1]);//Green fill #00FF00
+	var blueColor = new dojo.Color([0, 0, 255, 1]);//Blue fill #0000FF
+
+	var yellowColor = new dojo.Color([255, 255, 0, 1]);//Yellow fill #FFFF00
+	var magentaColor = new dojo.Color([255, 0, 255, 1]);//Magenta fill #FF00FF
+	var cyanColor = new dojo.Color([0, 255, 255, 1]);//Cyan fill #00FFFF
+			
+	var orangeColor = new dojo.Color([255, 127, 0, 1]);//Orange fill #FF7F00
+	var springgreenColor = new dojo.Color([0, 255, 127, 1]);//SpringGreen fill #00FF7F
+	var purpleColor = new dojo.Color([127, 0, 255, 1]);//Purple fill #7F00FF
+	
+	var deepskyblueColor = new dojo.Color([0, 127, 255, 1]);//DeepSkyBlue fill #007FFF
+	var chartreuseColor = new dojo.Color([127, 255, 0, 1]);//Chartreuse fill #7FFF00
+	var fuchsiaColor = new dojo.Color([255, 0, 127, 1]);//Fuchsia fill #FF007F
+
+	var blackColor = new dojo.Color([0, 0, 0, 1]);//Black fill
+	var whiteColor = new dojo.Color([255, 255, 255, 1]);//white fill
+
+	//simple Line Symbol
+	var redSLS = new esri.symbol.SimpleLineSymbol().setColor(redColor).setWidth("3");
+	var greenSLS = new esri.symbol.SimpleLineSymbol().setColor(greenColor).setWidth("3");
+	var blueSLS = new esri.symbol.SimpleLineSymbol().setColor(blueColor).setWidth("3");
+	
+	var yellowSLS = new esri.symbol.SimpleLineSymbol().setColor(yellowColor).setWidth("3");
+	var magentaSLS = new esri.symbol.SimpleLineSymbol().setColor(magentaColor).setWidth("3");
+	var cyanSLS = new esri.symbol.SimpleLineSymbol().setColor(cyanColor).setWidth("3");
+		
+	var orangeSLS = new esri.symbol.SimpleLineSymbol().setColor(orangeColor).setWidth("3");
+	var springgreenSLS = new esri.symbol.SimpleLineSymbol().setColor(springgreenColor).setWidth("3");
+	var purpleSLS = new esri.symbol.SimpleLineSymbol().setColor(purpleColor).setWidth("3");
+	var deepskyblueSLS = new esri.symbol.SimpleLineSymbol().setColor(deepskyblueColor).setWidth("3");
+	var chartreuseSLS = new esri.symbol.SimpleLineSymbol().setColor(chartreuseColor).setWidth("3");
+	var fuchsiaSLS = new esri.symbol.SimpleLineSymbol().setColor(fuchsiaColor).setWidth("3");
+	
+	//Linea Negra, para el borde del simbolo...
+	var blackSLS = new esri.symbol.SimpleLineSymbol().setColor(blackColor).setWidth("3");
+	var whiteSLS = new esri.symbol.SimpleLineSymbol().setColor(whiteColor).setWidth("3");
+
+	//Colores
+	filtro.renderer = new esri.renderer.UniqueValueRenderer(blackSLS, "terminal");
+	filtro.renderer.addValue({value: "Chiguayante",symbol: greenSLS,label: "Chiguayante"});
+	filtro.renderer.addValue({value: "Concepción",symbol: redSLS,label: "Concepción"});
+	filtro.renderer.addValue({value: "Coronel",symbol: blueSLS,label: "Coronel"});
+	filtro.renderer.addValue({value: "Hualpen",symbol: yellowSLS,label: "Hualpen"});
+	filtro.renderer.addValue({value: "Hualqui",symbol: magentaSLS,label: "Hualqui"});
+	filtro.renderer.addValue({value: "Lota",symbol: orangeSLS,label: "Lota"});
+	filtro.renderer.addValue({value: "Penco",symbol: chartreuseSLS,label: "Penco"});
+	filtro.renderer.addValue({value: "San Pedro de la Paz",symbol: springgreenSLS,label: "San Pedro de la Paz"});
+	filtro.renderer.addValue({value: "Talcahuano",symbol: purpleSLS,label: "Talcahuano"});
+	filtro.renderer.addValue({value: "Tomé",symbol: deepskyblueSLS,label: "Tomé"});
+	
+	var optionsArray = [];
+	var drawingOptions = new esri.layers.LayerDrawingOptions();
+	drawingOptions.renderer = filtro.renderer;
+	optionsArray[0] = drawingOptions;
+	filtro.DynMapServLayer.setLayerDrawingOptions(optionsArray);
+	Lgnd("Comuna Terminal");
+	}
+
+//Popup
+function Popup(result) {
+	//make sure a feature was clicked
+	
+	if ( result.features.length === 0 ) {
+		clearMap();
+		return;
+		}
+	var popupTemplate = new esri.dijit.PopupTemplate(
+		{
+			title: "Linea: {nombre}",
+			fieldInfos: [
+						{ fieldName: "ruta", visible: true, label: "Ruta: " },
+						{ fieldName: "servicio", visible: true, label: "Servicio: " },
+						{ fieldName: "sentido", visible: false, label: "Sentido: " },
+						{ fieldName: "origen", visible: true, label: "Origen: " },
+						{ fieldName: "destino", visible: true, label: "Destino: " },
+						{ fieldName: "recorrido", visible: true, label: "Recorrido: " },
+						{ fieldName: "categoria", visible: true, label: "Categoría: " },
+						{ fieldName: "terminal", visible: true, label: "Terminal: " },
+						{ fieldName: "frecuencia", visible: true, label: "Frecuencia: " }
+				]
+			}
+		);
+	dojo.forEach(
+		result.features, 
+		function(f) {f.setInfoTemplate(popupTemplate);}
+		);
+	filtro.map.infoWindow.setFeatures(result.features);
+	filtro.map.infoWindow.show(filtro.click.screenPoint,filtro.map.getInfoWindowAnchor(filtro.click.screenPoint));    // field information
+	filtro.map.infoWindow.set("popupWindow", false);
+	dijit.byId("fieldsContent").set("content", filtro.map.infoWindow.getSelectedFeature().getContent());
+			dojo.byId("featureCount").innerHTML = "1 de " + filtro.map.infoWindow.features.length +" Recorridos(s) seleccionado(s)";
+	if(filtro.map.infoWindow.features.length > 1){ esri.show(dojo.byId("pager"));} else {esri.hide(dojo.byId("pager"));};
+	}
+
+
+//Filtros...
+function actFiltros(valores) {
+	//vectores de Filtro
+	var vecNombre = dijit.byId("planta").get("value");
+	var vecServicio = dijit.byId("sector").get("value");
+	var vecRuta = dijit.byId("centro").get("value");
+	var vecCategoria = dijit.byId("categoria").get("value");
+	
+	//Consultas Recorridos	
+	var queryNombre;
+	if(vecNombre === '*' ) queryNombre ="1 = 1";
+	else queryNombre ="nombre = '" + vecNombre + "'";
+		
+	var queryRuta;
+	if(vecRuta === '*' ) queryRuta ="1 = 1";
+	else queryRuta ="ruta = '" + vecRuta + "'";
+	
+	var queryServicio;
+	if(vecServicio === '*' ) queryServicio ="1 = 1";
+	else queryServicio ="servicio = '" + vecServicio + "'";
+	
+	var queryCategoria;
+	if(vecCategoria === 'ALL' ) queryCategoria ="1 = 1";
+	else queryCategoria ="categoria = '" + vecCategoria + "'";
+
+	//Cadena de Consulta
+	filtro.where = queryNombre + " AND " + queryRuta + " AND " + queryServicio + " AND " + queryCategoria;
+	
+	var layerDefs = [];
+	layerDefs[0] = filtro.where;
+	console.log(layerDefs[0]);
+	
+	filtro.DynMapServLayer.layerDefinitions = layerDefs;
+
+	//filtro.map.removeLayer(filtro.DynMapServLayer);
+	//filtro.map.addLayer(filtro.DynMapServLayer);
+	
+	filtro.DynMapServLayer.hide();
+	filtro.DynMapServLayer.show();
+	
+	//filtro.map.();
+	//filtro.DynMapServLayer.();
+
+	clearMap();
+	}
+
+/*-----------------------------------------------------------------------------------------*/
+/*  ------------------------------         Slct()          ------------------------------  */
+/*-----------------------------------------------------------------------------------------*/
+
+function Slct() {
+
+	var plantas =  [
+		{ plant: "*", value: "*", name: "todas las plantas", selected: true },
+		{ plant: "01", value: "01", name: "Planta Maule" },
+		{ plant: "02", value: "02", name: "Arauco - Nueva ALdea" },
+		{ plant: "03", value: "03", name: "ENAP- Talcahuano" },
+		];
+
+	var sectores =  [
+		{ sect: "*", plant: "*", value: "*", name: "Todos los sectores", selected: true },
+		{ sect: "0101", plant: "01", value: "0101", name: "Bodega" },
+		{ sect: "0102", plant: "01", value: "0102", name: "hornos" },
+		{ sect: "0201", plant: "02", value: "0201", name: "Patio" },
+		{ sect: "0202", plant: "02", value: "0202", name: "aserradero" },
+		{ sect: "0301", plant: "03", value: "0301", name: "oficinas" },
+		{ sect: "0302", plant: "03", value: "0302", name: "calderas" },
+		];
+
+	var centros =  [
+		{ center: "*", sect: "*", plant: "*", value: "*", name: "Todos los centros"},
+		{ center: "0101-201507", sect: "0101", plant: "01", value: "0101-201507", name: "0101-201507" },
+		{ center: "0101-201508", sect: "0101", plant: "01", value: "0101-201508", name: "0101-201508" },
+		{ center: "0102-201506", sect: "0102", plant: "01", value: "0102-201506", name: "0102-201506" },
+		{ center: "0102-201511", sect: "0102", plant: "01", value: "0102-201511", name: "0102-201511" },
+		{ center: "0201-201501", sect: "0201", plant: "02", value: "0201-201501", name: "0201-201501" },
+		{ center: "0201-201502", sect: "0201", plant: "02", value: "0201-201502", name: "0201-201502" },
+		{ center: "0202-201504", sect: "0202", plant: "02", value: "0202-201504", name: "0202-201504" },
+		{ center: "0202-201507", sect: "0202", plant: "02", value: "0202-201507", name: "0202-201507" },
+		{ center: "0301-201507", sect: "0301", plant: "03", value: "0301-201507", name: "0301-201507" },
+		{ center: "0301-201508", sect: "0301", plant: "03", value: "0301-201508", name: "0301-201508" },
+		{ center: "0302-201509", sect: "0302", plant: "03", value: "0302-201509", name: "0302-201509" },
+		{ center: "0302-201510", sect: "0302", plant: "03", value: "0302-201510", name: "0302-201510" },
+		];
+
+	new dijit.form.FilteringSelect({
+		id: "planta",
+		value: "*",
+		store: new dojo.store.Memory({ idProperty: "value", data: plantas }),
+		autoComplete: true,
+		queryExpr: '*${0}*',
+		required: false,
+		style: "font-size:90%;",
+		onChange: function(plant){
+			if(this.item.plant != "*"){
+				dijit.byId('sector').query.plant = this.item.plant || /.*/;
+				dijit.byId('sector').set('value', this.item ? "*" : null);
+				dijit.byId('centro').query.plant = this.item.plant || /.*/;
+				dijit.byId('centro').set('value', this.item ? "*" : null);
+				}
+			else {
+				dijit.byId('sector').query.plant = /.*/;
+				dijit.byId('sector').set('value', this.item ? "*" : null);
+				dijit.byId('centro').query.plant = /.*/;
+				dijit.byId('centro').set('value', this.item ? "*" : null);
+				}
+			}
+		}, "planta").startup();
+
+	new dijit.form.FilteringSelect({
+		id: "sector",
+		value: "*",
+		store: new dojo.store.Memory({ idProperty: "value", data: sectores }),
+		autoComplete: true,
+		queryExpr: '*${0}*',
+		required: false,
+		style: "font-size:90%;",
+		onChange: function(sect){
+			if(this.item.sect != "*"){
+				dijit.byId('centro').query.sect = this.item.sect || /.*/;
+				dijit.byId('centro').set('value', this.item ? "*" : null);
+				}
+			else {
+				dijit.byId('centro').query.sect = /.*/;
+				dijit.byId('centro').set('value', this.item ? "*" : null);
+				}
+			}
+		}, "sector");
+
+	new dijit.form.FilteringSelect({
+		id: "centro",
+		value: "*",
+		store: new dojo.store.Memory({ idProperty: "value", data: centros }),
+		autoComplete: true,
+		required: false,
+		queryExpr: "*${0}*",
+		ignoreCase:true,
+		style: "font-size:90%;"
+		}, "centro");
+
+	new dijit.form.Select({
+		name: "XD",
+		style: "font-size:90%;",
+		options: [
+			{ value: "xd1", label: "xd1", selected: true },
+			{ value: "xd2", label: "xd2" },
+			]
+		}, 
+		"XD");
+	}
+
+
+/*-----------------------------------------------------------------------------------------*/
+/*  --------------------------------- Funciones Comunes ---------------------------------  */
+/*-----------------------------------------------------------------------------------------*/
+
+//Generador de Leyenda
+function Lgnd(setTitle) {
+	console.log("Lgnd", setTitle);
+	console.log("Lgnd", filtro.map);
+	console.log("Lgnd", filtro.DynMapServLayer);
+	
+	filtro.legend = new esri.dijit.Legend({map: filtro.map, respectCurrentMapScale: true, layerInfos: [{title:setTitle,layer:filtro.DynMapServLayer}]}, "leyenda");
+	filtro.legend.startup();
+	
+	
+	filtro.DynMapServLayer.hide();
+	filtro.DynMapServLayer.show();
+	
+	}
+
+//Consulta por los puntos que cumples  los valores asignados
+function consultaPunto(e) {
+	var mp, pad, consultaGeom, consulta, hacerConsulta;
+	mp = e.mapPoint;
+
+	//save copy of the click event
+	filtro.click = e;
+	//build an extent around the click point
+	pad = filtro.map.extent.getWidth() / filtro.map.width * 3;
+	consultaGeom = new esri.geometry.Extent(mp.x - pad, mp.y - pad, mp.x + pad, mp.y + pad, filtro.map.spatialReference);
+
+	consulta = new esri.tasks.Query();
+	consulta.outSpatialReference = filtro.map.spatialReference;
+	consulta.returnGeometry = true;
+	consulta.where = filtro.where;
+	consulta.outFields = filtro.outFields;
+	consulta.geometry = consultaGeom;
+
+	hacerConsulta = new esri.tasks.QueryTask(filtro.urlCapa);
+	hacerConsulta.execute(consulta, Popup);
+	}
+
+//Crear DIV para logo en el mapa
+function getCreate() {	
+	dojo.create('img', {src: './images/logo-estchile.png'}, dojo.byId('logoMap'));
+	}
+
+//borrar ventana de info
+function escClosesPopup(key) {if ( key.keyCode == 27 ) {clearMap();}}
+
+//marcar error
+function errorHandler(err) {console.log('Oops, error: ', err);}
+
+//limpiar mapas
+function clearMap(){
+		filtro.map.infoWindow.unsetMap(filtro.map);
+		filtro.map.infoWindow.setMap(filtro.map);
+		dojo.byId("featureCount").innerHTML = "Click en el mapa para ver información";
+		esri.hide(dojo.byId("pager"));
+		dijit.byId("fieldsContent").set("content", "");
+		}
+
+//dojo ready init
+dojo.ready(init);

@@ -1,0 +1,104 @@
+/*-----------------------------------------------------------------------------------------*/
+/*  ------------------------------         Slct()          ------------------------------  */
+/*-----------------------------------------------------------------------------------------*/
+
+function Slct() {
+
+	var plantas =  [
+		{ plant: "*", value: "*", name: "todas las plantas", selected: true },
+		{ plant: "01", value: "01", name: "Planta Maule" },
+		{ plant: "02", value: "02", name: "Arauco - Nueva ALdea" },
+		{ plant: "03", value: "03", name: "ENAP- Talcahuano" },
+		];
+
+	var sectores =  [
+		{ sect: "*", plant: "*", value: "*", name: "Todos los sectores", selected: true },
+		{ sect: "0101", plant: "01", value: "0101", name: "Bodega" },
+		{ sect: "0102", plant: "01", value: "0102", name: "hornos" },
+		{ sect: "0201", plant: "02", value: "0201", name: "Patio" },
+		{ sect: "0202", plant: "02", value: "0202", name: "aserradero" },
+		{ sect: "0301", plant: "03", value: "0301", name: "oficinas" },
+		{ sect: "0302", plant: "03", value: "0302", name: "calderas" },
+		];
+
+	var centros =  [
+		{ center: "*", sect: "*", plant: "*", value: "*", name: "Todos los centros"},
+		{ center: "0101-201507", sect: "0101", plant: "01", value: "0101-201507", name: "0101-201507" },
+		{ center: "0101-201508", sect: "0101", plant: "01", value: "0101-201508", name: "0101-201508" },
+		{ center: "0102-201506", sect: "0102", plant: "01", value: "0102-201506", name: "0102-201506" },
+		{ center: "0102-201511", sect: "0102", plant: "01", value: "0102-201511", name: "0102-201511" },
+		{ center: "0201-201501", sect: "0201", plant: "02", value: "0201-201501", name: "0201-201501" },
+		{ center: "0201-201502", sect: "0201", plant: "02", value: "0201-201502", name: "0201-201502" },
+		{ center: "0202-201504", sect: "0202", plant: "02", value: "0202-201504", name: "0202-201504" },
+		{ center: "0202-201507", sect: "0202", plant: "02", value: "0202-201507", name: "0202-201507" },
+		{ center: "0301-201507", sect: "0301", plant: "03", value: "0301-201507", name: "0301-201507" },
+		{ center: "0301-201508", sect: "0301", plant: "03", value: "0301-201508", name: "0301-201508" },
+		{ center: "0302-201509", sect: "0302", plant: "03", value: "0302-201509", name: "0302-201509" },
+		{ center: "0302-201510", sect: "0302", plant: "03", value: "0302-201510", name: "0302-201510" },
+		];
+
+	new dijit.form.FilteringSelect({
+		id: "planta",
+		value: "*",
+		store: new dojo.store.Memory({ idProperty: "value", data: plantas }),
+		autoComplete: true,
+		queryExpr: '*${0}*',
+		required: false,
+		style: "font-size:90%;",
+		onChange: function(line){
+			if(this.item.line != "*"){
+				dijit.byId('sector').query.sect = this.item.center || /.*/;
+				dijit.byId('sector').set('value', this.item ? "*" : null);
+				dijit.byId('centro').query.center = this.item.center || /.*/;
+				dijit.byId('centro').set('value', this.item ? "*" : null);
+				}
+			else {
+				dijit.byId('sector').query.sect = /.*/;
+				dijit.byId('sector').set('value', this.item ? "*" : null);
+				dijit.byId('centro').query.center = /.*/;
+				dijit.byId('centro').set('value', this.item ? "*" : null);
+				}
+			}
+		}, "planta").startup();
+
+	new dijit.form.FilteringSelect({
+		id: "sector",
+		value: "*",
+		store: new dojo.store.Memory({ idProperty: "value", data: sectores }),
+		autoComplete: true,
+		queryExpr: '*${0}*',
+		required: false,
+		style: "font-size:90%;",
+		onChange: function(service){
+			if(this.item.service != "*"){
+				dijit.byId('centro').query.service = this.item.service || /.*/;
+				dijit.byId('centro').set('value', this.item ? "*" : null);
+				}
+			else {
+				dijit.byId('centro').query.service = /.*/;
+				dijit.byId('centro').set('value', this.item ? "*" : null);
+				}
+			}
+		}, "sector");
+
+	new dijit.form.FilteringSelect({
+		id: "centro",
+		value: "*",
+		store: new dojo.store.Memory({ idProperty: "value", data: centros }),
+		autoComplete: true,
+		required: false,
+		queryExpr: "*${0}*",
+		ignoreCase:true,
+		style: "font-size:90%;"
+		}, "centro");
+
+	new dijit.form.Select({
+		name: "XD",
+		style: "font-size:90%;",
+		options: [
+			{ value: "xd1", label: "xd1", selected: true },
+			{ value: "xd2", label: "xd2" },
+			]
+		}, 
+		"XD");
+	}
