@@ -66,24 +66,25 @@ function init() {
 	//L.Control.Layers( {'Google Hibrido':gglH, 'Google':ggl}, {}).addTo(mapas.central);
 
 	L.tileLayer.betterWms(url, {
-		layers: 'est40516:Edificacion, est40516:people',
+		layers: 'est40516:Edificacion',
 		transparent: true,
 		format: 'image/png'
 		}).addTo(mapas.central);
 
-	/** /
+	/**/
 	L.tileLayer.betterWms(url, {
 		layers: 'est40516:people',
 		transparent: true,
-		format: 'image/png'
+		format: 'image/png',
+		styles: 'people_alergias'
 		}).addTo(mapas.central);
-	/**/
-	dojo.create('div', null, dojo.byId('leyenda'), "first");
+	/*genera leyenda*/
+	getLegend();
 	/*FILTROS*/
 	dojo.connect(dijit.byId("planta"), "onChange", actFiltros);
 	/*fin*/
 	}
-
+//http://104.196.40.15:8080/geoserver/est40516/wms?service=WMS&version=1.1.0&request=GetMap&layers=est40516:people&styles=people_alergias&bbox=808860.7101161322,6054190.876024606,809239.8662073202,6054295.726372454&width=768&height=330&srs=EPSG:32718&format=application/openlayers
 /*-----------------------------------------------------------------------------------------*/
 /*  ------------------------------         Slct()          ------------------------------  */
 /*-----------------------------------------------------------------------------------------*/
@@ -181,6 +182,12 @@ function Slct() {
 		}, "trabajador");
 	}
 
+//Crear DIV para logo en el mapa
+function getLegend() {
+	dojo.create('img', {src: 'http://104.196.40.15:8080/geoserver/est40516/wms?REQUEST=GetLegendGraphic&style=Edificacion&VERSION=1.1.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=est40516:Edificacion'}, dojo.byId('leyenda'));
+	dojo.create('br', null, dojo.byId('leyenda'));
+	dojo.create('img', {src: 'http://104.196.40.15:8080/geoserver/est40516/wms?REQUEST=GetLegendGraphic&style=people_alergias&VERSION=1.1.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=est40516:people'}, dojo.byId('leyenda'));
+	}
 //Crear DIV para logo en el mapa
 function getLogo() {	
 	dojo.create('img', {src: './images/logo-estchile.png'}, dojo.byId('logoMap'));

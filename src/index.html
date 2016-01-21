@@ -44,11 +44,8 @@
 				<div id="filter" data-dojo-type="dijit.layout.AccordionContainer">
 					<!--Filtros de recorridos -->
 					<div id="filterReco" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Filtros', selected:true">
-							<img alt="legend" src="http://104.196.40.15:8080/geoserver/est40516/wms?REQUEST=GetLegendGraphic&VERSION=1.1.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=est40516:Edificacion" />
-							Espacios de Trabajo
-							<br>
-							<img alt="legend" src="http://104.196.40.15:8080/geoserver/est40516/wms?REQUEST=GetLegendGraphic&VERSION=1.1.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=est40516:people" />
-							Personal
+						<div id="SliderLabel">Leyenda</div>
+						<div id="leyenda"></div>
 						<!--Planta-->
 						<div id="slider">
 							<div id="SliderLabel">Planta:</div>
@@ -67,7 +64,7 @@
 					</div>
 					<!--Leyenda-->
 					<div id="legend-tp" class="legend" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Leyenda'">
-						<div id="leyenda"></div>
+						<div id="leyendasa"></div>
 					</div>
 					<!--Info-->
 					<div id="fields-tp" class="fields" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Informacion'">
