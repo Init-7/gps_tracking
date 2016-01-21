@@ -76,7 +76,7 @@ function init() {
 		layers: 'est40516:people',
 		transparent: true,
 		format: 'image/png',
-		styles: 'people_alergias'
+		styles: 'Trabajador'
 		}).addTo(mapas.central);
 	/*genera leyenda*/
 	getLegend();
@@ -84,7 +84,7 @@ function init() {
 	dojo.connect(dijit.byId("planta"), "onChange", actFiltros);
 	/*fin*/
 	}
-//http://104.196.40.15:8080/geoserver/est40516/wms?service=WMS&version=1.1.0&request=GetMap&layers=est40516:people&styles=people_alergias&bbox=808860.7101161322,6054190.876024606,809239.8662073202,6054295.726372454&width=768&height=330&srs=EPSG:32718&format=application/openlayers
+
 /*-----------------------------------------------------------------------------------------*/
 /*  ------------------------------         Slct()          ------------------------------  */
 /*-----------------------------------------------------------------------------------------*/
@@ -184,9 +184,9 @@ function Slct() {
 
 //Crear DIV para logo en el mapa
 function getLegend() {
-	dojo.create('img', {src: 'http://104.196.40.15:8080/geoserver/est40516/wms?REQUEST=GetLegendGraphic&style=Edificacion&VERSION=1.1.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=est40516:Edificacion'}, dojo.byId('leyenda'));
+	dojo.create('img', {src: 'http://104.196.40.15:8080/geoserver/est40516/wms?REQUEST=GetLegendGraphic&style=Trabajador&VERSION=1.1.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=est40516:people&LEGEND_OPTIONS=forceLabels:on'}, dojo.byId('leyenda'));
 	dojo.create('br', null, dojo.byId('leyenda'));
-	dojo.create('img', {src: 'http://104.196.40.15:8080/geoserver/est40516/wms?REQUEST=GetLegendGraphic&style=people_alergias&VERSION=1.1.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=est40516:people'}, dojo.byId('leyenda'));
+	dojo.create('img', {src: 'http://104.196.40.15:8080/geoserver/est40516/wms?REQUEST=GetLegendGraphic&style=Edificacion&VERSION=1.1.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=est40516:Edificacion&LEGEND_OPTIONS=forceLabels:on'}, dojo.byId('leyenda'));
 	}
 //Crear DIV para logo en el mapa
 function getLogo() {	
