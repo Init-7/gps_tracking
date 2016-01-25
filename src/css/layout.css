@@ -86,7 +86,7 @@ body {
 	background-color:#E8E8E8;
 	border:solid 2px #B8B8B8;
 	margin:5px; 
-    width:200px;
+    width:260px;
 	}
 
 h3 { 
@@ -109,19 +109,17 @@ h6{
 	color: #666; 
 	}
 #slider {
-	color: #666; 
-	margin: 5px auto;
-	padding: 3px;
+	color: #666;
 	}
 #SliderLabel { 
-	padding: 20px 0 10px 0; 
+	padding: 5px 0 1px 0; 
 	}
 
 .dijitTextBox {
 	border: solid black 1px;
-	 #overflow: hidden;
-	 width: 10em;
-	 vertical-align: middle;
+	#overflow: hidden;
+	width: 13em;
+	vertical-align: middle;
 }
 
 .dojoxCheckedMultiSelect .dojoxCheckedMultiSelectWrapper {
