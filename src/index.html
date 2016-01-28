@@ -40,13 +40,13 @@
 
 			<!--PANEL DERECHO -->
 			<div id="rightPane" class="roundedCorners shadow" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'right'" >
-				<div id="filter" data-dojo-type="dijit.layout.AccordionContainer">
+				<div id="leftPanel" data-dojo-type="dijit.layout.AccordionContainer">
 					<!--Leyenda-- >
-					<div id="legend-tp" class="legend" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Leyenda', selected:true">
+					<div id="legend" class="legend" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Leyenda', selected:true">
 						<div id="leyenda"></div>
 					</div>
 					<!--Filtros de recorridos -->
-					<div id="filterReco" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Filtros y Leyenda'">
+					<div id="filter" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Filtros y Leyenda'">
 						<div id="slider">
 							<!--Planta-->
 							<div id="SliderLabel">Planta:</div>
@@ -65,7 +65,8 @@
 						</div>
 					</div>
 					<!--Info-->
-					<div id="fields-tp" class="fields" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Información'">
+					<div id="info" class="fields" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Información'">
+						<div id="itemDetails">&nbsp;</div>
 					</div>
 				</div>
 			</div>
