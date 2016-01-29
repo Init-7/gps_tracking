@@ -20,10 +20,6 @@ dojo.require("dojo.number");
 dojo.require("dojo.data.ObjectStore");
 dojo.require("dojo.store.Memory");
 
-/*-----------------------------------------------------------------------------------------*/
-/*  ------------------------------         INIT()          ------------------------------  */
-/*-----------------------------------------------------------------------------------------*/
-
 var db = {};
 
 var mapas = {};
@@ -34,6 +30,10 @@ var url = {};
  url.leyendaTrabajador = 'http://104.196.40.15:8080/geoserver/est40516/wms?REQUEST=GetLegendGraphic&VERSION=1.1.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LEGEND_OPTIONS=forceLabels:on&LAYER=est40516:people&style=Trabajador'
 url.leyendaEdificacion = 'http://104.196.40.15:8080/geoserver/est40516/wms?REQUEST=GetLegendGraphic&VERSION=1.1.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LEGEND_OPTIONS=forceLabels:on&LAYER=est40516:Edificacion&style=Edificacion';
      url.leyendaPMaule = 'http://104.196.40.15:8080/geoserver/est40516/wms?REQUEST=GetLegendGraphic&VERSION=1.1.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LEGEND_OPTIONS=forceLabels:on&LAYER=est40516:Edificacion&style=PMaule';
+
+/*-----------------------------------------------------------------------------------------*/
+/*  ------------------------------         INIT()          ------------------------------  */
+/*-----------------------------------------------------------------------------------------*/
 
 function init() {
 	//Generamos formulario de seleccion
@@ -112,17 +112,20 @@ function addLayer() {
 function actFiltros(valor) {
 	db.vecPlanta = dijit.byId("planta").get("value");
 
-	if(db.plantaSelect === '*'){mapas.central.setView([-36.3,-72.3], 8);
+	if(db.plantaSelect === '*'){
+		mapas.central.setView([-36.3,-72.3], 8);
 		dojo.attr(dojo.byId('work'), "src", url.leyendaEdificacion);
 		}
 	if(db.plantaSelect === '01'){
 		mapas.central.setView([-35.607,-71.588], 16);
 		dojo.attr(dojo.byId('work'), "src", url.leyendaPMaule);
 		}
-	if(db.plantaSelect === '02'){mapas.central.setView([-36.780,-73.125], 15);
+	if(db.plantaSelect === '02'){
+		mapas.central.setView([-36.780,-73.125], 15);
 		dojo.attr(dojo.byId('work'), "src", url.leyendaEdificacion);
 		}
-	if(db.plantaSelect === '03'){mapas.central.setView([-36.8395,-73.114], 18);
+	if(db.plantaSelect === '03'){
+		mapas.central.setView([-36.8395,-73.114], 18);
 		dojo.attr(dojo.byId('work'), "src", url.leyendaEdificacion);
 		}
 	}
@@ -234,7 +237,7 @@ function ShowWMSLayersInfo(evt){
 	var inner = '<iframe src="' + urls + '" width="100%" height="110px" style="border:none"></iframe>'
 	dojo.attr(dojo.byId('itemDetails'), "innerHTML", inner);
 
-    console.log(urls);
+    //console.log(urls);
     }
 
 //URL para obtener detalles de capa WMS 
@@ -266,6 +269,11 @@ function getFeatureInfoUrl(map, layer, latlng, params) {
 
     params[params.version === '1.3.0' ? 'i' : 'x'] = point.x;
     params[params.version === '1.3.0' ? 'j' : 'y'] = point.y;
+
+    console.log(defaultParams);
+    console.log(params);
+    console.log(layer._url);
+    console.log(L.Util.getParamString(params, layer._url, true));
 
     return layer._url + L.Util.getParamString(params, layer._url, true);
     }
