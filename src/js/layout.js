@@ -42,13 +42,14 @@ function init() {
 	addMap();
 	//cargamos capas
 	addLayer()
+	addGeoJSON()
 	/*genera leyenda*/
 	getLegend();
 
 	/*FILTROS*/
-	dojo.connect(dijit.byId("planta"), "onChange", actFiltros);
-	dojo.connect(dijit.byId("centro"), "onChange", actFiltros);
-	dojo.connect(dijit.byId("trabajador"), "onChange", actFiltros);
+	dojo.connect(dijit.byId("planta"), "onChange", centrarMapa);
+	dojo.connect(dijit.byId("centro"), "onChange", centrarMapa);
+	dojo.connect(dijit.byId("trabajador"), "onChange", centrarMapa);
 	/*fin*/
 	}
 
@@ -66,18 +67,20 @@ function addMap() {
 	//mapas.Chile = L.map('map', {center: [-37,-73],zoom: 4}); //Chile
 	
 	// for all possible values and explanations see "Template Parameters" in https://msdn.microsoft.com/en-us/library/ff701716.aspx
-	var imagerySet = 'Aerial'; // AerialWithLabels | Birdseye | BirdseyeWithLabels | Road
+	var imagerySet = 'Aerial'; // Aerial | AerialWithLabels | Birdseye | BirdseyeWithLabels | Road
 	var bing = new L.BingLayer('LfO3DMI9S6GnXD7d0WGs~bq2DRVkmIAzSOFdodzZLvw~Arx8dclDxmZA0Y38tHIJlJfnMbGq5GXeYmrGOUIbS2VLFzRKCK0Yv_bAl6oe-DOc', {type: imagerySet});
+
+	var imagerySetWL = 'AerialWithLabels'; // Aerial | AerialWithLabels | Birdseye | BirdseyeWithLabels | Road
+	var bingWL = new L.BingLayer('LfO3DMI9S6GnXD7d0WGs~bq2DRVkmIAzSOFdodzZLvw~Arx8dclDxmZA0Y38tHIJlJfnMbGq5GXeYmrGOUIbS2VLFzRKCK0Yv_bAl6oe-DOc', {type: imagerySetWL});
 
 	var ggl = new L.Google();
 	var gglH = new L.Google('HYBRID');
 
-	//mapas.central.addLayer(bing);
-	mapas.central.addLayer(gglH);
+	//mapas.central.addLayer(gglH);
 	//mapas.central.addLayer(ggl);
-	//mapas.central.addControl(new L.Control.Layers( {'Bing':bing, 'Google':ggl, 'Google Hibrido':gglH}, {}));
-	mapas.central.addControl(new L.Control.Layers( {'Google':ggl, 'Google Hibrido':gglH}, {}));
-	//L.Control.Layers( {'Google Hibrido':gglH, 'Google':ggl}, {}).addTo(mapas.central);
+	//mapas.central.addLayer(bing);
+	mapas.central.addLayer(bingWL);
+	mapas.central.addControl(new L.Control.Layers( {'Bing':bing, 'Bing with Labels':bingWL, 'Google':ggl, 'Google Hibrido':gglH}, {}));
 	}
 
 //agregamos capas
@@ -90,7 +93,7 @@ function addLayer() {
         attribution: 'Edificacion'
         });
     layer.maule.options.crs = L.CRS.EPSG4326;
-    layer.maule.setOpacity(1)
+    layer.maule.setOpacity(1);
     layer.maule.addTo(mapas.central);
     /**/
     layer.job =  L.tileLayer.wms(url.central, {
@@ -101,17 +104,81 @@ function addLayer() {
         attribution: 'Trabajador'
         });
     layer.job.options.crs = L.CRS.EPSG4326;
-    layer.job.setOpacity(1)
-    layer.job.addTo(mapas.central);
+    layer.job.setOpacity(1);
+
+    //layer.job.addTo(mapas.central);
+
+	layer.groupJob = L.featureGroup(); //L.layerGroup();
+	layer.groupJob.addLayer(layer.job);
+	//layer.groupJob.addTo(mapas.central);
+
+    layer.maule.bringToFront();
+    //layer.job.bringToFront();
 
     mapas.central.off('click', ShowWMSLayersInfo);
     mapas.central.on('click', ShowWMSLayersInfo); 
 	}
 
-//Filtros...
-function actFiltros(valor) {
-	db.vecPlanta = dijit.byId("planta").get("value");
+//http://104.196.40.15:8080/geoserver/est40516/ows ? service=WFS & version=1.0.0 & request=GetFeature & typeName=est40516:people & maxFeatures=50 & outputFormat=application%2Fjson
+//http://104.196.40.15:8080/geoserver/est40516/ows ? service=WFS & version=1.0.0 & request=GetFeature & typeName=est40516:people & outputFormat=text%2Fjavascript & format_options=callback%3AgetJson & SrsName=EPSG%3A4326
+//http://104.196.40.15:8080/geoserver/est40516/ows ? service=WFS & version=1.0.0 & request=GetFeature & typeName=est40516:people & maxFeatures=50 & outputFormat=application%2Fjson
 
+function addGeoJSON() {
+	var owsrootUrl = 'http://104.196.40.15:8080/geoserver/est40516/ows';
+
+	var defParam = {
+	    service : 'WFS',
+    	version : '1.0.0',
+    	request : 'GetFeature',
+    	typeName : 'est40516:people',
+    	maxFeatures : '50',
+    	outputFormat : 'application/json'
+		};
+
+	var defaultParameters = {
+	    service : 'WFS',
+    	version : '1.0.0',
+    	request : 'GetFeature',
+    	typeName : 'est40516:people',
+    	outputFormat : 'text/javascript',
+   		format_options : 'callback:getJson',
+    	SrsName : 'EPSG:4326'
+		};
+
+	var parameters = L.Util.extend(defParam);
+	var URL = owsrootUrl + L.Util.getParamString(parameters);
+
+	var WFSLayer = null;
+	console.log('addGeoJSON', URL);
+
+	var realtime = L.realtime({
+		url: 'https://wanderdrone.appspot.com/',
+        crossOrigin: true,
+        type: 'json'
+    }, {
+        interval: 3 * 1000
+    }).addTo(mapas.central);
+    realtime.on('update', function() {mapas.central.fitBounds(realtime.getBounds(), {maxZoom: 3});});
+    
+	}
+
+//Filtros...
+function centrarMapa(valor) {
+	//db.vecPlanta = dijit.byId("planta").get("value");
+	console.log('centrar Mapa');
+	if (dijit.byId("centro").item.plant === '*' && dijit.byId("trabajador").item.plant === '*') {
+		db.plantaSelect = dijit.byId("planta").item.plant;
+		console.log('planta ',dijit.byId("planta").item.plant);
+		}
+	else if (dijit.byId("trabajador").item.plant === '*') {
+		db.plantaSelect = dijit.byId("centro").item.plant;
+		console.log('centro ',dijit.byId("centro").item.plant);
+		}
+	else {
+		db.plantaSelect = dijit.byId("trabajador").item.plant;
+		console.log('trabajador ',dijit.byId("trabajador").item.plant);
+		}
+	console.log('----');
 	if(db.plantaSelect === '*'){
 		mapas.central.setView([-36.3,-72.3], 8);
 		dojo.attr(dojo.byId('work'), "src", url.leyendaEdificacion);
@@ -132,6 +199,7 @@ function actFiltros(valor) {
 
 //generamos select para filtros
 function Slct() {
+	/*inicio DB* /
 	db.plantas =  [
 		{ plant: "*", value: "*", name: "todas las plantas", selected: true },
 
@@ -159,7 +227,35 @@ function Slct() {
 		{ job: "job-0506", center: "03-201601", plant: "03", value: "job-0506", name: "Lautaro Silva" },
 		{ job: "job-0507", center: "03-201601", plant: "03", value: "job-0507", name: "Jhonny Gutiérrez" },
 		];
+	/*fin DB*/
+	db.plantas =  [
+	    { plant: "*", value: "*", name: "todas las plantas", selected: true },
 
+	    { plant: "01", value: "01", name: "CMPC-Planta Maule" },
+	    { plant: "02", value: "02", name: "ENAP" },
+	    { plant: "03", value: "03", name: "Oficina EST" },
+	    ];
+
+	  db.centros =  [
+	    { center: "*", plant: "*", value: "*", name: "Todos los centros", selected: true },
+
+	    { center: "MA0101", plant: "01", value: "MA0101", name: "MA0101" },
+	    { center: "MA0102", plant: "01", value: "MA0102", name: "MA0102" },
+	    { center: "MA0130", plant: "01", value: "MA0130", name: "MA0130" },
+	    { center: "MA0203", plant: "01", value: "MA0203", name: "MA0203" },
+	    { center: "MA3182", plant: "01", value: "MA3182", name: "MA3182" },
+	    { center: "3654", plant: "01", value: "3654", name: "3654" },
+	    ];
+
+	  db.trabajadores =  [
+	    { job: "*", center: "*", plant: "*", value: "*", name: "Todos los trabajadores", fEmer: "", fPers: "", cargo: "", antiguedad: "", alergia: "",},
+	    { job: "people.1", center: "MA0130", plant: "01", value: "people.1", name: "Perico los palotes", fEmer: "5641896578", fPers: "56989456123", cargo: "Electrico", antiguedad: "5", alergia: "Penicilina",},
+	    { job: "people.2", center: "MA0203", plant: "01", value: "people.2", name: "Alan Brito", fEmer: "425698745", fPers: "56987456321", cargo: "Mecanico", antiguedad: "3", alergia: "Sulfas",},
+	    { job: "people.3", center: "MA0101", plant: "01", value: "people.3", name: "Carlos Hernandez", fEmer: "5641874563", fPers: "56415896745", cargo: "Director Comercial", antiguedad: "20", alergia: "mani",},
+	    { job: "people.4", center: "MA3182", plant: "01", value: "people.4", name: "Victor Hernandez", fEmer: "456456456456", fPers: "4564654516", cargo: "Jefe Centro Negocios", antiguedad: "5", alergia: "mani",},
+	    { job: "people.5", center: "MA0102", plant: "01", value: "people.5", name: "Juan Pablo Hernandez", fEmer: "1515645645615", fPers: "51651651561", cargo: "Director General", antiguedad: "15", alergia: "mani", },
+	    { job: "people.6", center: "MA3654", plant: "01", value: "people.6", name: "Aquies Baeza", fEmer: "15646845", fPers: "465465465", cargo: "Supervisor", antiguedad: "12", alergia: "nada", },
+	    ];
 	new dijit.form.FilteringSelect({
 		id: "planta",
 		value: "*",
@@ -169,8 +265,6 @@ function Slct() {
 		required: false,
 		style: "font-size:90%;",
 		onChange: function(plant){
-			db.plantaSelect = this.item.plant;
-			console.log('plant: ',db.plantaSelect);
 			if(this.item.plant != "*"){
 				dijit.byId('centro').query.plant = this.item.plant || "*" || /.*/;
 				dijit.byId('centro').set('value', this.item ? "*" : null);
@@ -195,8 +289,6 @@ function Slct() {
 		required: false,
 		style: "font-size:90%;",
 		onChange: function(center){
-			db.plantaSelect = this.item.plant;
-			console.log('center: ',db.plantaSelect);
 			if(this.item.center != "*"){
 				dijit.byId('trabajador').query.center = this.item.center || /.*/;
 				dijit.byId('trabajador').set('value', this.item ? "*" : null);
@@ -217,10 +309,6 @@ function Slct() {
 		queryExpr: "*${0}*",
 		ignoreCase:true,
 		style: "font-size:90%;",
-		onChange: function(job){
-			db.plantaSelect = this.item.plant;
-			console.log('job: ',db.plantaSelect);
-			}
 		}, "trabajador");
 	}
 
@@ -233,10 +321,13 @@ function getLegend() {
 
 //info
 function ShowWMSLayersInfo(evt){
-    var urls = getFeatureInfoUrl(mapas.central,layer.job,evt.latlng,{'info_format': 'text/html'});
-	var inner = '<iframe src="' + urls + '" width="100%" height="110px" style="border:none"></iframe>'
-	dojo.attr(dojo.byId('itemDetails'), "innerHTML", inner);
+    //var urls = getFeatureInfoUrl(mapas.central,layer.job,evt.latlng,{'info_format': 'text/html'});
+    var urls = getFeatureInfoUrl(mapas.central,layer.maule,evt.latlng,{'info_format': 'text/html'});
+	var inner = '';
 
+	inner = '<iframe src="' + urls + '" width="100%" height="110px" style="border:none"></iframe>';
+	dojo.attr(dojo.byId('itemDetails'), "innerHTML", inner);
+	divInfo();
     //console.log(urls);
     }
 
@@ -270,13 +361,34 @@ function getFeatureInfoUrl(map, layer, latlng, params) {
     params[params.version === '1.3.0' ? 'i' : 'x'] = point.x;
     params[params.version === '1.3.0' ? 'j' : 'y'] = point.y;
 
-    console.log(defaultParams);
-    console.log(params);
-    console.log(layer._url);
-    console.log(L.Util.getParamString(params, layer._url, true));
+    //console.log(defaultParams.valueOf());
+    //console.log(defaultParams.toSource());
+    //console.log(defaultParams.toString());
+
+    //console.log(layer._url);
+    //console.log(L.Util.getParamString(params, layer._url, true));
 
     return layer._url + L.Util.getParamString(params, layer._url, true);
     }
+
+
+//info
+function divInfo(){
+	//job: center: plant: value: name: fEmer: fPers: cargo: antiguedad: alergia:
+
+	var inner = '<h2 style="align:center"> Datos Trabajador </h2>' +
+			'Nombre: '+ dijit.byId("trabajador").item.name + ' <br />'+
+			'Telefono Personal: '+ dijit.byId("trabajador").item.fPers + ' <br />'+
+			'Telefono emeregencia: '+ dijit.byId("trabajador").item.fEmer + ' <br />'+
+			'Alergias: '+ dijit.byId("trabajador").item.alergia + ' <br />'+
+			'Cargo: '+ dijit.byId("trabajador").item.cargo + ' <br />'+
+			'Años de antiguedad: '+ dijit.byId("trabajador").item.antiguedad + ' <br />'+
+			'Centro de Negocio: '+ dijit.byId("trabajador").item.center + ' <br />'+
+			'Planta: '+ dijit.byId("trabajador").item.plant + ' <br /><br />';
+	dojo.attr(dojo.byId('divInfo'), "innerHTML", inner);
+    //console.log(ucargo);
+}
+
 
 //dojo ready init
 dojo.ready(init);
