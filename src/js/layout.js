@@ -54,13 +54,12 @@ function init() {
 	}
 
 /*-----------------------------------------------------------------------------------------*/
-/*  ------------------------------         Slct()          ------------------------------  */
+/*  ------------------------------    funciones varias     ------------------------------  */
 /*-----------------------------------------------------------------------------------------*/
 
-//Filtros...
+//agregaos mapa base...
 function addMap() {
 	mapas.central = L.map('map', {center: [-36.3,-72.3],zoom: 8});
-
 	//mapas.PlantaMaule = L.map('map', {center: [-35.607,-71.588],zoom: 16}); //Planta Maule
 	//mapas.ENAP = L.map('map', {center: [-36.780,-73.125],zoom: 15}); //Enap
 	//mapas.OficEST = L.map('map', {center: [-36.8395,-73.114],zoom: 18}); //Oficina EST
@@ -83,7 +82,7 @@ function addMap() {
 	mapas.central.addControl(new L.Control.Layers( {'Bing':bing, 'Bing with Labels':bingWL, 'Google':ggl, 'Google Hibrido':gglH}, {}));
 	}
 
-//agregamos capas
+//agregamos capas bases (edificacion de planatas...)
 function addLayer() {    
     layer.maule = L.tileLayer.wms(url.central, {
         layers: 'est40516:Edificacion',
@@ -119,12 +118,38 @@ function addLayer() {
     mapas.central.on('click', ShowWMSLayersInfo); 
 	}
 
-//http://104.196.40.15:8080/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:people&maxFeatures=50&outputFormat=application%2Fjson
-//http://104.196.40.15:8080/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:gps1&maxFeatures=1&outputFormat=application%2Fjson
+/*estructura GeoJson* /
+http://104.196.40.15:8080/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:gps1&outputFormat=application/json
+{
+	"type":"FeatureCollection",
+	"totalFeatures":1,
+	"features":[{
+		"type":"Feature",
+		"id":"gps1.fid-555fd13a_152a2299560_-2e28",
+		"geometry":{
+			"type":"Point",
+			"coordinates":[-36.83945444444444,-73.11391166666667,4326]},
+			"geometry_name":"punto",
+			"properties":{
+				"id":1,
+				"deviceId":1,
+				"deviceTime":"2016-02-04T21:50:46Z",
+				"valid":true,
+				"address":"21-31 Juan Gómez de Vidaurre, San Pedro de la Paz, Región Metropolitana, CL",
+				"attributes":"{\"sat\":7,\"mcc\":730,\"mnc\":1,\"lac\":58001,\"cid\":38386,\"index\":67,\"ip\":\"186.9.133.246\"}",
+				"lat":-36.83945444444444,"lon":-73.11391166666667
+				}
+			}],
+		"crs":{
+			"type":"name",
+			"properties":{"name":"urn:ogc:def:crs:EPSG::4326"}
+			}
+	}
+/**/
 
+//agregamos capas del GPS, mediante GeoJSON
 function addGeoJSON() {
 	var owsrootUrl = 'http://104.196.40.15:8080/geoserver/est40516/ows';
-
 	var defParam = {
 	    service : 'WFS',
     	version : '1.0.0',
@@ -135,18 +160,26 @@ function addGeoJSON() {
 
 	var parameters = L.Util.extend(defParam);
 	var URL = owsrootUrl + L.Util.getParamString(parameters);
-	
-	var realtime = L.realtime({
-		url: 'https://wanderdrone.appspot.com/',
-		//url: URL,
-        crossOrigin: true,
-        type: 'json'
-    }, {
-        interval: 3 * 1000
-    }).addTo(mapas.central);
-    
-    realtime.on('update', function() {mapas.central.fitBounds(realtime.getBounds(), {maxZoom: 3});});
-    
+
+	/*lectura DOJO + leaflet-realtime de GeoJSON */
+	//layer.geojson = L.geoJson().addTo(mapas.central);
+	dojo.xhrGet({
+		url: URL,
+		handleAs: "json",
+		load: function(jsonData) {
+			dojo.forEach(jsonData.features,function(features) {
+				//layer.geojson.addData(features);
+			    var requestData = function(success, error) {
+					L.Realtime.reqwest({url:URL, type:'json', method: 'post'})
+					.then(function(data) {success(features);})
+					.catch(function(err) {error(err);});
+					};
+				layer.realtime = L.realtime(requestData, {interval: 10 * 1000}).addTo(mapas.central);
+				layer.realtime.on('update', function(e) {console.log('lat: ',features.properties.lat,' lon: ',features.properties.lon);});
+				});
+			},
+		error: function() {}
+		});	    
 	}
 
 //Filtros...
