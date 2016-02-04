@@ -110,18 +110,17 @@ function addLayer() {
 
 	layer.groupJob = L.featureGroup(); //L.layerGroup();
 	layer.groupJob.addLayer(layer.job);
-	//layer.groupJob.addTo(mapas.central);
+	layer.groupJob.addTo(mapas.central);
 
     layer.maule.bringToFront();
-    //layer.job.bringToFront();
+    layer.job.bringToFront();
 
     mapas.central.off('click', ShowWMSLayersInfo);
     mapas.central.on('click', ShowWMSLayersInfo); 
 	}
 
-//http://104.196.40.15:8080/geoserver/est40516/ows ? service=WFS & version=1.0.0 & request=GetFeature & typeName=est40516:people & maxFeatures=50 & outputFormat=application%2Fjson
-//http://104.196.40.15:8080/geoserver/est40516/ows ? service=WFS & version=1.0.0 & request=GetFeature & typeName=est40516:people & outputFormat=text%2Fjavascript & format_options=callback%3AgetJson & SrsName=EPSG%3A4326
-//http://104.196.40.15:8080/geoserver/est40516/ows ? service=WFS & version=1.0.0 & request=GetFeature & typeName=est40516:people & maxFeatures=50 & outputFormat=application%2Fjson
+//http://104.196.40.15:8080/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:people&maxFeatures=50&outputFormat=application%2Fjson
+//http://104.196.40.15:8080/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:gps1&maxFeatures=1&outputFormat=application%2Fjson
 
 function addGeoJSON() {
 	var owsrootUrl = 'http://104.196.40.15:8080/geoserver/est40516/ows';
@@ -130,34 +129,22 @@ function addGeoJSON() {
 	    service : 'WFS',
     	version : '1.0.0',
     	request : 'GetFeature',
-    	typeName : 'est40516:people',
-    	maxFeatures : '50',
+    	typeName : 'est40516:gps1',
     	outputFormat : 'application/json'
-		};
-
-	var defaultParameters = {
-	    service : 'WFS',
-    	version : '1.0.0',
-    	request : 'GetFeature',
-    	typeName : 'est40516:people',
-    	outputFormat : 'text/javascript',
-   		format_options : 'callback:getJson',
-    	SrsName : 'EPSG:4326'
 		};
 
 	var parameters = L.Util.extend(defParam);
 	var URL = owsrootUrl + L.Util.getParamString(parameters);
-
-	var WFSLayer = null;
-	console.log('addGeoJSON', URL);
-
+	
 	var realtime = L.realtime({
 		url: 'https://wanderdrone.appspot.com/',
+		//url: URL,
         crossOrigin: true,
         type: 'json'
     }, {
         interval: 3 * 1000
     }).addTo(mapas.central);
+    
     realtime.on('update', function() {mapas.central.fitBounds(realtime.getBounds(), {maxZoom: 3});});
     
 	}
@@ -165,20 +152,16 @@ function addGeoJSON() {
 //Filtros...
 function centrarMapa(valor) {
 	//db.vecPlanta = dijit.byId("planta").get("value");
-	console.log('centrar Mapa');
 	if (dijit.byId("centro").item.plant === '*' && dijit.byId("trabajador").item.plant === '*') {
 		db.plantaSelect = dijit.byId("planta").item.plant;
-		console.log('planta ',dijit.byId("planta").item.plant);
 		}
 	else if (dijit.byId("trabajador").item.plant === '*') {
 		db.plantaSelect = dijit.byId("centro").item.plant;
-		console.log('centro ',dijit.byId("centro").item.plant);
 		}
 	else {
 		db.plantaSelect = dijit.byId("trabajador").item.plant;
-		console.log('trabajador ',dijit.byId("trabajador").item.plant);
 		}
-	console.log('----');
+
 	if(db.plantaSelect === '*'){
 		mapas.central.setView([-36.3,-72.3], 8);
 		dojo.attr(dojo.byId('work'), "src", url.leyendaEdificacion);
@@ -321,8 +304,8 @@ function getLegend() {
 
 //info
 function ShowWMSLayersInfo(evt){
-    //var urls = getFeatureInfoUrl(mapas.central,layer.job,evt.latlng,{'info_format': 'text/html'});
-    var urls = getFeatureInfoUrl(mapas.central,layer.maule,evt.latlng,{'info_format': 'text/html'});
+    var urls = getFeatureInfoUrl(mapas.central,layer.job,evt.latlng,{'info_format': 'text/html'});
+    //var urls = getFeatureInfoUrl(mapas.central,layer.maule,evt.latlng,{'info_format': 'text/html'});
 	var inner = '';
 
 	inner = '<iframe src="' + urls + '" width="100%" height="110px" style="border:none"></iframe>';
@@ -361,13 +344,6 @@ function getFeatureInfoUrl(map, layer, latlng, params) {
     params[params.version === '1.3.0' ? 'i' : 'x'] = point.x;
     params[params.version === '1.3.0' ? 'j' : 'y'] = point.y;
 
-    //console.log(defaultParams.valueOf());
-    //console.log(defaultParams.toSource());
-    //console.log(defaultParams.toString());
-
-    //console.log(layer._url);
-    //console.log(L.Util.getParamString(params, layer._url, true));
-
     return layer._url + L.Util.getParamString(params, layer._url, true);
     }
 
@@ -386,7 +362,6 @@ function divInfo(){
 			'Centro de Negocio: '+ dijit.byId("trabajador").item.center + ' <br />'+
 			'Planta: '+ dijit.byId("trabajador").item.plant + ' <br /><br />';
 	dojo.attr(dojo.byId('divInfo'), "innerHTML", inner);
-    //console.log(ucargo);
 }
 
 
