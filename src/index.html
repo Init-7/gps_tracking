@@ -3,7 +3,8 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
-		<title>Sisema Monitoreo GPS</title>
+		<link rel="icon" href="images/favicon2.png">
+		<title>::ESTChile:: Sisema Monitoreo GPS</title>
 
 		<!-- Load estilos-->
 		<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/dojo/1.10.4/dijit/themes/claro/claro.css" />
@@ -38,14 +39,14 @@
 
 			<!--MAP-->
 			<div id="map" class="roundedCorners shadow" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'center'" >
-				<img id="logoMap" src="./images/logo-estchile.png">
+				<img id="logoMap" src="./images/estchile.png" style="max-height: 75px;">
 			</div>
 
 			<!--PANEL DERECHO -->
 			<div id="rightPane" class="roundedCorners shadow" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'right'" >
 				<div id="leftPanel" data-dojo-type="dijit.layout.AccordionContainer">
 					<!--Leyenda-- >
-					<div id="legend" class="legend" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Leyenda', selected:true">
+					<div id="legend" class="legend" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Leyenda'">
 						<div id="leyenda"></div>
 					</div>
 					<!--Filtros de recorridos -->
@@ -68,7 +69,8 @@
 						</div>
 					</div>
 					<!--Info-->
-					<div id="info" class="fields" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Información'">
+					<div id="info" class="fields" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Información', selected:true">
+						<div id="divInfoGPS">&nbsp;</div>
 						<div id="divInfo">&nbsp;</div>
 						<div id="itemDetails">&nbsp;</div>
 					</div>

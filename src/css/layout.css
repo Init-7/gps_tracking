@@ -161,12 +161,13 @@ h6{
 }
 
 /*Style for company logo added to the map*/
-.logoMap{
-  bottom:5px;
+#logoMap{
+  bottom:15px;
   position:absolute;
   right:5px;
   z-index:30;
 }
-.logoMap img{
+#logoMap img{
   border:none;
+  max-height: 50px;
 }
