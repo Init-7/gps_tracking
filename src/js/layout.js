@@ -49,7 +49,7 @@ function init() {
 	/*FILTROS*/
 	dojo.connect(dijit.byId("planta"), "onChange", centrarMapa);
 	dojo.connect(dijit.byId("centro"), "onChange", centrarMapa);
-	dojo.connect(dijit.byId("trabajador"), "onChange", centrarMapa);
+	dojo.connect(dijit.byId("trabajador"), "onChange", centrarMapaJob);
 	/*fin*/
 	}
 
@@ -163,10 +163,36 @@ function addGeoJSON() {
 	url.GeoJSON = owsrootUrl + L.Util.getParamString(parameters);
 
 	/*lectura DOJO + leaflet-realtime de GeoJSON */
-	layer.realtime = L.realtime(rtGeoJSON,{interval: 5 * 1000}).addTo(mapa);
-	layer.realtime.on('update', function(e) {});
+	layer.realtime = L.realtime(rtGeoJSON,{
+		pointToLayer: pointToGeoJSON, 
+		onEachFeature: onEachGeoJSON, 
+		interval: 15 * 1000
+		}).addTo(mapa);
+
+	layer.realtime.on('update', function(e) {console.log('rt: ',db.GeoJSON.properties.id,':',db.GeoJSON.id)});
 
 	/**/
+	}
+/*estilo*/
+var onEachGeoJSON = function (feature, layer) {
+	layer.on({
+		click: function (){console.log('click');divInfoGPS(feature);divInfoJob(feature.properties.deviceId)}
+		});
+	}
+
+/*estilo*/
+var pointToGeoJSON = function (feature, latlng) {
+	return L.circleMarker(
+		latlng, 
+		{
+			radius: 4,
+			fillColor: "#ff0000",
+			color: "#000",
+			weight: 1,
+			opacity: 1,
+			fillOpacity: 0.8
+			}
+		);
 	}
 /* info Realtime*/
 var rtGeoJSON = function(success, error) {
@@ -192,8 +218,7 @@ var xhrGeoJSON = function(){
 				});
 			}
 		);
-
-	divInfoGPS(GeoJSON);
+	db.GeoJSON = GeoJSON;
 	return GeoJSON;
 	}
 
@@ -227,6 +252,14 @@ function centrarMapa(valor) {
 		mapa.setView([-36.8395,-73.114], 18);
 		dojo.attr(dojo.byId('work'), "src", url.leyendaEdificacion);
 		}
+	}
+
+
+/* Centrar mapa trabajador */
+function centrarMapaJob(valor) {
+	//db.vecPlanta = dijit.byId("planta").get("value");
+	db.plantaSelect = dijit.byId("trabajador").item.plant;
+	mapa.fitBounds(layer.realtime.getBounds(), {});
 	}
 
 /*generamos select (manejo temporal de BD)*/
@@ -288,7 +321,7 @@ function Slct() {
 	    { job: "people.4", center: "MA3182", plant: "01", value: "people.4", name: "Victor Hernandez", fEmer: "456456456456", fPers: "4564654516", cargo: "Jefe Centro Negocios", antiguedad: "5", alergia: "mani",},
 	    { job: "people.5", center: "MA0102", plant: "01", value: "people.5", name: "Juan Pablo Hernandez", fEmer: "1515645645615", fPers: "51651651561", cargo: "Director General", antiguedad: "15", alergia: "mani", },
 	    { job: "people.6", center: "MA3654", plant: "01", value: "people.6", name: "Aquies Baeza", fEmer: "15646845", fPers: "465465465", cargo: "Supervisor", antiguedad: "12", alergia: "nada", },
-	    { job: "gps-user-007", center: "gps2016", plant: "03", value: "gps-user-007", name: "Lautaro Silva", fEmer: "133", fPers: "+56950645387", cargo: "Jefe Proyecto", antiguedad: "3 años", alergia: "nada", },
+	    { job: "1", center: "gps2016", plant: "03", value: "1", name: "Lautaro Silva", fEmer: "133", fPers: "+56950645387", cargo: "Jefe Proyecto", antiguedad: "3 años", alergia: "nada", },
 	    ];
 	new dijit.form.FilteringSelect({
 		id: "planta",
@@ -359,9 +392,11 @@ function ShowWMSLayersInfo(evt){
 	var inner = '';
 
 	inner = '<iframe src="' + urls + '" width="100%" height="110px" style="border:none"></iframe>';
-	dojo.attr(dojo.byId('itemDetails'), "innerHTML", inner);
+	dojo.attr(dojo.byId('divInfoEdif'), "innerHTML", inner);
 
-	divInfo();
+	dojo.attr(dojo.byId('divInfoJob'), "innerHTML", '');
+	dojo.attr(dojo.byId('divInfoGPS'), "innerHTML", '');
+	//divInfoJob();
 	}
 
 /* URL para obtener detalles de capa WMS */
@@ -398,10 +433,9 @@ function getFeatureInfoUrl(map, layer, latlng, params) {
     }
 
 
-/* info BD */
-function divInfo(){
+/* info BD * /
+function divInfoJob(){
 	//job: center: plant: value: name: fEmer: fPers: cargo: antiguedad: alergia:
-
 	var inner = '<h2 style="align:center"> Datos Trabajador </h2>' +
 			'Nombre: '+ dijit.byId("trabajador").item.name + ' <br />'+
 			'Telefono Personal: '+ dijit.byId("trabajador").item.fPers + ' <br />'+
@@ -411,25 +445,45 @@ function divInfo(){
 			'Años de antiguedad: '+ dijit.byId("trabajador").item.antiguedad + ' <br />'+
 			'Centro de Negocio: '+ dijit.byId("trabajador").item.center + ' <br />'+
 			'Planta: '+ dijit.byId("trabajador").item.plant + ' <br /><br />';
-	dojo.attr(dojo.byId('divInfo'), "innerHTML", inner);
+	dojo.attr(dojo.byId('divInfoJob'), "innerHTML", inner);
+	console.log(db);
+	console.log(db.trabajadores);
+}
+
+/* info BD */
+function divInfoJob(jobID){
+	//job: center: plant: value: name: fEmer: fPers: cargo: antiguedad: alergia:
+	var inner;
+	dojo.forEach(db.trabajadores,function(job) {
+		if (job.job == jobID) {
+			inner = '<h2 style="align:center"> Datos Trabajador</h2>' +
+				'Nombre: '+ job.name + ' <br />'+
+				'Telefono Personal: '+ job.fPers + ' <br />'+
+				'Telefono emeregencia: '+ job.fEmer + ' <br />'+
+				'Alergias: '+ job.alergia + ' <br />'+
+				'Cargo: '+ job.cargo + ' <br />'+
+				'Años de antiguedad: '+ job.antiguedad + ' <br />'+
+				'Centro de Negocio: '+ job.center + ' <br />'+
+				'Planta: '+ job.plant + ' <br /><br />';
+			}
+		});
+	dojo.attr(dojo.byId('divInfoJob'), "innerHTML", inner);
 }
 
 /* info GepJSON (GPS) */
 function divInfoGPS(features){
-	var inner = '<h2 style="align:center"> Datos Trabajador </h2>' +
-		'ID (prop): '+ features.properties.deviceId + ' <br /><br />'+
-		'ID (GPS): '+ features.properties.id + ' <br /><br />'+
-		'Fecha: '+ features.properties.deviceTime + ' <br /><br />'+
+	var inner = '<h2 style="align:center"> Datos GPS </h2>' +
+		'ID (prop): '+ features.properties.deviceId + ' <br />'+
+		'ID (GPS): '+ features.properties.id + ' <br />'+
+		'Fecha: '+ features.properties.deviceTime + '<br />'+
 		'Latitud: '+ features.properties.lat + ' <br />'+
-		'Longitud: '+ features.properties.lon + ' <br /><br />'+
-		'Direccion: '+ features.properties.address + ' (aprox.) <br /><br />'+
-		'ID (interno): '+ features.id + ' <br /><br /><br />';
+		'Longitud: '+ features.properties.lon + ' <br />'+
+		'Direccion: '+ features.properties.address + ' (aprox.) <br />'+
+		'ID (interno): '+ features.id + ' <br /><br />';
 	dojo.attr(dojo.byId('divInfoGPS'), "innerHTML", inner);
-	console.log(features.properties.id,':',features.id);//'time:',features.properties.deviceTime);
-	console.log('lat:',features.properties.lat,' lon:',features.properties.lon);
+	console.log(features.properties.id,':',features.id);//,'time:',features.properties.deviceTime);
+	//console.log('lat:',features.properties.lat,' lon:',features.properties.lon);
 	}
 
 //dojo ready init
 dojo.ready(init);
-
-
