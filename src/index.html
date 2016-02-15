@@ -11,26 +11,24 @@
 		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
 		<link rel="stylesheet" href="css/layout.css">
 
-		<script>var dojoConfig = { parseOnLoad: true };</script>
-
 		<!-- Load externo-->
 		<script src="http://maps.google.com/maps/api/js?v=3"></script>
 		<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
 		<script src="js/leaflet-realtime.js"></script>
 		
-		<script src="//ajax.googleapis.com/ajax/libs/dojo/1.10.4/dojo/dojo.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/dojo/1.10.4/dojo/dojo.js" data-dojo-config="async: false, parseOnLoad: true"></script>
 
 		<!--load interno-->
 		<script src="js/Bing.js"></script>
 		<script src="js/Google.js"></script>
 
-		<script src="js/layout.js"></script>
+		<script src="js/layout_amd.js"></script>
 	</head>
 	<body class="claro">
-		<div id="mainWindow" data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="design:'headline'" style="width: 100%; height: 100%;">
+		<div id="mainWindow" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'sidebar', gutters:true, liveSplitters:true" style="width: 100%; height: 100%;">
 
 			<!--CABECERA-->
-			<div id="header" class="shadow roundedCorners" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'top'">
+			<div id="header" class="roundedCorners shadow" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'">
 				<a class="logo" href="http://www.estchile.cl/">
 					<img src="./images/estchile.png" alt="EST Chile" style="max-height: 50px;">
 				</a>
@@ -38,19 +36,15 @@
 			</div>
 
 			<!--MAP-->
-			<div id="map" class="roundedCorners shadow" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'center'" >
+			<div id="map" class="roundedCorners shadow" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:true, region:'center'" >
 				<img id="logoMap" src="./images/estchile.png" style="max-height: 75px;">
 			</div>
 
-			<!--PANEL DERECHO -->
-			<div id="rightPane" class="roundedCorners shadow" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'right'" >
-				<div id="leftPanel" data-dojo-type="dijit.layout.AccordionContainer">
-					<!--Leyenda-- >
-					<div id="legend" class="legend" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Leyenda'">
-						<div id="leyenda"></div>
-					</div>
+			<!--PANEL Izquierdo -->
+			<div id="rightPane" class="roundedCorners shadow" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:true, region:'right'" >
+				<div id="AccordionPanel" data-dojo-type="dijit/layout/AccordionContainer">
 					<!--Filtros de recorridos -->
-					<div id="filter" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Filtros y Leyenda'">
+					<div id="filter" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="title:'Filtros y Leyenda'">
 						<div id="slider">
 							<!--Planta-->
 							<div id="SliderLabel">Planta:</div>
@@ -69,10 +63,10 @@
 						</div>
 					</div>
 					<!--Info-->
-					<div id="info" class="fields" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Información', selected:true">
-						<div id="divInfoJob">&nbsp;</div>
+					<div id="info" class="fields" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="title:'Información', selected:true">
+						<div id="divInfoDB">&nbsp;</div>
 						<div id="divInfoGPS">&nbsp;</div>
-						<div id="divInfoEdif">&nbsp;</div>
+						<div id="divInfoWMS">&nbsp;</div>
 					</div>
 				</div>
 			</div>
