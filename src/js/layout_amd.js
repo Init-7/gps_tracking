@@ -3,63 +3,79 @@ require([
 	"dijit/layout/BorderContainer", 
 	"dijit/layout/ContentPane", 
 	"dijit/form/FilteringSelect",
+	"dijit/registry",
 	"dojo/store/Memory", 
-
 	"dojo/ready",
 	"dojo/on", 
 	"dojo/mouse",
 	"dojo/aspect",
 	"dojo/dom-attr",
 	"dojo/dom-construct",
-	"dojo/_base/xhr",
+	"dojo/request/xhr",
 	"dojo/_base/array",
-
 	"dojo/parser",
 	"dojo/dom",
 	"dojo/domReady!"
 	], 
 	function(
-		AccordionContainer, BorderContainer, ContentPane, FilteringSelect, Memory,
-		ready, on, mouse, aspect, domConstruct, domAttr, xhr, array, parser, dom){
+	  AccordionContainer,
+	  BorderContainer,
+	  ContentPane,
+	  FilteringSelect,
+	  registry,
+	  Memory,
+	  ready,
+	  on,
+	  mouse,
+	  aspect,
+	  domAttr,
+	  domConstruct,
+	  xhr,
+	  array,
+	  parser,
+	  dom
+	  ){
 		var mapa, db = {}, layer = [], url = {};
 
-		db.plantas =  [
-			{ plant: "*", value: "*", name: "todas las plantas", selected: true },
-
-			{ plant: "01", value: "01", name: "CMPC-Planta Maule" },
-			{ plant: "02", value: "02", name: "ENAP" },
-			{ plant: "03", value: "03", name: "Oficina EST" },
-			];
-
-		db.centros =  [
-			{ center: "*", plant: "*", value: "*", name: "Todos los centros", selected: true },
-
-			{ center: "MA0101", plant: "01", value: "MA0101", name: "MA0101" },
-			{ center: "MA0102", plant: "01", value: "MA0102", name: "MA0102" },
-			{ center: "MA0130", plant: "01", value: "MA0130", name: "MA0130" },
-			{ center: "MA0203", plant: "01", value: "MA0203", name: "MA0203" },
-			{ center: "MA3182", plant: "01", value: "MA3182", name: "MA3182" },
-			{ center: "3654", plant: "01", value: "3654", name: "MA3654" },
-			{ center: "gps2016", plant: "03", value: "gps2016", name: "GPS Pruebas" },
-			];
-
-		db.trabajadores =  [
-			{ job: "*", center: "*", plant: "*", value: "*", name: "Todos los trabajadores", fEmer: "", fPers: "", cargo: "", antiguedad: "", alergia: "",},
-			{ job: "people.1", center: "MA0130", plant: "01", value: "people.1", name: "Perico los palotes", fEmer: "5641896578", fPers: "56989456123", cargo: "Electrico", antiguedad: "5", alergia: "Penicilina",},
-			{ job: "people.2", center: "MA0203", plant: "01", value: "people.2", name: "Alan Brito", fEmer: "425698745", fPers: "56987456321", cargo: "Mecanico", antiguedad: "3", alergia: "Sulfas",},
-			{ job: "people.3", center: "MA0101", plant: "01", value: "people.3", name: "Carlos Hernandez", fEmer: "5641874563", fPers: "56415896745", cargo: "Director Comercial", antiguedad: "20", alergia: "mani",},
-			{ job: "people.4", center: "MA3182", plant: "01", value: "people.4", name: "Victor Hernandez", fEmer: "456456456456", fPers: "4564654516", cargo: "Jefe Centro Negocios", antiguedad: "5", alergia: "mani",},
-			{ job: "people.5", center: "MA0102", plant: "01", value: "people.5", name: "Juan Pablo Hernandez", fEmer: "1515645645615", fPers: "51651651561", cargo: "Director General", antiguedad: "15", alergia: "mani", },
-			{ job: "people.6", center: "MA3654", plant: "01", value: "people.6", name: "Aquies Baeza", fEmer: "15646845", fPers: "465465465", cargo: "Supervisor", antiguedad: "12", alergia: "nada", },
-
-			{ job: "1", center: "gps2016", plant: "03", value: "1", name: "Lautaro Silva", fEmer: "133", fPers: "+56950645387", cargo: "Jefe Proyecto", antiguedad: "3 años", alergia: "nada", },
-			];
-
-		url.wmsroot = 'http://104.196.40.15:8080/geoserver/est40516/wms';
-		url.owsroot = 'http://104.196.40.15:8080/geoserver/est40516/ows';
-
 		ready(function(){
-			//filterDB();
+			//Ejemplo de base de datos...
+			db.plantas =  [
+				{ plant: "*", value: "*", name: "todas las plantas", selected: true },
+
+				{ plant: "01", value: "01", name: "CMPC-Planta Maule" },
+				{ plant: "02", value: "02", name: "ENAP" },
+				{ plant: "03", value: "03", name: "Oficina EST" },
+				];
+
+			db.centros =  [
+				{ center: "*", plant: "*", value: "*", name: "Todos los centros", selected: true },
+
+				{ center: "MA0101", plant: "01", value: "MA0101", name: "MA0101" },
+				{ center: "MA0102", plant: "01", value: "MA0102", name: "MA0102" },
+				{ center: "MA0130", plant: "01", value: "MA0130", name: "MA0130" },
+				{ center: "MA0203", plant: "01", value: "MA0203", name: "MA0203" },
+				{ center: "MA3182", plant: "01", value: "MA3182", name: "MA3182" },
+				{ center: "3654", plant: "01", value: "3654", name: "MA3654" },
+				{ center: "gps2016", plant: "03", value: "gps2016", name: "GPS Pruebas" },
+				];
+
+			db.trabajadores =  [
+				{ job: "*", center: "*", plant: "*", value: "*", name: "Todos los trabajadores", fEmer: "", fPers: "", cargo: "", antiguedad: "", alergia: "",},
+				{ job: "people.1", center: "MA0130", plant: "01", value: "people.1", name: "Perico los palotes", fEmer: "5641896578", fPers: "56989456123", cargo: "Electrico", antiguedad: "5", alergia: "Penicilina",},
+				{ job: "people.2", center: "MA0203", plant: "01", value: "people.2", name: "Alan Brito", fEmer: "425698745", fPers: "56987456321", cargo: "Mecanico", antiguedad: "3", alergia: "Sulfas",},
+				{ job: "people.3", center: "MA0101", plant: "01", value: "people.3", name: "Carlos Hernandez", fEmer: "5641874563", fPers: "56415896745", cargo: "Director Comercial", antiguedad: "20", alergia: "mani",},
+				{ job: "people.4", center: "MA3182", plant: "01", value: "people.4", name: "Victor Hernandez", fEmer: "456456456456", fPers: "4564654516", cargo: "Jefe Centro Negocios", antiguedad: "5", alergia: "mani",},
+				{ job: "people.5", center: "MA0102", plant: "01", value: "people.5", name: "Juan Pablo Hernandez", fEmer: "1515645645615", fPers: "51651651561", cargo: "Director General", antiguedad: "15", alergia: "mani", },
+				{ job: "people.6", center: "MA3654", plant: "01", value: "people.6", name: "Aquies Baeza", fEmer: "15646845", fPers: "465465465", cargo: "Supervisor", antiguedad: "12", alergia: "nada", },
+
+				{ job: "1", center: "gps2016", plant: "03", value: "1", name: "Lautaro Silva", fEmer: "133", fPers: "+56950645387", cargo: "Jefe Proyecto", antiguedad: "3 años", alergia: "nada", },
+				];
+
+			//urls del servidor de mapas
+			url.wmsroot = 'http://104.196.40.15:8080/geoserver/est40516/wms';
+			url.owsroot = 'http://104.196.40.15:8080/geoserver/est40516/ows';
+
+			//formulario de seleccion...
 			new FilteringSelect({
 				id: "planta",
 				value: "*",
@@ -70,16 +86,16 @@ require([
 				style: "font-size:90%;",
 				onChange: function(plant){
 					if(this.item.plant != "*"){
-						dijit.byId('centro').query.plant = this.item.plant || "*" || /.*/;
-						dijit.byId('centro').set('value', this.item ? "*" : null);
-						dijit.byId('trabajador').query.plant = this.item.plant || /.*/;
-						dijit.byId('trabajador').set('value', this.item ? "*" : null);
+						registry.byId('centro').query.plant = this.item.plant || "*" || /.*/;
+						registry.byId('centro').set('value', this.item ? "*" : null);
+						registry.byId('trabajador').query.plant = this.item.plant || /.*/;
+						registry.byId('trabajador').set('value', this.item ? "*" : null);
 						}
 					else {
-						dijit.byId('centro').query.plant = /.*/;
-						dijit.byId('centro').set('value', this.item ? "*" : null);
-						dijit.byId('trabajador').query.plant = /.*/;
-						dijit.byId('trabajador').set('value', this.item ? "*" : null);
+						registry.byId('centro').query.plant = /.*/;
+						registry.byId('centro').set('value', this.item ? "*" : null);
+						registry.byId('trabajador').query.plant = /.*/;
+						registry.byId('trabajador').set('value', this.item ? "*" : null);
 						}
 					}
 				}, "planta").startup();
@@ -94,12 +110,12 @@ require([
 				style: "font-size:90%;",
 				onChange: function(center){
 					if(this.item.center != "*"){
-						dijit.byId('trabajador').query.center = this.item.center || /.*/;
-						dijit.byId('trabajador').set('value', this.item ? "*" : null);
+						registry.byId('trabajador').query.center = this.item.center || /.*/;
+						registry.byId('trabajador').set('value', this.item ? "*" : null);
 						}
 					else {
-						dijit.byId('trabajador').query.center = /.*/;
-						dijit.byId('trabajador').set('value', this.item ? "*" : null);
+						registry.byId('trabajador').query.center = /.*/;
+						registry.byId('trabajador').set('value', this.item ? "*" : null);
 						}
 					}
 				}, "centro");
@@ -115,15 +131,23 @@ require([
 				style: "font-size:90%;",
 				}, "trabajador");
 
-			//getURL();
-			var prmtGeoJSON = L.Util.extend({
-				service : 'WFS',
-				version : '1.0.0',
-				request : 'GetFeature',
-				typeName : 'est40516:gps1',
-				outputFormat : 'application/json'
+			//en caso de seleccionar...
+			aspect.after(registry.byId("planta"), "onChange", centrarMapa, true);
+			aspect.after(registry.byId("centro"), "onChange", centrarMapa, true);
+			aspect.after(registry.byId("trabajador"), "onChange", centrarMapaJob,true);
+
+			//generamos url de servicios de mapas, desde el servidor...
+			var prmtLydEdif = L.Util.extend({
+				request:'GetLegendGraphic',
+				version:'1.1.0',
+				format:'image/png',
+				width:'20',
+				height:'20',
+				legend_options:'forceLabels:on',
+				layer:'est40516:Edificacion',
+				style:'Edificacion'
 				});
-			url.GeoJSON = url.owsroot + L.Util.getParamString(prmtGeoJSON);
+			url.leyendaEdificacion = url.wmsroot + L.Util.getParamString(prmtLydEdif);
 
 			var prmtLydPMaule = L.Util.extend({
 				request:'GetLegendGraphic',
@@ -149,36 +173,43 @@ require([
 				});
 			url.leyendaTrabajador = url.wmsroot + L.Util.getParamString(prmtLydTrab);
 
-			var prmtLydEdif = L.Util.extend({
-				request:'GetLegendGraphic',
-				version:'1.1.0',
-				format:'image/png',
-				width:'20',
-				height:'20',
-				legend_options:'forceLabels:on',
-				layer:'est40516:Edificacion',
-				style:'Edificacion'
+			var prmtGeoJSON = L.Util.extend({
+				service : 'WFS',
+				version : '1.0.0',
+				request : 'GetFeature',
+				typeName : 'est40516:gps1',
+				outputFormat : 'application/json'
 				});
-			url.leyendaEdificacion = url.wmsroot + L.Util.getParamString(prmtLydEdif);
+			url.GeoJSON = url.owsroot + L.Util.getParamString(prmtGeoJSON);
 
-			//getLegend();
+			//generamos la leyenda inicial (generica)
 			domConstruct.create('img', {src: url.leyendaTrabajador, id:'job'}, dom.byId('leyenda'));
 			domConstruct.create('br', null, dom.byId('leyenda'));
 			domConstruct.create('img', {src: url.leyendaEdificacion,id:'work'}, dom.byId('leyenda'));
-			
-			//addBaseMap();
-			mapa = L.map('map', {center: [-36.8395,-73.114],zoom: 18});
+
+
+			// **** INICIAMOS EL MAPA (LEAFLET) **** //
+			//iniciamos mapa centrado en un objetivo principal
+			//mapa = L.map('map', {center: [-37,-73],zoom: 4}); //Chile
+			//mapa = L.map('map', {center: [-36.3,-72.3],zoom: 8}); //central
+			//mapa = L.map('map', {center: [-35.607,-71.588],zoom: 16}); //Planta Maule
+			//mapa = L.map('map', {center: [-36.780,-73.125],zoom: 15}); //Enap
+			mapa = L.map('map', {center: [-36.8395,-73.114],zoom: 18}); //Oficina EST
+
+			//variables para mapas de google y bing
 			var bing = new L.BingLayer('LfO3DMI9S6GnXD7d0WGs~bq2DRVkmIAzSOFdodzZLvw~Arx8dclDxmZA0Y38tHIJlJfnMbGq5GXeYmrGOUIbS2VLFzRKCK0Yv_bAl6oe-DOc', {type: 'Aerial'});
 			var bingWL = new L.BingLayer('LfO3DMI9S6GnXD7d0WGs~bq2DRVkmIAzSOFdodzZLvw~Arx8dclDxmZA0Y38tHIJlJfnMbGq5GXeYmrGOUIbS2VLFzRKCK0Yv_bAl6oe-DOc', {type: 'AerialWithLabels'});
 			var ggl = new L.Google(), gglH = new L.Google('HYBRID');
 
+			//se agrega al mapa la base seleccionada, en este caso AerialWithLabels de bing. Se agrega el control para cambiar el mapa base
 			mapa.addLayer(bingWL);
 			mapa.addControl(new L.Control.Layers( {'Bing':bing, 'Bing with Labels':bingWL, 'Google':ggl, 'Google Hibrido':gglH}, {}));
 
+			//en caso de hacer click en el mapa, se llama a la funcion ShowWMSLayersInfo
 			mapa.off('click', ShowWMSLayersInfo);
 			mapa.on('click', ShowWMSLayersInfo); 
 
-			//addWMS();
+			//se agregan la capa desde wms (convenientes para edificacion)
 			layer.maule = L.tileLayer.wms(url.wmsroot, {
 				layers: 'est40516:Edificacion',
 				transparent: true,
@@ -199,21 +230,32 @@ require([
 				});
 			layer.job.options.crs = L.CRS.EPSG4326;
 			layer.job.setOpacity(1);
-			layer.job.addTo(mapa);
+			//layer.job.addTo(mapa);
 
+			//prueba de nuevo metodo de insercion, para un mejor control de la capa
+			layer.groupJob = L.featureGroup(); //L.layerGroup();
+			layer.groupJob.addLayer(layer.job);
+			layer.groupJob.addTo(mapa);
+
+
+			//se traen capas al frente
 			layer.maule.bringToFront();
 			layer.job.bringToFront();
 
-			//addGeoJSON();
-			layer.realtime = L.realtime(rtGeoJSON,{onEachFeature: onEachGeoJSON, pointToLayer: pointToGeoJSON, interval: 15 * 1000}).addTo(mapa);
-			layer.realtime.on('update', function(e) {console.log(db.GeoJSON.properties.id,' :',db.GeoJSON.id)});
-
-			aspect.after(dom.byId("planta"), "onChange", centrarMapa,true);
-			aspect.after(dom.byId("centro"), "onChange", centrarMapa,true);
-			aspect.after(dom.byId("trabajador"), "onChange", centrarMapaJob,true);
+			//se agregan datos desde GeoJSON (conveniente para ubicacion en tiempo real de los trabajadores)
+			layer.realtime = L.realtime( 
+				realtimeGeoJSON , 
+				{
+					onEachFeature: onEachGeoJSON, 
+					pointToLayer: pointToGeoJSON, 
+					interval: 15 * 1000
+					} 
+				);
+			layer.realtime.addTo(mapa);
+			layer.realtime.on('update', function(e) {console.log('realtime:',db.GeoJSON.properties.id,':',db.GeoJSON.id)});
 		});
 
-		var rtGeoJSON = function(success, error) {
+		var realtimeGeoJSON = function(success, error) {
 			L.Realtime
 				.reqwest({url:url.GeoJSON, type:'json'})
 				.then(function(data) {success(xhrGeoJSON(url.GeoJSON));})
@@ -223,18 +265,18 @@ require([
 		var xhrGeoJSON = function(urlGeoJSON){
 			var GeoJSON;
 			var xhrargs = {
-				url: urlGeoJSON,
 				handleAs: "json",
 				sync: true,
 				error: function() {console.log('error xhr');}
 				};
 
-			dojo.xhrGet(xhrargs).then(
+			xhr(urlGeoJSON, xhrargs).then(
 				function(jsonData) {
 					array.forEach(jsonData.features,function(features) {
 						GeoJSON = features;
 						});
 					}
+
 				);
 			db.GeoJSON = GeoJSON; //var tmp para mostrar en console *
 			return GeoJSON;
@@ -266,14 +308,14 @@ require([
 		function centrarMapa(valor) {
 			var plantaSelect;
 
-			if (dijit.byId("centro").item.plant === '*' && dijit.byId("trabajador").item.plant === '*') {
-				plantaSelect = dijit.byId("planta").item.plant;
+			if (registry.byId("centro").item.plant === '*' && registry.byId("trabajador").item.plant === '*') {
+				plantaSelect = registry.byId("planta").item.plant;
 				}
-			else if (dijit.byId("trabajador").item.plant === '*') {
-				plantaSelect = dijit.byId("centro").item.plant;
+			else if (registry.byId("trabajador").item.plant === '*') {
+				plantaSelect = registry.byId("centro").item.plant;
 				}
 			else {
-				plantaSelect = dijit.byId("trabajador").item.plant;
+				plantaSelect = registry.byId("trabajador").item.plant;
 				}
 
 			if(plantaSelect === '*'){
@@ -367,7 +409,7 @@ require([
 				'Direccion: '+ features.properties.address + ' (aprox.) <br />'+
 				'ID (interno): '+ features.id + ' <br /><br />';
 			domAttr.set(dom.byId('divInfoGPS'), "innerHTML", inner);
-			console.log(features.properties.id,':',features.id);
+			console.log('click:',features.properties.id,':',features.id);
 			}
 
 		});
