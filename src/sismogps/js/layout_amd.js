@@ -56,7 +56,7 @@ require([
 				{ center: "MA0203", plant: "01", value: "MA0203", name: "MA0203" },
 				{ center: "MA3182", plant: "01", value: "MA3182", name: "MA3182" },
 				{ center: "3654", plant: "01", value: "3654", name: "MA3654" },
-				{ center: "gps2016", plant: "03", value: "gps2016", name: "GPS Pruebas" },
+				{ center: "gps2016", plant: "01", value: "gps2016", name: "GPS Pruebas" },
 				];
 
 			db.trabajadores =  [
@@ -68,7 +68,8 @@ require([
 				{ job: "people.5", center: "MA0102", plant: "01", value: "people.5", name: "Juan Pablo Hernandez", fEmer: "1515645645615", fPers: "51651651561", cargo: "Director General", antiguedad: "15", alergia: "mani", },
 				{ job: "people.6", center: "MA3654", plant: "01", value: "people.6", name: "Aquies Baeza", fEmer: "15646845", fPers: "465465465", cargo: "Supervisor", antiguedad: "12", alergia: "nada", },
 
-				{ job: "1", center: "gps2016", plant: "03", value: "1", name: "Lautaro Silva", fEmer: "133", fPers: "+56950645387", cargo: "Jefe Proyecto", antiguedad: "3 años", alergia: "nada", },
+				//{ job: "1", center: "gps2016", plant: "03", value: "1", name: "Lautaro Silva", fEmer: "133", fPers: "+56950645387", cargo: "Jefe Proyecto", antiguedad: "3 años", alergia: "nada", },
+				{ job: "1", center: "gps2016", plant: "01", value: "1", name: "Carlos Hernandez", fEmer: "5641874563", fPers: "56415896745", cargo: "Director Comercial", antiguedad: "20", alergia: "mani",},
 				];
 
 			//urls del servidor de mapas
@@ -157,6 +158,7 @@ require([
 				height:'20',
 				legend_options:'forceLabels:on',
 				layer:'est40516:Edificacion',
+				opacity:'0.3',
 				style:'PMaule'
 				});
 			url.leyendaPMaule = url.wmsroot + L.Util.getParamString(prmtLydPMaule);
@@ -206,7 +208,6 @@ require([
 
 			//se agrega al mapa la base seleccionada, en este caso AerialWithLabels de bing. Se agrega el control para cambiar el mapa base
 			mapa.addLayer(bingWL);
-			mapa.addControl(new L.Control.Layers( {'Bing':bing, 'Bing with Labels':bingWL, 'Google':ggl, 'Google Hibrido':gglH}, {}));
 
 			//en caso de hacer click en el mapa, se llama a la funcion ShowWMSLayersInfo
 			mapa.off('click', ShowWMSLayersInfo);
@@ -221,7 +222,7 @@ require([
 				attribution: 'Edificacion'
 			});
 			layer.maule.options.crs = L.CRS.EPSG4326;
-			layer.maule.setOpacity(1);
+			layer.maule.setOpacity(0.5);
 			layer.maule.addTo(mapa);
 
 			layer.job =  L.tileLayer.wms(url.wmsroot, {
@@ -246,6 +247,7 @@ require([
 			layer.maule.bringToFront();
 			layer.job.bringToFront();
 
+			mapa.addControl(new L.Control.Layers( {'Bing':bing, 'Bing with Labels':bingWL, 'Google':ggl, 'Google Hibrido':gglH}, {'Planta Maule':layer.maule,'Trabajadores':layer.job}));
 			//se agregan datos desde GeoJSON (conveniente para ubicacion en tiempo real de los trabajadores)
 			layer.realtime = L.realtime( 
 				realtimeGeoJSON , 
