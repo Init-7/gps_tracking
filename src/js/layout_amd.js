@@ -181,20 +181,23 @@ require([
 				outputFormat : 'application/json'
 				});
 			url.GeoJSON = url.owsroot + L.Util.getParamString(prmtGeoJSON);
+			console.log(url.GeoJSON);
 
 			//generamos la leyenda inicial (generica)
 			domConstruct.create('img', {src: url.leyendaTrabajador, id:'job'}, dom.byId('leyenda'));
 			domConstruct.create('br', null, dom.byId('leyenda'));
 			domConstruct.create('img', {src: url.leyendaEdificacion,id:'work'}, dom.byId('leyenda'));
 
-
 			// **** INICIAMOS EL MAPA (LEAFLET) **** //
-			//iniciamos mapa centrado en un objetivo principal
 			//mapa = L.map('map', {center: [-37,-73],zoom: 4}); //Chile
-			//mapa = L.map('map', {center: [-36.3,-72.3],zoom: 8}); //central
-			//mapa = L.map('map', {center: [-35.607,-71.588],zoom: 16}); //Planta Maule
-			//mapa = L.map('map', {center: [-36.780,-73.125],zoom: 15}); //Enap
-			mapa = L.map('map', {center: [-36.8395,-73.114],zoom: 18}); //Oficina EST
+			mapa = L.map('map');
+
+			//fijamos la primera vista....
+			//mapa.setView([-37,-73],4); //Chile
+			//mapa.setView([-36.3,-72.3],8); //central
+			//mapa.setView([-35.607,-71.588],16); //Planta Maule
+			//mapa.setView([-36.780,-73.125],15); //Enap
+			mapa.setView([-36.8395,-73.114],1); //Oficina EST
 
 			//variables para mapas de google y bing
 			var bing = new L.BingLayer('LfO3DMI9S6GnXD7d0WGs~bq2DRVkmIAzSOFdodzZLvw~Arx8dclDxmZA0Y38tHIJlJfnMbGq5GXeYmrGOUIbS2VLFzRKCK0Yv_bAl6oe-DOc', {type: 'Aerial'});
@@ -226,7 +229,8 @@ require([
 				transparent: true,
 				format: 'image/png',
 				styles: 'Trabajador',
-				attribution: 'Trabajador'
+				attribution: 'Trabajador',
+				minZoom: '4'
 				});
 			layer.job.options.crs = L.CRS.EPSG4326;
 			layer.job.setOpacity(1);
