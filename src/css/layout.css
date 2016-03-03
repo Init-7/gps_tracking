@@ -20,15 +20,13 @@ body {
     height:50px;
     margin: 5px 5px;
 }
-#header a.link, #header a.link:hover, #header a.link:active, #header a.link:visited {
-    font-size: large;
-    text-decoration: underline;
-    color: black;
-    float: right;
-    padding: 15px;
-}
-#header a.logo, #header a.logo:hover, #header a.logo:active, #header a.logo:visited {
+
+#header a.logoLeft{
     float: left;
+    text-decoration: none;
+}
+#header a.logoRight{
+    float: right;
     text-decoration: none;
 }
 .roundedCorners {
@@ -36,6 +34,14 @@ body {
     -moz-border-radius:4px;
     -webkit-border-radius:4px;
     border-radius:4px;
+}
+
+#h-logo-corfo {
+    max-height: 35px;
+}
+
+#h-logo-EST{
+    max-height: 50px;
 }
 
 .shadow {
@@ -170,4 +176,7 @@ h6{
 #logoMap img{
   border:none;
   max-height: 50px;
+}
+.date {
+    width: 7em;
 }

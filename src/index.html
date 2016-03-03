@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
 		<link rel="icon" href="images/favicon2.png">
-		<title>::ESTChile:: Sisema Monitoreo GPS</title>
+		<title>::ESTChile:: SISTEMA DE MONITOREO DE SEGURIDAD GPS</title>
 
 		<!-- Load estilos-->
 		<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/dojo/1.10.4/dijit/themes/claro/claro.css" />
@@ -29,10 +29,13 @@
 
 			<!--CABECERA-->
 			<div id="header" class="roundedCorners shadow" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'">
-				<a class="logo" href="http://www.estchile.cl/">
-					<img src="./images/estchile.png" alt="EST Chile" style="max-height: 50px;">
+				<a class="logoLeft" href="http://www.estchile.cl/" target="_blank">
+					<img id="h-logo-EST" src="./images/estchile.png" alt="EST Chile">
 				</a>
-				<div id="title">Sistema de Monitoreo GPS</div>
+				<div id="title">SISTEMA DE MONITOREO DE SEGURIDAD GPS</div>
+				<a class="logoRight" href="http://www.corfo.cl/" target="_blank">
+					<img id="h-logo-corfo" src="./images/logo-corfo.png"  alt="Corfo | Corporación de Fomento de la Producción">
+				</a>
 			</div>
 
 			<!--MAP-->
@@ -63,10 +66,45 @@
 						</div>
 					</div>
 					<!--Info-->
-					<div id="info" class="fields" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="title:'Información', selected:true">
+					<div id="info" class="fields" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="title:'Información'">
 						<div id="divInfoDB">&nbsp;</div>
 						<div id="divInfoGPS">&nbsp;</div>
 						<div id="divInfoWMS">&nbsp;</div>
+					</div>
+					<!--query-->
+					<div id="query" class="fields" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="title:'Consultas e Informes', selected:true">
+						<div id="slider">
+							<!--Planta-->
+							<div id="SliderLabel">Planta:</div>
+							<div id="plantaQuery"></div>
+							<div id="slider">&nbsp;</div>
+							<button id="BotonQuery" type="button"></button>
+							<div id="result1">&nbsp;</div>
+							<div id="slider">&nbsp;</div>
+						</div>
+						<div id="slider">
+							<!--Centro de Negocio-->
+							<div id="SliderLabel">Centro de Negocio:</div>
+							<div id="centroQuery"></div>
+							<!--trabajador-->
+							<div id="SliderLabel">Trabajador:</div>
+							<div id="trabajadorQuery"></div>
+							<!--Crango de fechas-->
+							<div id="SliderLabel">Rango Fecha:</div>
+							<div>
+								<input class="date" data-dojo-id="myFromDate" type="text" name="fromDate" data-dojo-type="dijit/form/DateTextBox" required="true" onChange="myToDate.constraints.min = arguments[0];" />
+								<label for="toDate">-</label>
+								<input class="date" data-dojo-id="myToDate" type="text" name="toDate" data-dojo-type="dijit/form/DateTextBox" required="true" onChange="myFromDate.constraints.max = arguments[0];" />
+							</div>
+						</div>
+						<!--div id="slider">
+							<div id="SliderLabel">Desde:</div>
+							<div id="startCal" style="font-size:90%;" data-dojo-type="dijit.form.DateTextBox" value="2009-01-01"></div>
+							<p id="startD">jueves, 1 de enero de 2009</p>
+							<div id="SliderLabel">Hasta:</div>
+							<div id="endCal" style="font-size:90%;" data-dojo-type="dijit.form.DateTextBox" value="2013-12-31" ></div>
+							<div id="endD">martes, 31 de diciembre de 2013</div>
+						</div-->
 					</div>
 				</div>
 			</div>
