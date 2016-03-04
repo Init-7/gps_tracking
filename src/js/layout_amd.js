@@ -20,7 +20,7 @@ require([
 	"dojo/domReady!"
 	], 
 	function(AccordionContainer,BorderContainer,ContentPane,FilteringSelect,Button,DateTextBox,registry,Memory,ready,on,mouse,aspect,domAttr,domConstruct,xhr,array,parser,dom){
-		var mapa, realtime_ctrl=false, maule_ctrl = false, db = {}, change = [], layer = [], url = {};
+		var mapa, realtime_ctrl=false, maule_ctrl = false, maule_heatmap = false, db = {}, change = [], layer = [], url = {}, cont = 0;
 
 		ready(function(){
 			//Ejemplo de base de datos...
@@ -40,9 +40,14 @@ require([
 				];
 
 			db.trabajadores =  [
-				{ job: "*", center: "*", plant: "*", value: "*", name: "Todos los trabajadores", fEmer: "", fPers: "", cargo: "", antiguedad: "", alergia: "",},
-				{ job: "1", center: "mauleGeneral", plant: "pmaule", value: "1", name: "Carlos Hernandez", fEmer: "5641874563", fPers: "56415896745", cargo: "Director Comercial", antiguedad: "20", alergia: "mani",},
-				{ job: "job02", center: "gpsEST", plant: "est", value: "job02", name: "Lautaro Silva", fEmer: "133", fPers: "+56950645387", cargo: "Jefe Proyecto", antiguedad: "3 años", alergia: "nada", },
+				{ job: "*", center: "*", plant: "*", value: "*", name: "Todos los trabajadores", fEmer: "", fPers: "", cargo: "", nivel_riesgo: "", alergia: "",},
+				{ job: "1", center: "mauleGeneral", plant: "pmaule", value: "1", name: "Pablo Rojas Soto", fEmer: "Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "??", alergia: "Sin Información",},
+				{ job: "5", center: "mauleGeneral", plant: "pmaule", value: "5", name: "Jorge Emanuel Gajardo Muñoz", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "4", alergia: "Sin Información",},
+				{ job: "6", center: "mauleGeneral", plant: "pmaule", value: "6", name: "Juan Carlos Gonzalez Gonzalez", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "4", alergia: "Sin Información",},
+				{ job: "7", center: "mauleGeneral", plant: "pmaule", value: "7", name: "Patricio Dominguez", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "4", alergia: "Sin Información",},
+				{ job: "8", center: "mauleGeneral", plant: "pmaule", value: "8", name: "Joshua Roan Cisterna Molina", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "2", alergia: "Sin Información",},
+				{ job: "9", center: "mauleGeneral", plant: "pmaule", value: "9", name: "Hector Rebolledo Cuevas", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "1", alergia: "Sin Información",},
+				{ job: "job02", center: "gpsEST", plant: "est", value: "job02", name: "Lautaro Silva", fEmer: "133", fPers: "+56950645387", cargo: "Jefe Proyecto", nivel_riesgo: "3", alergia: "nada", },
 				];
 
 			//urls del servidor de mapas
@@ -127,7 +132,7 @@ require([
 					}
 				}, "trabajador");
 
-			//formulario de seleccion...
+			//formulario de consultas...
 			new FilteringSelect({
 				id: "plantaQuery",
 				value: "*",
@@ -135,7 +140,26 @@ require([
 				autoComplete: true,
 				queryExpr: '*${0}*',
 				required: false,
-				style: "font-size:90%;"
+				style: "font-size:90%;",
+				onClick: function (){
+					change.pl = true;
+					change.ce = false;
+					change.tr = false;
+				},
+				onChange: function(plant){
+					if(this.item.plant != "*" && change.pl){
+						registry.byId('centroQuery').query.plant = this.item.plant ||  /.*/;
+						registry.byId('centroQuery').set('value', this.item ? "*" : null);
+						registry.byId('trabajadorQuery').query.plant = this.item.plant || /.*/;
+						registry.byId('trabajadorQuery').set('value', this.item ? "*" : null);
+						}
+					else if(change.pl){
+						registry.byId('centroQuery').query.plant = /.*/;
+						registry.byId('centroQuery').set('value', this.item ? "*" : null);
+						registry.byId('trabajadorQuery').query.plant = /.*/;
+						registry.byId('trabajadorQuery').set('value', this.item ? "*" : null);
+						}
+					}
 				}, "plantaQuery").startup();
 
 			new FilteringSelect({
@@ -145,7 +169,23 @@ require([
 				autoComplete: true,
 				queryExpr: '*${0}*',
 				required: false,
-				style: "font-size:90%;"
+				style: "font-size:90%;",
+				onClick: function (){
+					change.pl = false;
+					change.ce = true;
+					change.tr = false;
+				},
+				onChange: function(center){
+					if(this.item.center != "*" && change.ce){
+						registry.byId('trabajadorQuery').query.center = this.item.center || /.*/;
+						registry.byId('trabajadorQuery').set('value', this.item ? "*" : null);
+						registry.byId('plantaQuery').set('value', this.item.plant);
+						}
+					else if(change.ce || change.pl){
+						registry.byId('trabajadorQuery').query.center = /.*/;
+						registry.byId('trabajadorQuery').set('value', this.item ? "*" : null);
+						}
+					}
 				}, "centroQuery");
 
 			new FilteringSelect({
@@ -156,23 +196,22 @@ require([
 				required: false,
 				queryExpr: "*${0}*",
 				ignoreCase:true,
-				style: "font-size:90%;"
+				style: "font-size:90%;",
+				onClick: function (){
+					change.pl = false;
+					change.ce = false;
+					change.tr = true;
+				},
+				onChange: function(center){
+					if(this.item.job != "*" && change.tr){
+						registry.byId('plantaQuery').set('value', this.item.plant);
+						registry.byId('centroQuery').set('value', this.item.center);
+						}
+					}
 				}, "trabajadorQuery");
 
 			//generamos url de servicios de mapas, desde el servidor...
-			var prmtLydEdif = L.Util.extend({
-				request:'GetLegendGraphic',
-				version:'1.1.0',
-				format:'image/png',
-				width:'20',
-				height:'20',
-				legend_options:'forceLabels:on',
-				layer:'est40516:Edificacion',
-				style:'Edificacion'
-				});
-			url.leyendaEdificacion = url.wmsroot + L.Util.getParamString(prmtLydEdif);
-
-			var prmtLydPMaule = L.Util.extend({
+			var ParamLydPMaule_edificacion = L.Util.extend({
 				request:'GetLegendGraphic',
 				version:'1.1.0',
 				format:'image/png',
@@ -183,35 +222,52 @@ require([
 				opacity:'0.3',
 				style:'PMaule'
 				});
-			url.leyendaPMaule = url.wmsroot + L.Util.getParamString(prmtLydPMaule);
+			url.leyendaPMaule_edificacion = url.wmsroot + L.Util.getParamString(ParamLydPMaule_edificacion);
 
-			var prmtLydTrab = L.Util.extend({
+			var ParamLydPMaule_heatmap = L.Util.extend({
 				request:'GetLegendGraphic',
 				version:'1.1.0',
 				format:'image/png',
 				width:'20',
 				height:'20',
 				legend_options:'forceLabels:on',
-				layer:'est40516:people',
+				layer:'est40516:distinto',
+				opacity:'0.3',
+				style:'heatmap'
+				});
+			url.leyendaPMaule_heatmap = url.wmsroot + L.Util.getParamString(ParamLydPMaule_heatmap);
+
+			var ParamLydTrab = L.Util.extend({
+				request:'GetLegendGraphic',
+				version:'1.1.0',
+				format:'image/png',
+				width:'20',
+				height:'20',
+				legend_options:'forceLabels:on',
+				layer:'est40516:distinto',
 				style:'Trabajador'
 				});
-			url.leyendaTrabajador = url.wmsroot + L.Util.getParamString(prmtLydTrab);
+			url.leyendaTrabajador = url.wmsroot + L.Util.getParamString(ParamLydTrab);
 
-			var prmtGeoJSON = L.Util.extend({
+			var ParamGeoJSON = L.Util.extend({
 				service : 'WFS',
 				version : '1.0.0',
 				request : 'GetFeature',
-				typeName : 'est40516:gps1',
+				typeName : 'est40516:distinto',
 				outputFormat : 'application/json',
-				//maxfeatures : 1
+				//maxfeatures : 50
 				});
-			url.GeoJSON = url.owsroot + L.Util.getParamString(prmtGeoJSON);
+			url.GeoJSON = url.owsroot + L.Util.getParamString(ParamGeoJSON);
 			console.log(url.GeoJSON);
 
 			//generamos la leyenda inicial (generica)
 			domConstruct.create('img', {src: 'images/punto.png', id:'job'}, dom.byId('leyenda'));
 			domConstruct.create('br', null, dom.byId('leyenda'));
 			domConstruct.create('img', {src: 'images/punto.png',id:'work'}, dom.byId('leyenda'));
+			//HEatMAp
+			domConstruct.create('img', {src: 'images/punto.png', id:'jobHM'}, dom.byId('leyendaHeatmap'));
+			domConstruct.create('br', null, dom.byId('leyendaHeatmap'));
+			domConstruct.create('img', {src: 'images/punto.png',id:'workHM'}, dom.byId('leyendaHeatmap'));
 
 			// **** INICIAMOS EL MAPA (LEAFLET) **** //
 			//mapa = L.map('map', {center: [-37,-73],zoom: 4}); //Chile
@@ -249,25 +305,29 @@ require([
 			mapa.on('click', ShowWMSLayersInfo); 
 
 			//en caso de seleccionar...
-			aspect.after(registry.byId("planta"), "onChange", centrarMapaPlanta, true);
-			aspect.after(registry.byId("centro"), "onChange", centrarMapaCN, true);
-			aspect.after(registry.byId("trabajador"), "onChange", centrarMapaJob,true);
+			aspect.after(registry.byId("planta"), "onChange", selectJob_Planta, true);
+			aspect.after(registry.byId("centro"), "onChange", selectJob_CN, true);
+			aspect.after(registry.byId("trabajador"), "onChange", selectJob,true);
+
+			//en caso de seleccionar...
+			aspect.after(registry.byId("plantaQuery"), "onChange", query_Planta, true);
+			aspect.after(registry.byId("centroQuery"), "onChange", query_CN, true);
+			aspect.after(registry.byId("trabajadorQuery"), "onChange", query_Job,true);
+
 
 			layer.control = new L.Control.Layers( {'Bing':bing, 'Bing with Labels':bingWL, 'Google':ggl, 'Google Hibrido':gglH}, {});
 			mapa.addControl(layer.control);
 
 			// Create a button programmatically:
 			var myButton = new Button({
-				label: "Generar Informe",
-				onClick: function(){
-					dom.byId("result1").innerHTML = "Generar informe para: " + registry.byId("plantaQuery").item.name;
-			 		}
-				}, "BotonQuery").startup();
+				label: "Ver riesgo",
+				onClick: heatMap
+				}, "BotonHeatmap").startup();
 
 		});
 
 		/* Seleccion de mapas */
-		function centrarMapaPlanta(valor) {
+		function selectJob_Planta(valor) {
 			var plantaSelect = registry.byId("planta").item.plant;
 
 			//PLano General
@@ -275,8 +335,9 @@ require([
 				//centramos mapas en un plano general
 				mapa.setView([-36.3,-72.3], 8);
 
-				maule_ctrl = removeLayer(layer.maule,maule_ctrl);
-				realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl);
+				maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
+				maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
+				realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
 
 				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
 				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
@@ -287,33 +348,32 @@ require([
 				//centramos mapas en la planta
 				mapa.setView([-35.607,-71.588], 15);
 
-				realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl);
+				maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
+				realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
 
 				layer.maule.addTo(mapa); //Agregar el palno de la planta al mapa
 				layer.maule.bringToFront(); //traer capa al frente
 				layer.control.addOverlay(layer.maule,'Planta Maule');  //Agregar al control
 				maule_ctrl = true;
 
-				//se agregan datos desde GeoJSON (conveniente para ubicacion en tiempo real de los trabajadores)
-				url.GeoJSON = 'http://104.196.40.15:8080/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:gps1&outputFormat=application/json';
-
-				layer.realtime = realTime(url.GeoJSON);
+				layer.realtime = realTime(url.GeoJSON,'ALL');
 				layer.realtime.addTo(mapa);
 				layer.realtime.bringToFront(); //traer capa al frente
-				layer.realtime.on('update', function(e) {console.log('realtime:',db.GeoJSON.properties.id,':',db.GeoJSON.id)});
+				layer.realtime.on('update', function(e) {console.log('rt planta pmaule: ',cont++)});
 
 				layer.control.addOverlay(layer.realtime,'Trabajadores');
 
 				domAttr.set(dom.byId('job'), "src", url.leyendaTrabajador);
-				domAttr.set(dom.byId('work'), "src", url.leyendaPMaule);
+				domAttr.set(dom.byId('work'), "src", url.leyendaPMaule_edificacion);
 				}
 
 			//Enap
 			if(plantaSelect === 'enap' && change.pl){
 				mapa.setView([-36.780,-73.125], 15);
 
+				maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
 				maule_ctrl = removeLayer(layer.maule, maule_ctrl);
-				realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl);
+				realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
 
 				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
 				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
@@ -323,25 +383,26 @@ require([
 			if(plantaSelect === 'est' && change.pl){
 				mapa.setView([-36.8395,-73.114], 18);
 
-				maule_ctrl = removeLayer(layer.maule,maule_ctrl);
-				realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl);
+				maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
+				maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
+				realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
 
 				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
 				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
 				}
 			}
 
-		function centrarMapaCN(valor) {
+		function selectJob_CN(valor) {
 			var centroSelect = registry.byId("centro").item.center;
 
 			//General
 			if(centroSelect === '*' && change.ce){
-				console.log('centro select *');
 				//centramos mapas en un plano general
 				mapa.setView([-36.3,-72.3], 8);
 
-				maule_ctrl = removeLayer(layer.maule,maule_ctrl);
-				realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl);
+				maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
+				maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
+				realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
 
 				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
 				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
@@ -352,70 +413,193 @@ require([
 				//centramos mapas en la planta
 				mapa.setView([-35.607,-71.588], 15);
 
-				realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl);
+				maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
+				realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
 
 				layer.maule.addTo(mapa); //Agregar el palno de la planta al mapa
 				layer.maule.bringToFront(); //traer capa al frente
 				layer.control.addOverlay(layer.maule,'Planta Maule');  //Agregar al control
 				maule_ctrl = true;
 
-				//se agregan datos desde GeoJSON (conveniente para ubicacion en tiempo real de los trabajadores)
-				url.GeoJSON = 'http://104.196.40.15:8080/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516%3Agps1&outputFormat=application%2Fjson&maxfeatures=2';
-
-				layer.realtime = realTime(url.GeoJSON);
+				layer.realtime = realTime(url.GeoJSON,'ALL');
 				layer.realtime.addTo(mapa);
 				layer.realtime.bringToFront(); //traer capa al frente
-				layer.realtime.on('update', function(e) {console.log('realtime:',db.GeoJSON.properties.id,':',db.GeoJSON.id)});
+				layer.realtime.on('update', function(e) {console.log('rt cn pmaule: ',cont++)});
 
 				layer.control.addOverlay(layer.realtime,'Trabajadores');
 
 				domAttr.set(dom.byId('job'), "src", url.leyendaTrabajador);
-				domAttr.set(dom.byId('work'), "src", url.leyendaPMaule);
+				domAttr.set(dom.byId('work'), "src", url.leyendaPMaule_edificacion);
 				
 				}
 
 			//Oficina EST
 			if(centroSelect === 'gpsEST' && change.ce){
-				console.log('centro select gpsEST');
 				mapa.setView([-36.8395,-73.114], 18);
 
-				maule_ctrl = removeLayer(layer.maule,maule_ctrl);
-				realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl);
+				maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
+				maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
+				realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
 
 				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
 				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
 				}
 			}
 
-		function centrarMapaJob(valor) {
-			var trabjadorSelect = registry.byId("trabajador").item.job;
+		function selectJob(valor) {
+			var jobId = registry.byId("trabajador").item.job;
+			//mapa.fitBounds(layer.realtime.getBounds(), {});}
 
-			//General
-			if(trabjadorSelect === '*' && change.tr){}
+			if(registry.byId("trabajador").item.plant == 'pmaule'){
+				//centramos mapas en la planta
+				mapa.setView([-35.607,-71.588], 15);
 
-			//Carlos Hernandez
-			if(trabjadorSelect === '1' && change.tr){
-				mapa.fitBounds(layer.realtime.getBounds(), {});
-				console.log('trabajador select 1');
+				maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
+				realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
+
+				layer.maule.addTo(mapa); //Agregar el palno de la planta al mapa
+				layer.maule.bringToFront(); //traer capa al frente
+				layer.control.addOverlay(layer.maule,'Planta Maule');  //Agregar al control
+				maule_ctrl = true;
+
+				domAttr.set(dom.byId('job'), "src", url.leyendaTrabajador);
+				domAttr.set(dom.byId('work'), "src", url.leyendaPMaule_edificacion);
+
+				layer.realtime = realTime(url.GeoJSON,jobId);
+				layer.realtime.addTo(mapa);
+				layer.realtime.bringToFront(); //traer capa al frente
+				layer.realtime.on('update', function(e) {console.log('rt job pmaule: ',cont++)});
+
+				layer.control.addOverlay(layer.realtime,'Trabajadores');
 				}
 
-			//Lautaro Silva
-			if(trabjadorSelect === 'job02' && change.tr){console.log('trabajador select job02');}
+			if(registry.byId("trabajador").item.plant == 'enap'){
+				//centramos mapas en la planta
+				mapa.setView([-36.780,-73.125], 15);
 
+				maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
+				maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
+				realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
+
+				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
+				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
+
+				layer.realtime = realTime(url.GeoJSON,jobId);
+				layer.realtime.addTo(mapa);
+				layer.realtime.bringToFront(); //traer capa al frente
+				layer.realtime.on('update', function(e) {console.log('rt job enap: ',cont++)});
+
+				layer.control.addOverlay(layer.realtime,'Trabajadores');
+				}
+
+			if(registry.byId("trabajador").item.plant == 'est'){
+				//centramos mapas en la planta
+				mapa.setView([-36.8395,-73.114], 18);
+
+				maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
+				maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
+				realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
+
+				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
+				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
+
+				layer.realtime = realTime(url.GeoJSON,jobId);
+				layer.realtime.addTo(mapa);
+				layer.realtime.bringToFront(); //traer capa al frente
+				layer.realtime.on('update', function(e) {console.log('rt job est: ',cont++)});
+
+				layer.control.addOverlay(layer.realtime,'Trabajadores');
+				}
 			}
 
+
+		/* Seleccion de mapas */
+		function query_Planta(valor) {
+			var plantaSelect = registry.byId("plantaQuery").item.plant;
+
+			//PLano General
+			if(plantaSelect === '*'){
+				//centramos mapas en un plano general
+				mapa.setView([-36.3,-72.3], 8);
+				}
+
+			//Planta Maule
+			if(plantaSelect === 'pmaule'){
+				//centramos mapas en la planta
+				mapa.setView([-35.607,-71.588], 15);
+				layer.control.addOverlay(layer.maule,'Planta Maule');
+				}
+
+			//Enap
+			if(plantaSelect === 'enap'){
+				mapa.setView([-36.780,-73.125], 15);
+				}
+
+			//Oficina EST
+			if(plantaSelect === 'est'){
+				mapa.setView([-36.8395,-73.114], 18);
+				}
+			};
+
+		/* Seleccion de mapas */
+		var heatMap =  function (){
+
+			maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
+			maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
+			realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
+
+			dom.byId("result1").innerHTML = "Mapa de calor con areas de riesgo: " + registry.byId("plantaQuery").item.name;
+			if(registry.byId("plantaQuery").item.plant == 'pmaule'){
+				maule_heatmap = true;
+
+				layer.heatmap = L.tileLayer.wms(url.wmsroot, {
+					layers: 'est40516:distinto',
+					transparent: true,
+					format: 'image/png',
+					styles: 'heatmap',
+					srs: 'EPSG:4326',
+					opacity: 1,
+					service: 'WMS',
+					version: '1.1.0',
+					request: 'GetMap'
+					});
+				layer.heatmap.addTo(mapa);
+				layer.heatmap.bringToFront();
+				layer.control.addOverlay(layer.heatmap,'heatmap');
+
+				layer.realtime = realTime(url.GeoJSON,'ALL');
+				layer.realtime.addTo(mapa);
+				layer.realtime.bringToFront(); //traer capa al frente
+				layer.realtime.on('update', function(e) {console.log('heatmap: ',cont++)});
+
+				layer.control.addOverlay(layer.realtime,'Trabajadores');
+
+				domAttr.set(dom.byId('jobHM'), "src", url.leyendaTrabajador);
+				domAttr.set(dom.byId('workHM'), "src", url.leyendaPMaule_heatmap);
+				}
+			else {
+				mapa.setView([-36.3,-72.3], 8);
+				domAttr.set(dom.byId('jobHM'), "src", 'images/punto.png');
+				domAttr.set(dom.byId('workHM'), "src", 'images/punto.png');
+				};
+		};
+
+		/* Seleccion de mapas */
+		function query_CN(valor) {}
+		function query_Job(valor) {}
+
 		/*remover capa del mapa y de su control */
-		var removeLayer = function(remover,ctrl){
+		var removeLayer = function(remover,ctrl,ifRealTime){
 			if(ctrl){
 				mapa.removeLayer(remover);
 				layer.control.removeLayer(remover);
+				if(ifRealTime)remover.stop();
 				}
-			console.log('activo: ', ctrl);
 			return false;
 			}
 
 		/*Funciones de Realtime */
-		var realTime = function(urlGeoJSON){
+		var realTime = function(urlGeoJSON,ID){
 			realtime_ctrl = true;
 			return L.realtime(
 					function(success, error) {
@@ -425,7 +609,7 @@ require([
 								type:'json'
 								})
 							.then(function(data) {
-								success(xhrGeoJSON(urlGeoJSON));
+								success(xhrGeoJSON(urlGeoJSON,ID));
 								})
 							.catch(function(err) {
 								error(err);
@@ -439,7 +623,7 @@ require([
 					);
 			}
 
-		var xhrGeoJSON = function(urlGeoJSON){
+		var xhrGeoJSON = function(urlGeoJSON,ID){
 			var GeoJSON, GeoJSONs;
 			var xhrargs = {
 				handleAs: "json",
@@ -450,13 +634,16 @@ require([
 			xhr(urlGeoJSON, xhrargs).then(
 				function(jsonData) {
 					GeoJSONs = jsonData.features;
-					array.forEach(jsonData.features,function(features) {GeoJSON = features;});
+					array.forEach(jsonData.features,function(features) {if(features.properties.deviceId==ID)GeoJSON = features;});
 					}
 
 				);
 			db.GeoJSON = GeoJSON; //var tmp para mostrar en console *
 			db.GeoJSONs = GeoJSONs; //var tmp para mostrar en console *
-			return GeoJSONs;
+			if(ID == 'ALL'){
+				return GeoJSONs;
+				}
+			return GeoJSON;
 			}
 
 		var onEachGeoJSON = function (feature, layer) {
@@ -535,7 +722,7 @@ require([
 						'Telefono emeregencia: '+ job.fEmer + ' <br />'+
 						'Alergias: '+ job.alergia + ' <br />'+
 						'Cargo: '+ job.cargo + ' <br />'+
-						'Años de antiguedad: '+ job.antiguedad + ' <br />'+
+						'Nivel de riesgo: '+ job.nivel_riesgo + ' <br />'+
 						'Centro de Negocio: '+ job.center + ' <br />'+
 						'Planta: '+ job.plant + ' <br /><br />';
 					}
@@ -553,7 +740,6 @@ require([
 				'Direccion: '+ features.properties.address + ' (aprox.) <br />'+
 				'ID (interno): '+ features.id + ' <br /><br />';
 			domAttr.set(dom.byId('divInfoGPS'), "innerHTML", inner);
-			console.log('click:',features.properties.id,':',features.id);
 			}
 
 		});

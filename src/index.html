@@ -47,7 +47,7 @@
 			<div id="rightPane" class="roundedCorners shadow" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:true, region:'right'" >
 				<div id="AccordionPanel" data-dojo-type="dijit/layout/AccordionContainer">
 					<!--Filtros de recorridos -->
-					<div id="filter" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="title:'Filtros y Leyenda'">
+					<div id="filter" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="title:'Filtros y Leyenda', selected:true">
 						<div id="slider">
 							<!--Planta-->
 							<div id="SliderLabel">Planta:</div>
@@ -72,14 +72,15 @@
 						<div id="divInfoWMS">&nbsp;</div>
 					</div>
 					<!--query-->
-					<div id="query" class="fields" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="title:'Consultas e Informes', selected:true">
+					<div id="query" class="fields" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="title:'Consultas e Informes'">
 						<div id="slider">
 							<!--Planta-->
 							<div id="SliderLabel">Planta:</div>
 							<div id="plantaQuery"></div>
 							<div id="slider">&nbsp;</div>
-							<button id="BotonQuery" type="button"></button>
-							<div id="result1">&nbsp;</div>
+							<button id="BotonHeatmap" type="button"></button>
+							<div id="leyendaHeatmap"></div>
+							<div id="result1"></div>
 							<div id="slider">&nbsp;</div>
 						</div>
 						<div id="slider">
