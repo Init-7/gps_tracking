@@ -347,6 +347,7 @@ require([
 			if(plantaSelect === 'pmaule' && change.pl){
 				//centramos mapas en la planta
 				mapa.setView([-35.607,-71.588], 15);
+				url.GeoJSON = 'http://104.196.40.15:8000/gps/Maule/puntos/';
 
 				maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
 				realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
