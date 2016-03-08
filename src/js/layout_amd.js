@@ -319,38 +319,48 @@ require([
 			mapa.addControl(layer.control);
 
 			// Create a button programmatically:
-			var myButton = new Button({
+			var BtnHeatmap = new Button({
 				label: "Ver riesgo",
 				onClick: heatMap
-				}, "BotonHeatmap").startup();
+				}, "BtnHeatmap").startup();
+			var BtnTiempoEnPlanta = new Button({
+				label: "Tiempo en Planta",
+				onClick: enDesarrollo
+				}, "BtnTiempoEnPlanta").startup();
+			var BtnTiempoPorSector = new Button({
+				label: "Tiempo por sectores",
+				onClick: enDesarrollo
+				}, "BtnTiempoPorSector").startup();
 
 		});
 
+		function enDesarrollo() {
+			dom.byId("resultJob").innerHTML = "FUNCION EN DESARROLLO"
+			};
+
 		/* Seleccion de mapas */
-		function selectJob_Planta(valor) {
-			var plantaSelect = registry.byId("planta").item.plant;
+		function selectJob_Planta(valor) {if(change.pl){
+			var Planta = registry.byId("planta").item.plant;
+
+			//limpiamos mapas...
+			maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
+			maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
+			realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
 
 			//PLano General
-			if(plantaSelect === '*' && change.pl){
+			if(Planta === '*'){
 				//centramos mapas en un plano general
 				mapa.setView([-36.3,-72.3], 8);
-
-				maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
-				maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
-				realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
 
 				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
 				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
 				}
 
 			//Planta Maule
-			if(plantaSelect === 'pmaule' && change.pl){
+			if(Planta === 'pmaule'){
 				//centramos mapas en la planta
-				mapa.setView([-35.607,-71.588], 15);
-				url.GeoJSON = 'http://localhost:8000/gps/Maule/puntos/';
-
-				maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
-				realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
+				mapa.setView([-35.607,-71.588], 16);
+				//url.GeoJSON = 'http://104.196.40.15:8000/gps/Maule/puntos/';
 
 				layer.maule.addTo(mapa); //Agregar el palno de la planta al mapa
 				layer.maule.bringToFront(); //traer capa al frente
@@ -369,55 +379,44 @@ require([
 				}
 
 			//Enap
-			if(plantaSelect === 'enap' && change.pl){
+			if(Planta === 'enap'){
 				mapa.setView([-36.780,-73.125], 15);
-
-				maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
-				maule_ctrl = removeLayer(layer.maule, maule_ctrl);
-				realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
 
 				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
 				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
 				}
 
 			//Oficina EST
-			if(plantaSelect === 'est' && change.pl){
+			if(Planta === 'est'){
 				mapa.setView([-36.8395,-73.114], 18);
-
-				maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
-				maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
-				realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
 
 				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
 				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
 				}
-			}
+			}};
 
-		function selectJob_CN(valor) {
-			var centroSelect = registry.byId("centro").item.center;
+		function selectJob_CN(valor) {if(change.ce){
+			var Centro_negocio = registry.byId("centro").item.center;
+
+			maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
+			maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
+			realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
 
 			//General
-			if(centroSelect === '*' && change.ce){
+			if(Centro_negocio === '*'){
 				//centramos mapas en un plano general
 				mapa.setView([-36.3,-72.3], 8);
-
-				maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
-				maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
-				realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
 
 				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
 				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
 				}
 
 			//Planta Maule
-			if(centroSelect === 'mauleGeneral' && change.ce){
+			if(Centro_negocio === 'mauleGeneral'){
 				//centramos mapas en la planta
-				mapa.setView([-35.607,-71.588], 15);
+				mapa.setView([-35.607,-71.588], 16);
 
-				maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
-				realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
-
-				layer.maule.addTo(mapa); //Agregar el palno de la planta al mapa
+				layer.maule.addTo(mapa); //Agregar el plano de la planta al mapa
 				layer.maule.bringToFront(); //traer capa al frente
 				layer.control.addOverlay(layer.maule,'Planta Maule');  //Agregar al control
 				maule_ctrl = true;
@@ -435,36 +434,39 @@ require([
 				}
 
 			//Oficina EST
-			if(centroSelect === 'gpsEST' && change.ce){
+			if(Centro_negocio === 'gpsEST'){
 				mapa.setView([-36.8395,-73.114], 18);
-
-				maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
-				maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
-				realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
 
 				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
 				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
 				}
-			}
+			}};
 
 		function selectJob(valor) {
 			var jobId = registry.byId("trabajador").item.job;
+			var planta = registry.byId("trabajador").item.plant;
 			//mapa.fitBounds(layer.realtime.getBounds(), {});}
 
-			if(registry.byId("trabajador").item.plant == 'pmaule'){
-				//centramos mapas en la planta
-				mapa.setView([-35.607,-71.588], 15);
+			maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
+			maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
+			realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
 
-				maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
-				realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
+			if(planta == '*'){
+				//centramos mapas en la planta
+				mapa.setView([-36.3,-72.3],8); //central
+
+				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
+				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
+				}
+
+			if(planta == 'pmaule'){
+				//centramos mapas en la planta
+				mapa.setView([-35.607,-71.588], 16);
 
 				layer.maule.addTo(mapa); //Agregar el palno de la planta al mapa
 				layer.maule.bringToFront(); //traer capa al frente
 				layer.control.addOverlay(layer.maule,'Planta Maule');  //Agregar al control
 				maule_ctrl = true;
-
-				domAttr.set(dom.byId('job'), "src", url.leyendaTrabajador);
-				domAttr.set(dom.byId('work'), "src", url.leyendaPMaule_edificacion);
 
 				layer.realtime = realTime(url.GeoJSON,jobId);
 				layer.realtime.addTo(mapa);
@@ -472,87 +474,76 @@ require([
 				layer.realtime.on('update', function(e) {console.log('rt job pmaule: ',cont++)});
 
 				layer.control.addOverlay(layer.realtime,'Trabajadores');
+
+				domAttr.set(dom.byId('job'), "src", url.leyendaTrabajador);
+				domAttr.set(dom.byId('work'), "src", url.leyendaPMaule_edificacion);
 				}
 
-			if(registry.byId("trabajador").item.plant == 'enap'){
+			if(planta == 'enap'){
 				//centramos mapas en la planta
 				mapa.setView([-36.780,-73.125], 15);
 
-				maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
-				maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
-				realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
-
 				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
 				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
-
-				layer.realtime = realTime(url.GeoJSON,jobId);
-				layer.realtime.addTo(mapa);
-				layer.realtime.bringToFront(); //traer capa al frente
-				layer.realtime.on('update', function(e) {console.log('rt job enap: ',cont++)});
-
-				layer.control.addOverlay(layer.realtime,'Trabajadores');
 				}
 
-			if(registry.byId("trabajador").item.plant == 'est'){
+			if(planta == 'est'){
 				//centramos mapas en la planta
 				mapa.setView([-36.8395,-73.114], 18);
 
-				maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
-				maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
-				realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
-
 				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
 				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
-
-				layer.realtime = realTime(url.GeoJSON,jobId);
-				layer.realtime.addTo(mapa);
-				layer.realtime.bringToFront(); //traer capa al frente
-				layer.realtime.on('update', function(e) {console.log('rt job est: ',cont++)});
-
-				layer.control.addOverlay(layer.realtime,'Trabajadores');
-				}
-			}
-
-
-		/* Seleccion de mapas */
-		function query_Planta(valor) {
-			var plantaSelect = registry.byId("plantaQuery").item.plant;
-
-			//PLano General
-			if(plantaSelect === '*'){
-				//centramos mapas en un plano general
-				mapa.setView([-36.3,-72.3], 8);
-				}
-
-			//Planta Maule
-			if(plantaSelect === 'pmaule'){
-				//centramos mapas en la planta
-				mapa.setView([-35.607,-71.588], 15);
-				layer.control.addOverlay(layer.maule,'Planta Maule');
-				}
-
-			//Enap
-			if(plantaSelect === 'enap'){
-				mapa.setView([-36.780,-73.125], 15);
-				}
-
-			//Oficina EST
-			if(plantaSelect === 'est'){
-				mapa.setView([-36.8395,-73.114], 18);
 				}
 			};
 
 		/* Seleccion de mapas */
-		var heatMap =  function (){
+		function query_Planta(valor) {
+			var Planta = registry.byId("plantaQuery").item.plant;
 
 			maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
 			maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
 			realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
 
-			dom.byId("result1").innerHTML = "Mapa de calor con areas de riesgo: " + registry.byId("plantaQuery").item.name;
-			if(registry.byId("plantaQuery").item.plant == 'pmaule'){
-				maule_heatmap = true;
+			domAttr.set(dom.byId('jobHM'), "src", 'images/punto.png');
+			domAttr.set(dom.byId('workHM'), "src", 'images/punto.png');
 
+			//PLano General
+			if(Planta === '*'){
+				//centramos mapas en un plano general
+				mapa.setView([-36.3,-72.3], 8);
+				layer.control.removeLayer(layer.maule);
+				}
+
+			//Planta Maule
+			if(Planta === 'pmaule'){
+				//centramos mapas en la planta
+				mapa.setView([-35.607,-71.588], 16);
+				layer.control.addOverlay(layer.maule,'Planta Maule');
+				}
+
+			//Enap
+			if(Planta === 'enap'){
+				mapa.setView([-36.780,-73.125], 15);
+				layer.control.removeLayer(layer.maule);
+				}
+
+			//Oficina EST
+			if(Planta === 'est'){
+				mapa.setView([-36.8395,-73.114], 18);
+				layer.control.removeLayer(layer.maule);
+				}
+			};
+
+		/* Seleccion de mapas */
+		var heatMap =  function (){
+			var planta = registry.byId("plantaQuery").item.plant;
+
+			maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
+			maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
+			realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
+
+			if(planta == 'pmaule'){
+				maule_heatmap = true;
 				layer.heatmap = L.tileLayer.wms(url.wmsroot, {
 					layers: 'est40516:distinto',
 					transparent: true,
@@ -577,13 +568,14 @@ require([
 
 				domAttr.set(dom.byId('jobHM'), "src", url.leyendaTrabajador);
 				domAttr.set(dom.byId('workHM'), "src", url.leyendaPMaule_heatmap);
+				dom.byId("resultHeatmap").innerHTML = "Mapa de calor con areas de riesgo: " + registry.byId("plantaQuery").item.name;
 				}
 			else {
-				mapa.setView([-36.3,-72.3], 8);
 				domAttr.set(dom.byId('jobHM'), "src", 'images/punto.png');
 				domAttr.set(dom.byId('workHM'), "src", 'images/punto.png');
+				dom.byId("resultHeatmap").innerHTML = "Mapa de calor con areas de riesgo: " + registry.byId("plantaQuery").item.name + " Sin Datos";
 				};
-		};
+			};
 
 		/* Seleccion de mapas */
 		function query_CN(valor) {}
@@ -625,7 +617,7 @@ require([
 			}
 
 		var xhrGeoJSON = function(urlGeoJSON,ID){
-			var GeoJSON, GeoJSONs;
+			var GeoJSON, GeoJSONs, GeoJSONcn;
 			var xhrargs = {
 				handleAs: "json",
 				sync: true,
@@ -635,15 +627,18 @@ require([
 			xhr(urlGeoJSON, xhrargs).then(
 				function(jsonData) {
 					GeoJSONs = jsonData.features;
-					array.forEach(jsonData.features,function(features) {if(features.properties.deviceId==ID)GeoJSON = features;});
+					array.forEach(jsonData.features,function(features) {
+						if(features.properties.deviceId==ID)GeoJSON = features;
+						//if(features.properties.cnId==cnID)GeoJSONcn =+ features;
+						});
 					}
 
 				);
 			db.GeoJSON = GeoJSON; //var tmp para mostrar en console *
 			db.GeoJSONs = GeoJSONs; //var tmp para mostrar en console *
-			if(ID == 'ALL'){
-				return GeoJSONs;
-				}
+			db.GeoJSONcn = GeoJSONcn; //var tmp para mostrar en console *
+			if(ID == 'ALL'){return GeoJSONs;}
+			if(ID == 'CN'){return GeoJSONcn;}
 			return GeoJSON;
 			}
 
