@@ -106,6 +106,7 @@ require([
 					else if(change.ce || change.pl){
 						registry.byId('trabajador').query.center = /.*/;
 						registry.byId('trabajador').set('value', this.item ? "*" : null);
+						registry.byId('planta').set('value', this.item.plant);
 						}
 					}
 				}, "centro");
@@ -124,8 +125,8 @@ require([
 					change.ce = false;
 					change.tr = true;
 				},
-				onChange: function(center){
-					if(this.item.job != "*" && change.tr){
+				onChange: function(job){
+					if(change.tr){
 						registry.byId('planta').set('value', this.item.plant);
 						registry.byId('centro').set('value', this.item.center);
 						}
@@ -184,6 +185,7 @@ require([
 					else if(change.ce || change.pl){
 						registry.byId('trabajadorQuery').query.center = /.*/;
 						registry.byId('trabajadorQuery').set('value', this.item ? "*" : null);
+						registry.byId('plantaQuery').set('value', this.item.plant);
 						}
 					}
 				}, "centroQuery");
@@ -202,8 +204,8 @@ require([
 					change.ce = false;
 					change.tr = true;
 				},
-				onChange: function(center){
-					if(this.item.job != "*" && change.tr){
+				onChange: function(job){
+					if(change.tr){
 						registry.byId('plantaQuery').set('value', this.item.plant);
 						registry.byId('centroQuery').set('value', this.item.center);
 						}
@@ -335,7 +337,24 @@ require([
 		});
 
 		function enDesarrollo() {
-			dom.byId("resultJob").innerHTML = "FUNCION EN DESARROLLO"
+
+			//dom.byId("resultJob").innerHTML = "FUNCION EN DESARROLLO"
+
+			var inner = '<h2 style="align:center"> Tiempo en planta:<br />9 hrs, 17 min </h2>' +
+				'Bodega: 4 hrs, 17 min  <br />'+
+				'casino: 0 hrs, 43 min  <br />'+
+				'patio Bodega: 0 hrs, 26 min  <br />'+
+				'Bodega: 3 hrs, 47 min  <br />'+
+				'porteria: 0 hrs, 10 min  <br />'+
+				'---------------------  <br />'+
+				'total: 9 hrs, 17 min <br />';
+
+			console.log(registry.byId("toDate"));
+			//domAttr.set(dom.byId('divInforme'), "innerHTML", inner);
+			if(registry.byId("trabajadorQuery").item.value == '*') dom.byId("resultJob").innerHTML = "selecciones un trabajador";
+			else if(registry.byId("fromDate").value == 'Invalid Date') dom.byId("resultJob").innerHTML = "selecciones fecha inicial";
+			else if(registry.byId("toDate").value == 'Invalid Date') dom.byId("resultJob").innerHTML = "selecciones fecha final";
+			else dom.byId("resultJob").innerHTML = inner;
 			};
 
 		/* Seleccion de mapas */
@@ -737,6 +756,5 @@ require([
 				'ID (interno): '+ features.id + ' <br /><br />';
 			domAttr.set(dom.byId('divInfoGPS'), "innerHTML", inner);
 			}
-
 		});
 /*END*/

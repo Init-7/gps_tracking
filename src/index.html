@@ -84,7 +84,7 @@
 							<div id="slider">&nbsp;</div>
 						</div>
 						<div id="slider">
-							<H4>&nbsp;&nbsp;&nbsp;Informes Estadisticos</H4>
+							<H4 style="align:center">Informes Estadisticos</H4>
 							<!--Centro de Negocio-->
 							<div id="SliderLabel">Centro de Negocio:</div>
 							<div id="centroQuery"></div>
@@ -94,15 +94,16 @@
 							<!--rango de fechas-->
 							<div id="SliderLabel">Rango Fecha:</div>
 							<div>
-								<input class="date" data-dojo-id="myFromDate" type="text" name="fromDate" data-dojo-type="dijit/form/DateTextBox" required="true" onChange="myToDate.constraints.min = arguments[0];" />
+								<input class="date" data-dojo-id="myFromDate" type="text" name="fromDate" id="fromDate" data-dojo-type="dijit/form/DateTextBox" required="true" onChange="myToDate.constraints.min = arguments[0];" />
 								<label for="toDate">-</label>
-								<input class="date" data-dojo-id="myToDate" type="text" name="toDate" data-dojo-type="dijit/form/DateTextBox" required="true" onChange="myFromDate.constraints.max = arguments[0];" />
+								<input class="date" data-dojo-id="myToDate" type="text" name="toDate" id="toDate"  data-dojo-type="dijit/form/DateTextBox" required="true" onChange="myFromDate.constraints.max = arguments[0];" />
 							</div>
 							<div id="slider">&nbsp;</div>
 							<button id="BtnTiempoEnPlanta" type="button"></button>
-							<button id="BtnTiempoPorSector" type="button"></button>
+							<!--button id="BtnTiempoPorSector" type="button"></button-->
 							<div id="slider">&nbsp;</div>
 							<div id="resultJob"></div>
+							<div id="divInforme">&nbsp;</div>
 						</div>
 						<!--div id="slider">
 							<div id="SliderLabel">Desde:</div>
