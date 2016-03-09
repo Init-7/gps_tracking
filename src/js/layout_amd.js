@@ -464,7 +464,6 @@ require([
 		function selectJob(valor) {
 			var jobId = registry.byId("trabajador").item.job;
 			var planta = registry.byId("trabajador").item.plant;
-			//mapa.fitBounds(layer.realtime.getBounds(), {});}
 
 			maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
 			maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
@@ -490,7 +489,12 @@ require([
 				layer.realtime = realTime(url.GeoJSON,jobId);
 				layer.realtime.addTo(mapa);
 				layer.realtime.bringToFront(); //traer capa al frente
-				layer.realtime.on('update', function(e) {console.log('rt job pmaule: ',cont++)});
+				var zoom = true;
+				layer.realtime.on('update', function(e) {
+					if (zoom) mapa.fitBounds(layer.realtime.getBounds());
+					zoom = false;
+					console.log('rt job pmaule: ',cont++);
+					});
 
 				layer.control.addOverlay(layer.realtime,'Trabajadores');
 
@@ -653,9 +657,9 @@ require([
 					}
 
 				);
-			db.GeoJSON = GeoJSON; //var tmp para mostrar en console *
-			db.GeoJSONs = GeoJSONs; //var tmp para mostrar en console *
-			db.GeoJSONcn = GeoJSONcn; //var tmp para mostrar en console *
+			//db.GeoJSON = GeoJSON; //var tmp para mostrar en console *
+			//db.GeoJSONs = GeoJSONs; //var tmp para mostrar en console *
+			//db.GeoJSONcn = GeoJSONcn; //var tmp para mostrar en console *
 			if(ID == 'ALL'){return GeoJSONs;}
 			if(ID == 'CN'){return GeoJSONcn;}
 			return GeoJSON;
@@ -690,9 +694,9 @@ require([
 			var urls = getFeatureInfoUrl(mapa,layer.maule,evt.latlng,{'info_format': 'text/html'});
 			var inner = '<iframe src="' + urls + '" width="100%" height="110px" style="border:none"></iframe>';
 
-			domAttr.set(dom.byId('divInfoDB'), "innerHTML", '');
-			domAttr.set(dom.byId('divInfoGPS'), "innerHTML", '');
-			domAttr.set(dom.byId('divInfoWMS'), "innerHTML", inner);
+			dom.byId("divInfoDB").innerHTML = '';
+			dom.byId("divInfoGPS").innerHTML = '';
+			dom.byId("divInfoWMS").innerHTML = inner;
 			}
 
 		function getFeatureInfoUrl(map, layer, latlng, params) {
@@ -742,7 +746,9 @@ require([
 						'Planta: '+ job.plant + ' <br /><br />';
 					}
 				});
-			domAttr.set(dom.byId('divInfoDB'), "innerHTML", inner);
+			//domAttr.set(dom.byId('divInfoDB'), "innerHTML", inner);
+			dom.byId("divInfoDB").innerHTML = inner;
+
 		}
 
 		function divInfoGPS(features){
@@ -754,7 +760,9 @@ require([
 				'Longitud: '+ features.properties.lon + ' <br />'+
 				'Direccion: '+ features.properties.address + ' (aprox.) <br />'+
 				'ID (interno): '+ features.id + ' <br /><br />';
-			domAttr.set(dom.byId('divInfoGPS'), "innerHTML", inner);
+			//domAttr.set(dom.byId('divInfoGPS'), "innerHTML", inner);
+			dom.byId("divInfoGPS").innerHTML = inner;
+			if(change.tr)mapa.fitBounds(layer.realtime.getBounds());
 			}
 		});
 /*END*/
