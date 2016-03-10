@@ -341,19 +341,25 @@ require([
 			//dom.byId("resultJob").innerHTML = "FUNCION EN DESARROLLO"
 
 			var inner = '<h2 style="align:center"> Tiempo en planta:<br />9 hrs, 17 min </h2>' +
-				'Bodega: 4 hrs, 17 min  <br />'+
-				'casino: 0 hrs, 43 min  <br />'+
-				'patio Bodega: 0 hrs, 26 min  <br />'+
-				'Bodega: 3 hrs, 47 min  <br />'+
-				'porteria: 0 hrs, 10 min  <br />'+
+				'<b>Bodega:</b> 4 hrs, 17 min  <br />'+
+				'<b>Casino:</b> 0 hrs, 43 min  <br />'+
+				'<b>Patio Bodega:</b> 0 hrs, 26 min  <br />'+
+				'<b>Bodega:</b> 3 hrs, 47 min  <br />'+
+				'<b>Portería:</b> 0 hrs, 10 min  <br />'+
 				'---------------------  <br />'+
-				'total: 9 hrs, 17 min <br />';
+				'<b>Total: 9 hrs, 17 min</b> <br />'+
+				'<br />'+
+				'<h4 style="align:center"> Tiempo en zonas peligrosas</h4>' +
+				'<b>Sin Peligro:</b> 0 hrs, 10 min  <br />'+
+				'<b>Peligro bajo:</b> 1 hrs, 09 min  <br />'+
+				'<b>Peligro medio:</b> 8 hrs, 04 min  <br />'+
+				'<b>Peligro alto:</b> 0 hrs, 0 min  <br />';
 
 			console.log(registry.byId("toDate"));
 			//domAttr.set(dom.byId('divInforme'), "innerHTML", inner);
-			if(registry.byId("trabajadorQuery").item.value == '*') dom.byId("resultJob").innerHTML = "selecciones un trabajador";
-			else if(registry.byId("fromDate").value == 'Invalid Date') dom.byId("resultJob").innerHTML = "selecciones fecha inicial";
-			else if(registry.byId("toDate").value == 'Invalid Date') dom.byId("resultJob").innerHTML = "selecciones fecha final";
+			if(registry.byId("trabajadorQuery").item.value == '*') dom.byId("resultJob").innerHTML = "Seleccione un trabajador";
+			else if(registry.byId("fromDate").value == 'Invalid Date') dom.byId("resultJob").innerHTML = "Seleccione fecha inicial";
+			else if(registry.byId("toDate").value == 'Invalid Date') dom.byId("resultJob").innerHTML = "Seleccione fecha final";
 			else dom.byId("resultJob").innerHTML = inner;
 			};
 
