@@ -20,7 +20,7 @@ require([
 	"dojo/domReady!"
 	], 
 	function(AccordionContainer,BorderContainer,ContentPane,FilteringSelect,Button,DateTextBox,registry,Memory,ready,on,mouse,aspect,domAttr,domConstruct,xhr,array,parser,dom){
-		var mapa, realtime_ctrl=false, maule_ctrl = false, trabajador_ctrl = false, maule_heatmap = false, db = {}, change = [], layer = [], url = {}, cont = 0;
+		var mapa, realtime_ctrl=false, maule_ctrl = false, maule_heatmap = false, db = {}, change = [], layer = [], url = {}, cont = 0;
 
 		ready(function(){
 			//Ejemplo de base de datos...
@@ -41,12 +41,23 @@ require([
 
 			db.trabajadores =  [
 				{ job: "*", center: "*", plant: "*", value: "*", name: "Todos los trabajadores", fEmer: "", fPers: "", cargo: "", nivel_riesgo: "", alergia: "",},
-				{ job: "1", center: "mauleGeneral", plant: "pmaule", value: "1", name: "Pablo Rojas Soto", fEmer: "Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "??", alergia: "Sin Información",},
-				{ job: "5", center: "mauleGeneral", plant: "pmaule", value: "5", name: "Jorge Emanuel Gajardo Muñoz", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "4", alergia: "Sin Información",},
-				{ job: "6", center: "mauleGeneral", plant: "pmaule", value: "6", name: "Juan Carlos Gonzalez Gonzalez", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "4", alergia: "Sin Información",},
-				{ job: "7", center: "mauleGeneral", plant: "pmaule", value: "7", name: "Patricio Dominguez", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "4", alergia: "Sin Información",},
+				{ job: "1", center: "mauleGeneral", plant: "pmaule", value: "1", name: "Pablo Rojas Soto", fEmer: "Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "1", alergia: "Sin Información",},
+				{ job: "5", center: "mauleGeneral", plant: "pmaule", value: "5", name: "Jorge Emanuel Gajardo Muñoz", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "3", alergia: "Sin Información",},
+				{ job: "6", center: "mauleGeneral", plant: "pmaule", value: "6", name: "Juan Carlos Gonzalez Gonzalez", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "3", alergia: "Sin Información",},
+				{ job: "7", center: "mauleGeneral", plant: "pmaule", value: "7", name: "Patricio Dominguez", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "3", alergia: "Sin Información",},
 				{ job: "8", center: "mauleGeneral", plant: "pmaule", value: "8", name: "Joshua Roan Cisterna Molina", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "2", alergia: "Sin Información",},
 				{ job: "9", center: "mauleGeneral", plant: "pmaule", value: "9", name: "Hector Rebolledo Cuevas", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "1", alergia: "Sin Información",},
+
+				{ job: "50001", center: "mauleGeneral", plant: "pmaule", value: "50001", name: "Patricio Alejandro Benavides YaÃ±ez", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "0", alergia: "Sin Información",},
+				{ job: "50002", center: "mauleGeneral", plant: "pmaule", value: "50002", name: "Bruno Jean Paul Cifuentes Pereira", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "0", alergia: "Sin Información",},
+				{ job: "50003", center: "mauleGeneral", plant: "pmaule", value: "50003", name: "Francisco Ignacio Diaz Diaz", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "3", alergia: "Sin Información",},
+				{ job: "50004", center: "mauleGeneral", plant: "pmaule", value: "50004", name: "Bayron Jeremy Diaz Godoy", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "1", alergia: "Sin Información",},
+				{ job: "50005", center: "mauleGeneral", plant: "pmaule", value: "50005", name: "Luis Patricio Fernandoy Acevedo", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "1", alergia: "Sin Información",},
+				{ job: "50006", center: "mauleGeneral", plant: "pmaule", value: "50006", name: "Fredy Alonzo NuÃ±ez Gonzalez", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "3", alergia: "Sin Información",},
+				{ job: "50007", center: "mauleGeneral", plant: "pmaule", value: "50007", name: "Maximiliano Benjamin Oses Iglesias", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "2", alergia: "Sin Información",},
+				{ job: "50008", center: "mauleGeneral", plant: "pmaule", value: "50008", name: "Jose Isaac Quijada Roa", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "2", alergia: "Sin Información",},
+				{ job: "50009", center: "mauleGeneral", plant: "pmaule", value: "50009", name: "Felipe Ignacio Salinas Jara", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "1", alergia: "Sin Información",},
+				{ job: "50010", center: "mauleGeneral", plant: "pmaule", value: "50010", name: "Ignacio Alejandro Torres Gonzalez", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "3", alergia: "Sin Información",},
 				{ job: "job02", center: "gpsEST", plant: "est", value: "job02", name: "Lautaro Silva", fEmer: "133", fPers: "+56950645387", cargo: "Jefe Proyecto", nivel_riesgo: "3", alergia: "nada", },
 				];
 
@@ -54,39 +65,105 @@ require([
 				{ 
 					job: "1", 
 					value: "1", 
-					enviadas: " - Ninguna.", 
-					recibidas: " - mie feb 23, 2015 14:50:00 Hrs: entrando a zona peligrosa, fuera de su aréa.<br />",
+					enviadas: " - Ninguna.",
+					recibidas: "Mensaje: entrando a zona peligrosa, fuera de su aréa.<br />Fecha: Mie feb 23, 2016<br /> Hora: 14:50:00 Hrs",
 				},
 				{ 
 					job: "5", 
 					value: "5", 
-					enviadas: " - Ninguna.-", 
-					recibidas: "",},
+					enviadas: " - sin alertas registradas.",
+					recibidas: " - sin alertas registradas.",
+				},
 				{ 
 					job: "6", 
 					value: "6", 
-					enviadas: " - SOS!! <br> Posible incidente.", 
-					recibidas: "",},
+					enviadas: " <b> S.O.S!! </b> Posible incidente..<br />Fecha: Mie feb 23, 2016<br /> Hora: 14:50:00 Hrs", 
+					recibidas: " - sin alertas registradas.",
+				},
 				{ 
 					job: "7", 
 					value: "7", 
-					enviadas: " - Ninguna.-", 
-					recibidas: "",},
+					enviadas: " - sin alertas registradas.", 
+					recibidas: " - sin alertas registradas.",
+				},
 				{ 
 					job: "8", 
 					value: "8", 
-					enviadas: " - Ninguna.-", 
-					recibidas: "",},
+					enviadas: " - sin alertas registradas.", 
+					recibidas: " - sin alertas registradas.",
+				},
 				{ 
 					job: "9", 
 					value: "9", 
-					enviadas: " - Ninguna.-", 
-					recibidas: "",},
+					enviadas: " - sin alertas registradas.", 
+					recibidas: " - sin alertas registradas.",
+				},
+				{ 
+					job: "50001", 
+					value: "50001", 
+					enviadas: " <b> S.O.S!! </b> Posible incidente.", 
+					recibidas: " - sin alertas registradas.",
+				},
+				{ 
+					job: "50002", 
+					value: "50002", 
+					enviadas: " - sin alertas registradas.", 
+					recibidas: " - sin alertas registradas.",
+				},
+				{ 
+					job: "50003", 
+					value: "50003", 
+					enviadas: " <b> S.O.S!! </b> Posible incidente..<br />Fecha: Mie feb 23, 2016<br /> Hora: 14:50:00 Hrs",
+					recibidas: "Mensaje: entrando a zona peligrosa, fuera de su aréa.<br />Fecha: Mie feb 23, 2016<br /> Hora: 14:50:00 Hrs",
+				},
+				{ 
+					job: "50004", 
+					value: "50004",  
+					enviadas: " - sin alertas registradas.", 
+					recibidas: " - sin alertas registradas.",
+				},
+				{ 
+					job: "50005", 
+					value: "50005", 
+					enviadas: " - sin alertas registradas.", 
+					recibidas: " - sin alertas registradas.",
+				},
+				{ 
+					job: "50006", 
+					value: "50006", 
+					enviadas: " - sin alertas registradas.", 
+					recibidas: " - sin alertas registradas.",
+				},
+				{ 
+					job: "50007", 
+					value: "50007", 
+					enviadas: " <b> S.O.S!! </b> Posible incidente.",  
+					recibidas: " - sin alertas registradas.",
+				},
+				{ 
+					job: "50008", 
+					value: "50008", 
+					enviadas: " - sin alertas registradas.", 
+					recibidas: " - sin alertas registradas.",
+				},
+				{ 
+					job: "50009", 
+					value: "50009", 
+					enviadas: " - sin alertas registradas.", 
+					recibidas: " - sin alertas registradas.",
+				},
+				{ 
+					job: "50010", 
+					value: "50010", 
+					enviadas: " - sin alertas registradas.", 
+					recibidas: " - sin alertas registradas.",
+				},
 				{ 
 					job: "job02", 
 					value: "job02", 
-					enviadas: " - sin alertas registradas", 
-					recibidas: " - sin alertas registradas",},
+					enviadas: " - sin alertas registradas.", 
+					recibidas: " - sin alertas registradas.",
+				},
 				];
 
 			//urls del servidor de mapas
@@ -393,6 +470,7 @@ require([
 			maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
 			maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
 			realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
+			domConstruct.destroy("aviso");
 
 			//PLano General
 			if(Planta === '*'){
@@ -408,6 +486,8 @@ require([
 				//centramos mapas en la planta
 				mapa.setView([-35.607,-71.588], 16);
 				//url.fakeGeoJSON = 'http://104.196.40.15:8000/gps/Maule/puntos/';
+
+				domConstruct.create('span', {id:'aviso', innerHTML:'6 trabajadores en estado de alto riesgo!<br /> Alertas enviadas'}, dom.byId('ALERTOIDE'));
 
 				layer.maule.addTo(mapa); //Agregar el palno de la planta al mapa
 				layer.maule.bringToFront(); //traer capa al frente
@@ -448,6 +528,7 @@ require([
 			maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
 			maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
 			realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
+			domConstruct.destroy("aviso");
 
 			//General
 			if(Centro_negocio === '*'){
@@ -462,6 +543,8 @@ require([
 			if(Centro_negocio === 'mauleGeneral'){
 				//centramos mapas en la planta
 				mapa.setView([-35.607,-71.588], 16);
+
+				domConstruct.create('span', {id:'aviso', innerHTML:'6 trabajadores en estado de alto riesgo!<br /> Alertas enviadas'}, dom.byId('ALERTOIDE'));
 
 				layer.maule.addTo(mapa); //Agregar el plano de la planta al mapa
 				layer.maule.bringToFront(); //traer capa al frente
@@ -496,6 +579,7 @@ require([
 			maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
 			maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
 			realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
+			domConstruct.destroy("aviso");
 
 			if(planta == '*'){
 				//centramos mapas en la planta
@@ -508,6 +592,8 @@ require([
 			if(planta == 'pmaule'){
 				//centramos mapas en la planta
 				mapa.setView([-35.607,-71.588], 16);
+
+				if(registry.byId("trabajador").item.nivel_riesgo == '3')domConstruct.create('span', {id:'aviso', innerHTML:'Trabajador en estado de alto riesgo!<br /> Alerta enviada'}, dom.byId('ALERTOIDE'));
 
 				layer.maule.addTo(mapa); //Agregar el palno de la planta al mapa
 				layer.maule.bringToFront(); //traer capa al frente
@@ -554,6 +640,7 @@ require([
 			maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
 			maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
 			realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
+			domConstruct.destroy("aviso");
 
 			domAttr.set(dom.byId('jobHM'), "src", 'images/punto.png');
 			domAttr.set(dom.byId('workHM'), "src", 'images/punto.png');
@@ -592,6 +679,7 @@ require([
 			maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
 			maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
 			realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
+			domConstruct.destroy("aviso");
 
 			if(planta == 'pmaule'){
 				maule_heatmap = true;
@@ -706,51 +794,51 @@ require([
 			if(feature.properties.nivel_ries=='3')return L.circleMarker(
 				latlng, 
 				{
-					radius: 17,
+					radius: 14,
 					fillColor: "#ff0000",
 					color: "#000",
 					weight: 1,
 					opacity: 1,
-					fillOpacity: 0.8
+					fillOpacity: 1
 					}
 				);
 			if(feature.properties.nivel_ries=='2')return L.circleMarker(
 				latlng, 
 				{
-					radius: 14,
+					radius: 11,
 					fillColor: "#ffff00",
 					color: "#000",
 					weight: 1,
 					opacity: 1,
-					fillOpacity: 0.8
+					fillOpacity: 1
 					}
 				);
 			if(feature.properties.nivel_ries=='1')return L.circleMarker(
 				latlng, 
 				{
-					radius: 11,
+					radius: 8,
 					fillColor: "#00ff00",
 					color: "#000",
 					weight: 1,
 					opacity: 1,
-					fillOpacity: 0.8
+					fillOpacity: 1
 					}
 				);
 			if(feature.properties.nivel_ries=='0')return L.circleMarker(
 				latlng, 
 				{
-					radius: 8,
+					radius: 5,
 					fillColor: "#ffffff",
 					color: "#000",
 					weight: 1,
 					opacity: 1,
-					fillOpacity: 0.8
+					fillOpacity: 1
 					}
 				);
 			return L.circleMarker(
 				latlng, 
 				{
-					radius: 8,
+					radius: 5,
 					fillColor: "#ff0000",
 					color: "#000",
 					weight: 1,
@@ -810,7 +898,7 @@ require([
 					inner = '<h2 style="align:center"> Datos Trabajador</h2>' +
 						'Nombre: '+ job.name + ' <br />'+
 						'Telefono Personal: '+ job.fPers + ' <br />'+
-						'Telefono emeregencia: '+ job.fEmer + ' <br />'+
+						'Telefono emergencia: '+ job.fEmer + ' <br />'+
 						'Alergias: '+ job.alergia + ' <br />'+
 						'Cargo: '+ job.cargo + ' <br />'+
 						'Nivel de riesgo: '+ job.nivel_riesgo + ' <br />'+
