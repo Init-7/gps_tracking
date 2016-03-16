@@ -349,7 +349,8 @@ require([
 				width:'20',
 				height:'20',
 				legend_options:'forceLabels:on',
-				layer:'est40516:distinto',
+				//layer:'est40516:distinto',
+				layer:'est40516:fakepeople',
 				opacity:'0.3',
 				style:'heatmap'
 				});
@@ -372,6 +373,7 @@ require([
 				version : '1.0.0',
 				request : 'GetFeature',
 				typeName : 'est40516:distinto',
+				//typeName : 'est40516:fakepeople',
 				outputFormat : 'application/json',
 				style : 'JOB_Peligro'
 				//maxfeatures : 50
@@ -644,6 +646,7 @@ require([
 
 			domAttr.set(dom.byId('jobHM'), "src", 'images/punto.png');
 			domAttr.set(dom.byId('workHM'), "src", 'images/punto.png');
+			dom.byId("resultHeatmap").innerHTML = "Mapa de calor con areas de riesgo: " + registry.byId("plantaQuery").item.name;
 
 			//PLano General
 			if(Planta === '*'){
@@ -684,7 +687,8 @@ require([
 			if(planta == 'pmaule'){
 				maule_heatmap = true;
 				layer.heatmap = L.tileLayer.wms(url.wmsroot, {
-					layers: 'est40516:distinto',
+					//layers: 'est40516:distinto',
+					layers: 'est40516:fakepeople',
 					transparent: true,
 					format: 'image/png',
 					styles: 'heatmap',
