@@ -20,7 +20,7 @@ require([
 	"dojo/domReady!"
 	], 
 	function(AccordionContainer,BorderContainer,ContentPane,FilteringSelect,Button,DateTextBox,registry,Memory,ready,on,mouse,aspect,domAttr,domConstruct,xhr,array,parser,dom){
-		var mapa, realtime_ctrl=false, maule_ctrl = false, maule_heatmap = false, db = {}, change = [], layer = [], url = {}, cont = 0;
+		var mapa, realtime_ctrl=false, maule_ctrl = false, trabajador_ctrl = false, maule_heatmap = false, db = {}, change = [], layer = [], url = {}, cont = 0;
 
 		ready(function(){
 			//Ejemplo de base de datos...
@@ -48,6 +48,45 @@ require([
 				{ job: "8", center: "mauleGeneral", plant: "pmaule", value: "8", name: "Joshua Roan Cisterna Molina", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "2", alergia: "Sin Información",},
 				{ job: "9", center: "mauleGeneral", plant: "pmaule", value: "9", name: "Hector Rebolledo Cuevas", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "1", alergia: "Sin Información",},
 				{ job: "job02", center: "gpsEST", plant: "est", value: "job02", name: "Lautaro Silva", fEmer: "133", fPers: "+56950645387", cargo: "Jefe Proyecto", nivel_riesgo: "3", alergia: "nada", },
+				];
+
+			db.alertas =  [
+				{ 
+					job: "1", 
+					value: "1", 
+					enviadas: " - Ninguna.", 
+					recibidas: " - mie feb 23, 2015 14:50:00 Hrs: entrando a zona peligrosa, fuera de su aréa.<br />",
+				},
+				{ 
+					job: "5", 
+					value: "5", 
+					enviadas: " - Ninguna.-", 
+					recibidas: "",},
+				{ 
+					job: "6", 
+					value: "6", 
+					enviadas: " - SOS!! <br> Posible incidente.", 
+					recibidas: "",},
+				{ 
+					job: "7", 
+					value: "7", 
+					enviadas: " - Ninguna.-", 
+					recibidas: "",},
+				{ 
+					job: "8", 
+					value: "8", 
+					enviadas: " - Ninguna.-", 
+					recibidas: "",},
+				{ 
+					job: "9", 
+					value: "9", 
+					enviadas: " - Ninguna.-", 
+					recibidas: "",},
+				{ 
+					job: "job02", 
+					value: "job02", 
+					enviadas: " - sin alertas registradas", 
+					recibidas: " - sin alertas registradas",},
 				];
 
 			//urls del servidor de mapas
@@ -247,7 +286,7 @@ require([
 				height:'20',
 				legend_options:'forceLabels:on',
 				layer:'est40516:distinto',
-				style:'Trabajador'
+				style:'JOB_Peligro'
 				});
 			url.leyendaTrabajador = url.wmsroot + L.Util.getParamString(ParamLydTrab);
 
@@ -257,18 +296,33 @@ require([
 				request : 'GetFeature',
 				typeName : 'est40516:distinto',
 				outputFormat : 'application/json',
+				style : 'JOB_Peligro'
 				//maxfeatures : 50
 				});
 			url.GeoJSON = url.owsroot + L.Util.getParamString(ParamGeoJSON);
 			console.log(url.GeoJSON);
 
+			var FakeGeoJSON = L.Util.extend({
+				service : 'WFS',
+				version : '1.0.0',
+				request : 'GetFeature',
+				typeName : 'est40516:fakepeople',
+				outputFormat : 'application/json',
+				style : 'JOB_Peligro'
+				//maxfeatures : 50
+				});
+			url.fakeGeoJSON = url.owsroot + L.Util.getParamString(FakeGeoJSON);
+			console.log(url.fakeGeoJSON);
+
 			//generamos la leyenda inicial (generica)
+			domConstruct.create('p', {innerHTML:'Trabajadores:'}, dom.byId('leyenda'));
 			domConstruct.create('img', {src: 'images/punto.png', id:'job'}, dom.byId('leyenda'));
-			domConstruct.create('br', null, dom.byId('leyenda'));
+			domConstruct.create('p', {innerHTML:'Edificacion:'}, dom.byId('leyenda'));
 			domConstruct.create('img', {src: 'images/punto.png',id:'work'}, dom.byId('leyenda'));
 			//HEatMAp
+			domConstruct.create('p', {innerHTML:'Trabajadores:'}, dom.byId('leyendaHeatmap'));
 			domConstruct.create('img', {src: 'images/punto.png', id:'jobHM'}, dom.byId('leyendaHeatmap'));
-			domConstruct.create('br', null, dom.byId('leyendaHeatmap'));
+			domConstruct.create('p', {innerHTML:'Edificacion:'}, dom.byId('leyendaHeatmap'));
 			domConstruct.create('img', {src: 'images/punto.png',id:'workHM'}, dom.byId('leyendaHeatmap'));
 
 			// **** INICIAMOS EL MAPA (LEAFLET) **** //
@@ -329,39 +383,7 @@ require([
 				label: "Tiempo en Planta",
 				onClick: enDesarrollo
 				}, "BtnTiempoEnPlanta").startup();
-			var BtnTiempoPorSector = new Button({
-				label: "Tiempo por sectores",
-				onClick: enDesarrollo
-				}, "BtnTiempoPorSector").startup();
-
 		});
-
-		function enDesarrollo() {
-
-			//dom.byId("resultJob").innerHTML = "FUNCION EN DESARROLLO"
-
-			var inner = '<h2 style="align:center"> Tiempo en planta:<br />9 hrs, 17 min </h2>' +
-				'<b>Bodega:</b> 4 hrs, 17 min  <br />'+
-				'<b>Casino:</b> 0 hrs, 43 min  <br />'+
-				'<b>Patio Bodega:</b> 0 hrs, 26 min  <br />'+
-				'<b>Bodega:</b> 3 hrs, 47 min  <br />'+
-				'<b>Portería:</b> 0 hrs, 10 min  <br />'+
-				'---------------------  <br />'+
-				'<b>Total: 9 hrs, 17 min</b> <br />'+
-				'<br />'+
-				'<h4 style="align:center"> Tiempo en zonas peligrosas</h4>' +
-				'<b>Sin Peligro:</b> 0 hrs, 10 min  <br />'+
-				'<b>Peligro bajo:</b> 1 hrs, 09 min  <br />'+
-				'<b>Peligro medio:</b> 8 hrs, 04 min  <br />'+
-				'<b>Peligro alto:</b> 0 hrs, 0 min  <br />';
-
-			console.log(registry.byId("toDate"));
-			//domAttr.set(dom.byId('divInforme'), "innerHTML", inner);
-			if(registry.byId("trabajadorQuery").item.value == '*') dom.byId("resultJob").innerHTML = "Seleccione un trabajador";
-			else if(registry.byId("fromDate").value == 'Invalid Date') dom.byId("resultJob").innerHTML = "Seleccione fecha inicial";
-			else if(registry.byId("toDate").value == 'Invalid Date') dom.byId("resultJob").innerHTML = "Seleccione fecha final";
-			else dom.byId("resultJob").innerHTML = inner;
-			};
 
 		/* Seleccion de mapas */
 		function selectJob_Planta(valor) {if(change.pl){
@@ -385,14 +407,14 @@ require([
 			if(Planta === 'pmaule'){
 				//centramos mapas en la planta
 				mapa.setView([-35.607,-71.588], 16);
-				//url.GeoJSON = 'http://104.196.40.15:8000/gps/Maule/puntos/';
+				//url.fakeGeoJSON = 'http://104.196.40.15:8000/gps/Maule/puntos/';
 
 				layer.maule.addTo(mapa); //Agregar el palno de la planta al mapa
 				layer.maule.bringToFront(); //traer capa al frente
 				layer.control.addOverlay(layer.maule,'Planta Maule');  //Agregar al control
 				maule_ctrl = true;
-
-				layer.realtime = realTime(url.GeoJSON,'ALL');
+				/**/
+				layer.realtime = realTime(url.fakeGeoJSON,'ALL');
 				layer.realtime.addTo(mapa);
 				layer.realtime.bringToFront(); //traer capa al frente
 				layer.realtime.on('update', function(e) {console.log('rt planta pmaule: ',cont++)});
@@ -446,7 +468,7 @@ require([
 				layer.control.addOverlay(layer.maule,'Planta Maule');  //Agregar al control
 				maule_ctrl = true;
 
-				layer.realtime = realTime(url.GeoJSON,'ALL');
+				layer.realtime = realTime(url.fakeGeoJSON,'ALL');
 				layer.realtime.addTo(mapa);
 				layer.realtime.bringToFront(); //traer capa al frente
 				layer.realtime.on('update', function(e) {console.log('rt cn pmaule: ',cont++)});
@@ -492,7 +514,7 @@ require([
 				layer.control.addOverlay(layer.maule,'Planta Maule');  //Agregar al control
 				maule_ctrl = true;
 
-				layer.realtime = realTime(url.GeoJSON,jobId);
+				layer.realtime = realTime(url.fakeGeoJSON,jobId);
 				layer.realtime.addTo(mapa);
 				layer.realtime.bringToFront(); //traer capa al frente
 				var zoom = true;
@@ -588,7 +610,7 @@ require([
 				layer.heatmap.bringToFront();
 				layer.control.addOverlay(layer.heatmap,'heatmap');
 
-				layer.realtime = realTime(url.GeoJSON,'ALL');
+				layer.realtime = realTime(url.fakeGeoJSON,'ALL');
 				layer.realtime.addTo(mapa);
 				layer.realtime.bringToFront(); //traer capa al frente
 				layer.realtime.on('update', function(e) {console.log('heatmap: ',cont++)});
@@ -639,7 +661,7 @@ require([
 						}, 
 					{
 						onEachFeature: onEachGeoJSON, 
-						pointToLayer: pointToGeoJSON, 
+						pointToLayer: pointToGeoJSON,
 						interval: 10 * 1000
 						} 
 					);
@@ -681,10 +703,54 @@ require([
 			}
 
 		var pointToGeoJSON = function (feature, latlng) {
+			if(feature.properties.nivel_ries=='3')return L.circleMarker(
+				latlng, 
+				{
+					radius: 17,
+					fillColor: "#ff0000",
+					color: "#000",
+					weight: 1,
+					opacity: 1,
+					fillOpacity: 0.8
+					}
+				);
+			if(feature.properties.nivel_ries=='2')return L.circleMarker(
+				latlng, 
+				{
+					radius: 14,
+					fillColor: "#ffff00",
+					color: "#000",
+					weight: 1,
+					opacity: 1,
+					fillOpacity: 0.8
+					}
+				);
+			if(feature.properties.nivel_ries=='1')return L.circleMarker(
+				latlng, 
+				{
+					radius: 11,
+					fillColor: "#00ff00",
+					color: "#000",
+					weight: 1,
+					opacity: 1,
+					fillOpacity: 0.8
+					}
+				);
+			if(feature.properties.nivel_ries=='0')return L.circleMarker(
+				latlng, 
+				{
+					radius: 8,
+					fillColor: "#ffffff",
+					color: "#000",
+					weight: 1,
+					opacity: 1,
+					fillOpacity: 0.8
+					}
+				);
 			return L.circleMarker(
 				latlng, 
 				{
-					radius: 5,
+					radius: 8,
 					fillColor: "#ff0000",
 					color: "#000",
 					weight: 1,
@@ -752,6 +818,16 @@ require([
 						'Planta: '+ job.plant + ' <br /><br />';
 					}
 				});
+
+			array.forEach(db.alertas,function(alerta) {
+				if (alerta.job == jobID) {
+					inner = inner + 
+						'<h2 style="align:center"> Historial de alertas</h2>' +
+						'<b>enviadas</b>:<br />'+ alerta.enviadas + '<br /><br />'+
+						'<b>recibidas</b>:<br />'+ alerta.recibidas + '<br /><br />';
+						//' - mie feb 23, 2015 14:50:00 Hrs: entrando a zona peligrosa, fuera de su aréa<br />'+
+					}
+				});
 			//domAttr.set(dom.byId('divInfoDB'), "innerHTML", inner);
 			dom.byId("divInfoDB").innerHTML = inner;
 
@@ -765,10 +841,35 @@ require([
 				'Latitud: '+ features.properties.lat + ' <br />'+
 				'Longitud: '+ features.properties.lon + ' <br />'+
 				'Direccion: '+ features.properties.address + ' (aprox.) <br />'+
-				'ID (interno): '+ features.id + ' <br /><br />';
+				'ID (interno): '+ features.id + 
+				' <br /><br />';
 			//domAttr.set(dom.byId('divInfoGPS'), "innerHTML", inner);
 			dom.byId("divInfoGPS").innerHTML = inner;
 			if(change.tr)mapa.fitBounds(layer.realtime.getBounds());
 			}
+
+		function enDesarrollo() {
+			//dom.byId("resultJob").innerHTML = "FUNCION EN DESARROLLO"
+			var inner = '<h2 style="align:center"> Tiempo en planta:<br />9 hrs, 17 min </h2>' +
+				'<b>Bodega:</b> 4 hrs, 17 min  <br />'+
+				'<b>Casino:</b> 0 hrs, 43 min  <br />'+
+				'<b>Patio Bodega:</b> 0 hrs, 26 min  <br />'+
+				'<b>Bodega:</b> 3 hrs, 47 min  <br />'+
+				'<b>Portería:</b> 0 hrs, 10 min  <br />'+
+				'---------------------  <br />'+
+				'<b>Total: 9 hrs, 17 min</b> <br />'+
+				'<br />'+
+				'<h4 style="align:center"> Tiempo en zonas peligrosas</h4>' +
+				'<b>Sin Peligro:</b> 0 hrs, 10 min  <br />'+
+				'<b>Peligro bajo:</b> 1 hrs, 09 min  <br />'+
+				'<b>Peligro medio:</b> 8 hrs, 04 min  <br />'+
+				'<b>Peligro alto:</b> 0 hrs, 0 min  <br />';
+
+			//domAttr.set(dom.byId('divInforme'), "innerHTML", inner);
+			if(registry.byId("trabajadorQuery").item.value == '*') dom.byId("resultJob").innerHTML = "Seleccione un trabajador";
+			else if(registry.byId("fromDate").value == 'Invalid Date') dom.byId("resultJob").innerHTML = "Seleccione fecha inicial";
+			else if(registry.byId("toDate").value == 'Invalid Date') dom.byId("resultJob").innerHTML = "Seleccione fecha final";
+			else dom.byId("resultJob").innerHTML = inner;
+			};
 		});
 /*END*/

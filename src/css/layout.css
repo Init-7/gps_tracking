@@ -89,68 +89,68 @@ body {
 
 #rightPane{
     font-size:10pt;
-	background-color:#E8E8E8;
-	border:solid 2px #B8B8B8;
-	margin:5px; 
+    background-color:#E8E8E8;
+    border:solid 2px #B8B8B8;
+    margin:5px; 
     width:260px;
-	}
+}
 
 h3 { 
-	margin: 0 0 0 0; 
-	border-bottom: 1px solid #444; 
-	text-align: center;
-	}
+    margin: 0 0 0 0; 
+    border-bottom: 1px solid #444; 
+    text-align: center;
+}
 h5{
-	margin: 1px 0 1px 0;
-	border-bottom: 0px;
-	}
+    margin: 1px 0 1px 0;
+    border-bottom: 0px;
+}
 h6{
-	margin: 1px 0 1px 0;
-	border-bottom: 0px;
-	}
+    margin: 1px 0 1px 0;
+    border-bottom: 0px;
+}
 
 .note { 
-	font-size: 80%; 
-	text-align: center;
-	color: #666; 
-	}
+    font-size: 80%; 
+    text-align: center;
+    color: #666; 
+}
 #slider {
-	color: #666;
-	}
+    color: #666;
+}
 #SliderLabel { 
-	padding: 5px 0 1px 0; 
-	}
+    padding: 5px 0 1px 0; 
+}
 
 .dijitTextBox {
-	border: solid black 1px;
-	#overflow: hidden;
-	width: 13em;
-	vertical-align: middle;
+    border: solid black 1px;
+    #overflow: hidden;
+    width: 13em;
+    vertical-align: middle;
 }
 
 .dojoxCheckedMultiSelect .dojoxCheckedMultiSelectWrapper {
-	border: solid white 1px;
-	margin: 1px 0;
-	overflow: auto;
-	overflow-y: hidden;
-	overflow-x: hidden;
-	height: 100%;
+    border: solid white 1px;
+    margin: 1px 0;
+    overflow: auto;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    height: 100%;
 }
 .claro .dojoxCheckedMultiSelect .dojoxCheckedMultiSelectWrapper {
-	border: 1px solid #fff;
-	background-color: #fff;
-	line-height: normal;
-	-webkit-transition-property:background-color, border;
-	-webkit-transition-duration:.35s;
+    border: 1px solid #fff;
+    background-color: #fff;
+    line-height: normal;
+    -webkit-transition-property:background-color, border;
+    -webkit-transition-duration:.35s;
 }
 .claro .dojoxCheckedMultiSelectHover .dojoxCheckedMultiSelectWrapper {
-	border-color: #fff;
-	background-color: #fff;
-	background-image: -moz-linear-gradient(rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 2px);
-	background-image: -webkit-linear-gradient(rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 2px);
-	background-image: linear-gradient(rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 2px);
-	background-repeat: repeat-x;
-	-webkit-transition-duration:.25s;
+    border-color: #fff;
+    background-color: #fff;
+    background-image: -moz-linear-gradient(rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 2px);
+    background-image: -webkit-linear-gradient(rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 2px);
+    background-image: linear-gradient(rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 2px);
+    background-repeat: repeat-x;
+    -webkit-transition-duration:.25s;
 }
 
 .claro .dijitContentPane {
@@ -168,15 +168,30 @@ h6{
 
 /*Style for company logo added to the map*/
 #logoMap{
-  bottom:15px;
-  position:absolute;
-  right:5px;
-  z-index:30;
+    bottom:15px;
+    position:absolute;
+    right:5px;
+    z-index:30;
 }
 #logoMap img{
-  border:none;
-  max-height: 50px;
+    border:none;
+    max-height: 50px;
 }
+
+#aviso{
+    position:absolute;
+    top:10px;
+    left:50px;
+    padding: 6px;
+    background-color: #FF0000;
+    border-radius: 4px;
+    border: solid 1px #333;
+    z-index:99;
+    max-width: 200px;
+    text-align: justify;
+    color: #fff;
+    }
+
 .date {
     width: 7em;
 }
