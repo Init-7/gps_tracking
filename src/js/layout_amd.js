@@ -22,7 +22,10 @@ require([
 	"dojo/domReady!"
 	], 
 	function(AccordionContainer,BorderContainer,ContentPane,FilteringSelect,Button,DateTextBox,registry,Memory,ready,on,mouse,aspect,domAttr,domConstruct,xhr,array,parser,dom){
-		var mapa, realtime_ctrl=false, gps_ctrl = false, maule_ctrl = false, maule_heatmap = false, maule_cluster= false, db = {}, change = [], layer = [], url = {}, cont = 0;
+		var mapa; 
+		var realtime_ctrl=false, gps_ctrl = false, maule_ctrl = false, maule_heatmap = false, maule_cluster= false; 
+		var db = {}, change = [], layer = [], url = {}, cont = 0;
+		var coordEST = [-36.778224,-73.080980], coordENAP = [-36.780,-73.125], coordMAULE = [-35.607,-71.588], coordCENTRAL = [-36.3,-72.3], coordMUNDO = [-37,-73];
 
 		ready(function(){
 			//Ejemplo de base de datos...
@@ -410,12 +413,7 @@ require([
 			mapa = L.map('map');
 
 			//fijamos la primera vista....
-			mapa.setView([-37,-73],2); //Mundo
-			//mapa.setView([-37,-73],4); //Chile
-			//mapa.setView([-36.3,-72.3],8); //central
-			//mapa.setView([-35.607,-71.588],16); //Planta Maule
-			//mapa.setView([-36.780,-73.125],15); //Enap
-			//mapa.setView([-36.8395,-73.114], 18)//Oficina EST
+			mapa.setView(coordMUNDO,2);
 
 			//variables para mapas de google y bing
 			var bing = new L.BingLayer('LfO3DMI9S6GnXD7d0WGs~bq2DRVkmIAzSOFdodzZLvw~Arx8dclDxmZA0Y38tHIJlJfnMbGq5GXeYmrGOUIbS2VLFzRKCK0Yv_bAl6oe-DOc', {type: 'Aerial'});
@@ -473,7 +471,7 @@ require([
 			//PLano General
 			if(Planta === '*'){
 				//centramos mapas en un plano general
-				mapa.setView([-36.3,-72.3], 8);
+				mapa.setView(coordCENTRAL, 8);
 				//limpiamos la leyenda
 				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
 				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
@@ -482,7 +480,7 @@ require([
 			//Planta Maule
 			if(Planta === 'pmaule'){
 				//centramos mapas en la planta
-				mapa.setView([-35.607,-71.588], 16);
+				mapa.setView(coordMAULE, 16);
 
 				domConstruct.create('span', {id:'aviso', innerHTML:'6 trabajadores en estado de alto riesgo!<br /> Alertas enviadas'}, dom.byId('ALERTOIDE'));
 
@@ -510,14 +508,14 @@ require([
 
 			//Enap
 			if(Planta === 'enap'){
-				mapa.setView([-36.780,-73.125], 15);
+				mapa.setView(coordENAP, 15);
 				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
 				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
 				}
 
 			//Oficina EST
 			if(Planta === 'est'){
-				mapa.setView([-36.8395,-73.114], 18);
+				mapa.setView(coordEST, 18);
 				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
 				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
 				}
@@ -540,7 +538,7 @@ require([
 				}
 
 			if(Centro_negocio === 'mauleGeneral'){
-				mapa.setView([-35.607,-71.588], 16);
+				mapa.setView(coordMAULE, 16);
 
 				domConstruct.create('span', {id:'aviso', innerHTML:'6 trabajadores en estado de alto riesgo!<br /> Alertas enviadas'}, dom.byId('ALERTOIDE'));
 
@@ -557,7 +555,7 @@ require([
 				}
 
 			if(Centro_negocio === 'gpsEST'){
-				mapa.setView([-36.8395,-73.114], 18);
+				mapa.setView(coordEST, 18);
 
 				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
 				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
@@ -582,7 +580,7 @@ require([
 				}
 
 			if(planta == 'pmaule'){
-				mapa.setView([-35.607,-71.588], 16);
+				mapa.setView(coordMAULE, 16);
 
 				if(registry.byId("trabajador").item.nivel_riesgo == '3')
 					domConstruct.create('span', {id:'aviso', innerHTML:'Trabajador en estado de alto riesgo!<br /> Alerta enviada'}, dom.byId('ALERTOIDE'));
@@ -603,13 +601,13 @@ require([
 				}
 
 			if(planta == 'enap'){
-				mapa.setView([-36.780,-73.125], 15);
+				mapa.setView(coordENAP, 15);
 				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
 				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
 				}
 
 			if(planta == 'est'){
-				mapa.setView([-36.8395,-73.114], 18);
+				mapa.setView(coordEST, 18);
 				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
 				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
 				}
@@ -631,22 +629,22 @@ require([
 			dom.byId("resultHeatmap").innerHTML = "planta: " + registry.byId("plantaQuery").item.name;
 
 			if(Planta === '*'){
-				mapa.setView([-36.3,-72.3], 8);
+				mapa.setView(coordCENTRAL, 8);
 				layer.control.removeLayer(layer.maule);
 				}
 
 			if(Planta === 'pmaule'){
-				mapa.setView([-35.607,-71.588], 16);
+				mapa.setView(coordMAULE, 16);
 				layer.control.addOverlay(layer.maule,'Planta Maule');
 				}
 
 			if(Planta === 'enap'){
-				mapa.setView([-36.780,-73.125], 15);
+				mapa.setView(coordENAP, 15);
 				layer.control.removeLayer(layer.maule);
 				}
 
 			if(Planta === 'est'){
-				mapa.setView([-36.8395,-73.114], 18);
+				mapa.setView(coordEST, 18);
 				layer.control.removeLayer(layer.maule);
 				}
 			};
@@ -707,23 +705,61 @@ require([
 			if(planta == 'pmaule'){
 				maule_cluster = true;
 
-				layer.realtime = realTime(url.fakeGeoJSON,'ALL').addTo(mapa).bringToFront().on('update', function(e) {console.log('heatmap: ',cont++)});
+				layer.realtime = realTime(url.fakeGeoJSON,'ALL').bringToFront().on('update', function(e) {console.log('heatmap: ',cont++)});
 				layer.control.addOverlay(layer.realtime,'Trabajadores');
 
 				/*Marker cluster*/
-				layer.markers = L.markerClusterGroup();
+				layer.markers = L.markerClusterGroup({ singleMarkerMode: true, spiderfyOnMaxZoom: false, showCoverageOnHover: false, zoomToBoundsOnClick: false});
 				layer.markers.addLayer(L.geoJson(xhrGeoJSON(url.fakeGeoJSON,'ALL'), {onEachFeature: function (feature, layer) {layer.bindPopup(feature.properties.nivel_ries);}})).addTo(mapa);
+				layer.markers.on('click', function (a) {
+					console.log('marker ' + a.layer);
+					});
+
+				layer.markers.on('clusterclick', function (a) {
+					// a.layer is actually a cluster
+					console.log('cluster ' + a.layer.getAllChildMarkers().length);
+					});
 				/*fin de marker cluster*/
 
 				domAttr.set(dom.byId('jobHM'), "src", url.leyendaTrabajador);
 				domAttr.set(dom.byId('workHM'), "src", 'images/punto.png');
 				dom.byId("resultHeatmap").innerHTML = "";
 				}
+			else if(planta == 'est'){
+				var markers = L.markerClusterGroup({ spiderfyOnMaxZoom: false, showCoverageOnHover: false, zoomToBoundsOnClick: false });
+
+				function populate() {
+					for (var i = 0; i < 100; i++) {
+						var m = L.marker(getRandomLatLng(mapa));
+						markers.addLayer(m);
+					}
+					return false;
+				}
+				function getRandomLatLng(mapa) {
+					var bounds = mapa.getBounds(),
+						southWest = bounds.getSouthWest(),
+						northEast = bounds.getNorthEast(),
+						lngSpan = northEast.lng - southWest.lng,
+						latSpan = northEast.lat - southWest.lat;
+
+					return L.latLng(
+							southWest.lat + latSpan * Math.random(),
+							southWest.lng + lngSpan * Math.random());
+				}
+
+				markers.on('clusterclick', function (a) {
+					a.layer.spiderfy();
+				});
+
+				populate();
+				mapa.addLayer(markers);
+				}
 			else {
 				domAttr.set(dom.byId('jobHM'), "src", 'images/punto.png');
 				domAttr.set(dom.byId('workHM'), "src", 'images/punto.png');
 				dom.byId("resultHeatmap").innerHTML = "sin datos";
 				};
+
 			};
 		/* consultas */
 		function query_CN(valor) {}
