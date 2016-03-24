@@ -23,35 +23,36 @@ require([
 	], 
 	function(AccordionContainer,BorderContainer,ContentPane,FilteringSelect,Button,DateTextBox,registry,Memory,ready,on,mouse,aspect,domAttr,domConstruct,xhr,array,parser,dom){
 		var mapa; 
-		var realtime_ctrl=false, gps_ctrl = false, maule_ctrl = false, maule_heatmap = false, maule_cluster= false; 
+		var feaktime_ctrl=false, gps_ctrl = false, maule_ctrl = false, maule_heatmap = false, est_cluster= false, maule_cluster= false; 
 		var db = {}, change = [], layer = [], url = {}, cont = 0;
-		var coordEST = [-36.778224,-73.080980], coordENAP = [-36.780,-73.125], coordMAULE = [-35.607,-71.588], coordCENTRAL = [-36.3,-72.3], coordMUNDO = [-37,-73];
+		var coordEST = [-36.778224,-73.080980];
+		var coordENAP = [-36.780,-73.125];
+		var coordMAULE = [-35.607,-71.588];
+		var coordCENTRAL = [-36.3,-72.3]
+		var coordMUNDO = [-37,-73];
 
 		ready(function(){
 			//Ejemplo de base de datos...
 			db.plantas =  [
 				{ plant: "*", value: "*", name: "todas las plantas", selected: true },
 
+				{ plant: "est", value: "est", name: "Oficina EST" },
 				{ plant: "pmaule", value: "pmaule", name: "CMPC-Planta Maule" },
 				{ plant: "enap", value: "enap", name: "ENAP" },
-				{ plant: "est", value: "est", name: "Oficina EST" },
 				];
 
 			db.centros =  [
 				{ center: "*", plant: "*", value: "*", name: "Todos los centros", selected: true },
 
-				{ center: "mauleGeneral", plant: "pmaule", value: "mauleGeneral", name: "Maule General" },
 				{ center: "gpsEST", plant: "est", value: "gpsEST", name: "GPS Pruebas EST" },
+				{ center: "mauleGeneral", plant: "pmaule", value: "mauleGeneral", name: "Maule General" },
 				];
 
 			db.trabajadores =  [
 				{ job: "*", center: "*", plant: "*", value: "*", name: "Todos los trabajadores", fEmer: "", fPers: "", cargo: "", nivel_riesgo: "", alergia: "",},
-				{ job: "1", center: "mauleGeneral", plant: "pmaule", value: "1", name: "Pablo Rojas Soto", fEmer: "Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "1", alergia: "Sin Información",},
-				{ job: "5", center: "mauleGeneral", plant: "pmaule", value: "5", name: "Jorge Emanuel Gajardo Muñoz", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "3", alergia: "Sin Información",},
-				{ job: "6", center: "mauleGeneral", plant: "pmaule", value: "6", name: "Juan Carlos Gonzalez Gonzalez", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "3", alergia: "Sin Información",},
-				{ job: "7", center: "mauleGeneral", plant: "pmaule", value: "7", name: "Patricio Dominguez", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "3", alergia: "Sin Información",},
-				{ job: "8", center: "mauleGeneral", plant: "pmaule", value: "8", name: "Joshua Roan Cisterna Molina", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "2", alergia: "Sin Información",},
-				{ job: "9", center: "mauleGeneral", plant: "pmaule", value: "9", name: "Hector Rebolledo Cuevas", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "1", alergia: "Sin Información",},
+
+				{ job: "1", center: "gpsEST", plant: "est", value: "1", name: "Carlos Hernandéz", fEmer: "133", fPers: "+56950645387", cargo: "Director EST", nivel_riesgo: "5", alergia: "nada", },
+				{ job: "21", center: "gpsEST", plant: "est", value: "21", name: "Lautaro Silva", fEmer: "133", fPers: "+56950645387", cargo: "Jefe Proyecto", nivel_riesgo: "4", alergia: "todo", },
 
 				{ job: "50001", center: "mauleGeneral", plant: "pmaule", value: "50001", name: "Patricio Alejandro Benavides YaÃ±ez", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "0", alergia: "Sin Información",},
 				{ job: "50002", center: "mauleGeneral", plant: "pmaule", value: "50002", name: "Bruno Jean Paul Cifuentes Pereira", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "0", alergia: "Sin Información",},
@@ -63,109 +64,103 @@ require([
 				{ job: "50008", center: "mauleGeneral", plant: "pmaule", value: "50008", name: "Jose Isaac Quijada Roa", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "2", alergia: "Sin Información",},
 				{ job: "50009", center: "mauleGeneral", plant: "pmaule", value: "50009", name: "Felipe Ignacio Salinas Jara", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "1", alergia: "Sin Información",},
 				{ job: "50010", center: "mauleGeneral", plant: "pmaule", value: "50010", name: "Ignacio Alejandro Torres Gonzalez", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "3", alergia: "Sin Información",},
-				{ job: "job02", center: "gpsEST", plant: "est", value: "job02", name: "Lautaro Silva", fEmer: "133", fPers: "+56950645387", cargo: "Jefe Proyecto", nivel_riesgo: "3", alergia: "nada", },
+				{ job: "50011", center: "mauleGeneral", plant: "pmaule", value: "50011", name: "Pablo Rojas Soto", fEmer: "Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "1", alergia: "Sin Información",},
+				{ job: "50012", center: "mauleGeneral", plant: "pmaule", value: "50012", name: "Jorge Emanuel Gajardo Muñoz", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "3", alergia: "Sin Información",},
+				{ job: "50013", center: "mauleGeneral", plant: "pmaule", value: "50013", name: "Juan Carlos Gonzalez Gonzalez", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "3", alergia: "Sin Información",},
+				{ job: "50014", center: "mauleGeneral", plant: "pmaule", value: "50014", name: "Patricio Dominguez", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "3", alergia: "Sin Información",},
+				{ job: "50015", center: "mauleGeneral", plant: "pmaule", value: "50015", name: "Joshua Roan Cisterna Molina", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "2", alergia: "Sin Información",},
+				{ job: "50016", center: "mauleGeneral", plant: "pmaule", value: "50016", name: "Hector Rebolledo Cuevas", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "1", alergia: "Sin Información",},
 				];
 
 			db.alertas =  [
 				{ 
 					job: "1", 
 					value: "1", 
-					enviadas: " - Ninguna.",
-					recibidas: "Mensaje: entrando a zona peligrosa, fuera de su aréa.<br />Fecha: Mie feb 23, 2016<br /> Hora: 14:50:00 Hrs",
-				},
-				{ 
-					job: "5", 
-					value: "5", 
-					enviadas: " - sin alertas registradas.",
-					recibidas: " - sin alertas registradas.",
-				},
-				{ 
-					job: "6", 
-					value: "6", 
-					enviadas: " <b> S.O.S!! </b> Posible incidente..<br />Fecha: Mie feb 23, 2016<br /> Hora: 14:50:00 Hrs", 
-					recibidas: " - sin alertas registradas.",
-				},
-				{ 
-					job: "7", 
-					value: "7", 
 					enviadas: " - sin alertas registradas.", 
 					recibidas: " - sin alertas registradas.",
-				},
-				{ 
-					job: "8", 
-					value: "8", 
+				},{ 
+					job: "21", 
+					value: "21", 
 					enviadas: " - sin alertas registradas.", 
 					recibidas: " - sin alertas registradas.",
-				},
-				{ 
-					job: "9", 
-					value: "9", 
-					enviadas: " - sin alertas registradas.", 
-					recibidas: " - sin alertas registradas.",
-				},
-				{ 
+				},{ 
 					job: "50001", 
 					value: "50001", 
 					enviadas: " <b> S.O.S!! </b> Posible incidente.", 
 					recibidas: " - sin alertas registradas.",
-				},
-				{ 
+				},{ 
 					job: "50002", 
 					value: "50002", 
 					enviadas: " - sin alertas registradas.", 
 					recibidas: " - sin alertas registradas.",
-				},
-				{ 
+				},{ 
 					job: "50003", 
 					value: "50003", 
 					enviadas: " <b> S.O.S!! </b> Posible incidente..<br />Fecha: Mie feb 23, 2016<br /> Hora: 14:50:00 Hrs",
 					recibidas: "Mensaje: entrando a zona peligrosa, fuera de su aréa.<br />Fecha: Mie feb 23, 2016<br /> Hora: 14:50:00 Hrs",
-				},
-				{ 
+				},{ 
 					job: "50004", 
 					value: "50004",  
 					enviadas: " - sin alertas registradas.", 
 					recibidas: " - sin alertas registradas.",
-				},
-				{ 
+				},{ 
 					job: "50005", 
 					value: "50005", 
 					enviadas: " - sin alertas registradas.", 
 					recibidas: " - sin alertas registradas.",
-				},
-				{ 
+				},{ 
 					job: "50006", 
 					value: "50006", 
 					enviadas: " - sin alertas registradas.", 
 					recibidas: " - sin alertas registradas.",
-				},
-				{ 
+				},{ 
 					job: "50007", 
 					value: "50007", 
 					enviadas: " <b> S.O.S!! </b> Posible incidente.",  
 					recibidas: " - sin alertas registradas.",
-				},
-				{ 
+				},{ 
 					job: "50008", 
 					value: "50008", 
 					enviadas: " - sin alertas registradas.", 
 					recibidas: " - sin alertas registradas.",
-				},
-				{ 
+				},{ 
 					job: "50009", 
 					value: "50009", 
 					enviadas: " - sin alertas registradas.", 
 					recibidas: " - sin alertas registradas.",
-				},
-				{ 
+				},{ 
 					job: "50010", 
 					value: "50010", 
 					enviadas: " - sin alertas registradas.", 
 					recibidas: " - sin alertas registradas.",
-				},
-				{ 
-					job: "job02", 
-					value: "job02", 
+				},{ 
+					job: "50011", 
+					value: "50011", 
+					enviadas: " - Ninguna.",
+					recibidas: "Mensaje: entrando a zona peligrosa, fuera de su aréa.<br />Fecha: Mie feb 23, 2016<br /> Hora: 14:50:00 Hrs",
+				},{ 
+					job: "50012", 
+					value: "50012", 
+					enviadas: " - sin alertas registradas.",
+					recibidas: " - sin alertas registradas.",
+				},{ 
+					job: "50013", 
+					value: "50013", 
+					enviadas: " <b> S.O.S!! </b> Posible incidente..<br />Fecha: Mie feb 23, 2016<br /> Hora: 14:50:00 Hrs", 
+					recibidas: " - sin alertas registradas.",
+				},{ 
+					job: "50014", 
+					value: "50014", 
+					enviadas: " - sin alertas registradas.", 
+					recibidas: " - sin alertas registradas.",
+				},{ 
+					job: "50015", 
+					value: "50015", 
+					enviadas: " - sin alertas registradas.", 
+					recibidas: " - sin alertas registradas.",
+				},{ 
+					job: "50016", 
+					value: "50016", 
 					enviadas: " - sin alertas registradas.", 
 					recibidas: " - sin alertas registradas.",
 				},
@@ -373,12 +368,23 @@ require([
 				});
 			url.leyendaTrabajador = url.wmsroot + L.Util.getParamString(ParamLydTrab);
 
+			var ParamLydGPS = L.Util.extend({
+				request:'GetLegendGraphic',
+				version:'1.1.0',
+				format:'image/png',
+				width:'20',
+				height:'20',
+				legend_options:'forceLabels:on',
+				layer:'est40516:distinto',
+				style:'Trabajador'
+				});
+			url.leyendaGPS = url.wmsroot + L.Util.getParamString(ParamLydGPS);
+
 			var ParamGeoJSON = L.Util.extend({
 				service : 'WFS',
 				version : '1.0.0',
 				request : 'GetFeature',
 				typeName : 'est40516:distinto',
-				//typeName : 'est40516:fakepeople',
 				outputFormat : 'application/json',
 				style : 'JOB_Peligro'
 				//maxfeatures : 50
@@ -393,21 +399,9 @@ require([
 				typeName : 'est40516:fakepeople',
 				outputFormat : 'application/json',
 				style : 'JOB_Peligro'
-				//maxfeatures : 50
 				});
 			url.fakeGeoJSON = url.owsroot + L.Util.getParamString(FakeGeoJSON);
 			console.log(url.fakeGeoJSON);
-
-			//generamos la leyenda inicial (generica)
-			domConstruct.create('p', {innerHTML:'Trabajadores:'}, dom.byId('leyenda'));
-			domConstruct.create('img', {src: 'images/punto.png', id:'job'}, dom.byId('leyenda'));
-			domConstruct.create('p', {innerHTML:'Edificacion:'}, dom.byId('leyenda'));
-			domConstruct.create('img', {src: 'images/punto.png',id:'work'}, dom.byId('leyenda'));
-			//HEatMAp
-			domConstruct.create('p', {innerHTML:'Trabajadores:'}, dom.byId('leyendaHeatmap'));
-			domConstruct.create('img', {src: 'images/punto.png', id:'jobHM'}, dom.byId('leyendaHeatmap'));
-			domConstruct.create('p', {innerHTML:'Areas:'}, dom.byId('leyendaHeatmap'));
-			domConstruct.create('img', {src: 'images/punto.png',id:'workHM'}, dom.byId('leyendaHeatmap'));
 
 			// **** INICIAMOS EL MAPA (LEAFLET) **** //
 			mapa = L.map('map');
@@ -445,15 +439,15 @@ require([
 			aspect.after(registry.byId("centro"), "onChange", selectJob_CN, true);
 			aspect.after(registry.byId("trabajador"), "onChange", selectJob,true);
 
-			//filtros para consultas...
-			aspect.after(registry.byId("plantaQuery"), "onChange", query_Planta, true);
-			aspect.after(registry.byId("centroQuery"), "onChange", query_CN, true);
-			aspect.after(registry.byId("trabajadorQuery"), "onChange", query_Job,true);
-
 			// crear botones para consultas:
 			var BtnHeatmap = new Button({label: "Ver riesgo",onClick: heatMap}, "BtnHeatmap").startup();
 			var BtnCluster = new Button({label: "Clustering",onClick: markerCluster}, "BtnCluster").startup();
 			var BtnTiempoEnPlanta = new Button({label: "Tiempo en Planta",onClick: enDesarrollo}, "BtnTiempoEnPlanta").startup();
+
+			//filtros para consultas...
+			aspect.after(registry.byId("plantaQuery"), "onChange", query_Planta, true);
+			aspect.after(registry.byId("centroQuery"), "onChange", query_CN, true);
+			aspect.after(registry.byId("trabajadorQuery"), "onChange", query_Job,true);
 		});
 
 		/* Seleccion de mapas */
@@ -463,8 +457,9 @@ require([
 			//limpiamos mapas...
 			maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
 			maule_cluster = removeLayer(layer.markers,maule_cluster,false);
+			est_cluster = removeLayer(layer.markers,est_cluster,false);
 			maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
-			realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
+			feaktime_ctrl = removeLayer(layer.realtime,feaktime_ctrl,true);
 			gps_ctrl = removeLayer(layer.gps,gps_ctrl,true);
 			domConstruct.destroy("aviso");
 
@@ -474,6 +469,18 @@ require([
 				mapa.setView(coordCENTRAL, 8);
 				//limpiamos la leyenda
 				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
+				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
+				}
+
+			//Oficina EST
+			if(Planta === 'est'){
+				mapa.setView(coordEST, 16);
+				/**/
+				gps_ctrl = true;
+				layer.gps = realTime(url.GeoJSON,'ALL').addTo(mapa).bringToFront().on('update', function(e) {console.log('gps est: ',cont++)});
+				layer.control.addOverlay(layer.gps,'GPS');
+
+				domAttr.set(dom.byId('job'), "src", url.leyendaGPS);
 				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
 				}
 
@@ -489,18 +496,13 @@ require([
 				layer.control.addOverlay(layer.maule,'Planta Maule');  //Agregar al control
 				maule_ctrl = true;
 				/**/
+				feaktime_ctrl = true;
 				layer.realtime = realTime(url.fakeGeoJSON,'ALL');
 				layer.realtime.addTo(mapa);
-				//var markers = L.markerClusterGroup();
-				//markers.addLayer(layer.realtime).addTo(mapa);
 				layer.realtime.bringToFront(); //traer capa al frente
 				layer.realtime.on('update', function(e) {console.log('rt planta pmaule: ',cont++)});
 
 				layer.control.addOverlay(layer.realtime,'Trabajadores');
-				/**/
-				gps_ctrl = true;
-				layer.gps = realTime(url.GeoJSON,'ALL').addTo(mapa).bringToFront().on('update', function(e) {console.log('rt planta pmaule: ',cont++)});
-				layer.control.addOverlay(layer.gps,'GPS');
 
 				domAttr.set(dom.byId('job'), "src", url.leyendaTrabajador);
 				domAttr.set(dom.byId('work'), "src", url.leyendaPMaule_edificacion);
@@ -509,13 +511,7 @@ require([
 			//Enap
 			if(Planta === 'enap'){
 				mapa.setView(coordENAP, 15);
-				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
-				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
-				}
 
-			//Oficina EST
-			if(Planta === 'est'){
-				mapa.setView(coordEST, 18);
 				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
 				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
 				}
@@ -526,13 +522,25 @@ require([
 
 			maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
 			maule_cluster = removeLayer(layer.markers,maule_cluster,false);
+			est_cluster = removeLayer(layer.markers,est_cluster,false);
 			maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
-			realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
+			feaktime_ctrl = removeLayer(layer.realtime,feaktime_ctrl,true);
 			gps_ctrl = removeLayer(layer.gps,gps_ctrl,true);
 			domConstruct.destroy("aviso");
 
 			if(Centro_negocio === '*'){
 				mapa.setView([-36.3,-72.3], 8);
+				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
+				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
+				}
+
+			if(Centro_negocio === 'gpsEST'){
+				mapa.setView(coordEST, 18);
+
+				gps_ctrl = true;
+				layer.gps = realTime(url.GeoJSON,'ALL').addTo(mapa).bringToFront().on('update', function(e) {console.log('rt cn est: ',cont++)});
+				layer.control.addOverlay(layer.gps,'GPS');
+
 				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
 				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
 				}
@@ -546,19 +554,12 @@ require([
 				layer.control.addOverlay(layer.maule,'Planta Maule');
 				maule_ctrl = true;
 
+				feaktime_ctrl = true;
 				layer.realtime = realTime(url.fakeGeoJSON,'ALL').addTo(mapa).bringToFront().on('update', function(e) {console.log('rt cn pmaule: ',cont++)});
 				layer.control.addOverlay(layer.realtime,'Trabajadores');
 
 				domAttr.set(dom.byId('job'), "src", url.leyendaTrabajador);
 				domAttr.set(dom.byId('work'), "src", url.leyendaPMaule_edificacion);
-				
-				}
-
-			if(Centro_negocio === 'gpsEST'){
-				mapa.setView(coordEST, 18);
-
-				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
-				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
 				}
 			}};
 
@@ -568,8 +569,9 @@ require([
 
 			maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
 			maule_cluster = removeLayer(layer.markers,maule_cluster,false);
+			est_cluster = removeLayer(layer.markers,est_cluster,false);
 			maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
-			realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
+			feaktime_ctrl = removeLayer(layer.realtime,feaktime_ctrl,true);
 			gps_ctrl = removeLayer(layer.gps,gps_ctrl,true);
 			domConstruct.destroy("aviso");
 
@@ -579,16 +581,35 @@ require([
 				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
 				}
 
+			if(planta == 'est'){
+				mapa.setView(coordEST, 18);
+
+				var zoom = true;
+				gps_ctrl = true;
+				layer.gps = realTime(url.GeoJSON,jobId).addTo(mapa).bringToFront().on('update', function(e) {
+					if(zoom) mapa.fitBounds(layer.gps.getBounds());
+					zoom = false;
+					console.log('rt job est: ',cont++);
+					});
+				layer.control.addOverlay(layer.gps,'Trabajadores');
+
+				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
+				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
+				}
+
 			if(planta == 'pmaule'){
-				mapa.setView(coordMAULE, 16);
+				mapa.setView(coordMAULE, 18);
 
 				if(registry.byId("trabajador").item.nivel_riesgo == '3')
 					domConstruct.create('span', {id:'aviso', innerHTML:'Trabajador en estado de alto riesgo!<br /> Alerta enviada'}, dom.byId('ALERTOIDE'));
 
+				maule_ctrl = true;
 				layer.maule.addTo(mapa).bringToFront();
 				layer.control.addOverlay(layer.maule,'Planta Maule'); 
-				maule_ctrl = true;
+
 				var zoom = true;
+				feaktime_ctrl = true;
+
 				layer.realtime = realTime(url.fakeGeoJSON,jobId).addTo(mapa).bringToFront().on('update', function(e) {
 					if(zoom) mapa.fitBounds(layer.realtime.getBounds());
 					zoom = false;
@@ -605,179 +626,10 @@ require([
 				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
 				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
 				}
-
-			if(planta == 'est'){
-				mapa.setView(coordEST, 18);
-				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
-				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
-				}
 			}};
-
-		/* Seleccion de mapas */
-		function query_Planta(valor) {
-			var Planta = registry.byId("plantaQuery").item.plant;
-
-			maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
-			maule_cluster = removeLayer(layer.markers,maule_cluster,false);
-			maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
-			realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
-			gps_ctrl = removeLayer(layer.gps,gps_ctrl,true);
-			domConstruct.destroy("aviso");
-
-			domAttr.set(dom.byId('jobHM'), "src", 'images/punto.png');
-			domAttr.set(dom.byId('workHM'), "src", 'images/punto.png');
-			dom.byId("resultHeatmap").innerHTML = "planta: " + registry.byId("plantaQuery").item.name;
-
-			if(Planta === '*'){
-				mapa.setView(coordCENTRAL, 8);
-				layer.control.removeLayer(layer.maule);
-				}
-
-			if(Planta === 'pmaule'){
-				mapa.setView(coordMAULE, 16);
-				layer.control.addOverlay(layer.maule,'Planta Maule');
-				}
-
-			if(Planta === 'enap'){
-				mapa.setView(coordENAP, 15);
-				layer.control.removeLayer(layer.maule);
-				}
-
-			if(Planta === 'est'){
-				mapa.setView(coordEST, 18);
-				layer.control.removeLayer(layer.maule);
-				}
-			};
-
-		/* mapa de calor */
-		var heatMap =  function (){
-			var planta = registry.byId("plantaQuery").item.plant;
-
-			maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
-			maule_cluster = removeLayer(layer.markers,maule_cluster,false);
-			maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
-			realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
-			gps_ctrl = removeLayer(layer.gps,gps_ctrl,true);
-			domConstruct.destroy("aviso");
-
-			if(planta == 'pmaule'){
-				maule_heatmap = true;
-				layer.heatmap = L.tileLayer.wms(url.wmsroot, {
-					//layers: 'est40516:distinto',
-					layers: 'est40516:fakepeople',
-					transparent: true,
-					format: 'image/png',
-					styles: 'heatmap',
-					srs: 'EPSG:4326',
-					opacity: 1,
-					service: 'WMS',
-					version: '1.1.0',
-					request: 'GetMap'
-					});
-				layer.heatmap.addTo(mapa).bringToFront();
-				layer.control.addOverlay(layer.heatmap,'heatmap');
-
-				layer.realtime = realTime(url.fakeGeoJSON,'ALL').addTo(mapa).bringToFront().on('update', function(e) {console.log('heatmap: ',cont++)});
-				layer.control.addOverlay(layer.realtime,'Trabajadores');
-
-				domAttr.set(dom.byId('jobHM'), "src", url.leyendaTrabajador);
-				domAttr.set(dom.byId('workHM'), "src", url.leyendaPMaule_heatmap);
-				dom.byId("resultHeatmap").innerHTML = "Mapa de calor con areas de riesgo: " + registry.byId("plantaQuery").item.name;
-				}
-			else {
-				domAttr.set(dom.byId('jobHM'), "src", 'images/punto.png');
-				domAttr.set(dom.byId('workHM'), "src", 'images/punto.png');
-				dom.byId("resultHeatmap").innerHTML = "Mapa de calor con areas de riesgo: " + registry.byId("plantaQuery").item.name + " Sin Datos";
-				};
-			};
-
-		/* markerCluster */
-		var markerCluster =  function (){
-			var planta = registry.byId("plantaQuery").item.plant;
-
-			maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
-			maule_cluster = removeLayer(layer.markers,maule_cluster,false);
-			maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
-			realtime_ctrl = removeLayer(layer.realtime,realtime_ctrl,true);
-			gps_ctrl = removeLayer(layer.gps,gps_ctrl,true);
-			domConstruct.destroy("aviso");
-
-			if(planta == 'pmaule'){
-				maule_cluster = true;
-
-				layer.realtime = realTime(url.fakeGeoJSON,'ALL').bringToFront().on('update', function(e) {console.log('heatmap: ',cont++)});
-				layer.control.addOverlay(layer.realtime,'Trabajadores');
-
-				/*Marker cluster*/
-				layer.markers = L.markerClusterGroup({ singleMarkerMode: true, spiderfyOnMaxZoom: false, showCoverageOnHover: false, zoomToBoundsOnClick: false});
-				layer.markers.addLayer(L.geoJson(xhrGeoJSON(url.fakeGeoJSON,'ALL'), {onEachFeature: function (feature, layer) {layer.bindPopup(feature.properties.nivel_ries);}})).addTo(mapa);
-				layer.markers.on('click', function (a) {
-					console.log('marker ' + a.layer);
-					});
-
-				layer.markers.on('clusterclick', function (a) {
-					// a.layer is actually a cluster
-					console.log('cluster ' + a.layer.getAllChildMarkers().length);
-					});
-				/*fin de marker cluster*/
-
-				domAttr.set(dom.byId('jobHM'), "src", url.leyendaTrabajador);
-				domAttr.set(dom.byId('workHM'), "src", 'images/punto.png');
-				dom.byId("resultHeatmap").innerHTML = "";
-				}
-			else if(planta == 'est'){
-				var markers = L.markerClusterGroup({ spiderfyOnMaxZoom: false, showCoverageOnHover: false, zoomToBoundsOnClick: false });
-
-				function populate() {
-					for (var i = 0; i < 100; i++) {
-						var m = L.marker(getRandomLatLng(mapa));
-						markers.addLayer(m);
-					}
-					return false;
-				}
-				function getRandomLatLng(mapa) {
-					var bounds = mapa.getBounds(),
-						southWest = bounds.getSouthWest(),
-						northEast = bounds.getNorthEast(),
-						lngSpan = northEast.lng - southWest.lng,
-						latSpan = northEast.lat - southWest.lat;
-
-					return L.latLng(
-							southWest.lat + latSpan * Math.random(),
-							southWest.lng + lngSpan * Math.random());
-				}
-
-				markers.on('clusterclick', function (a) {
-					a.layer.spiderfy();
-				});
-
-				populate();
-				mapa.addLayer(markers);
-				}
-			else {
-				domAttr.set(dom.byId('jobHM'), "src", 'images/punto.png');
-				domAttr.set(dom.byId('workHM'), "src", 'images/punto.png');
-				dom.byId("resultHeatmap").innerHTML = "sin datos";
-				};
-
-			};
-		/* consultas */
-		function query_CN(valor) {}
-		function query_Job(valor) {}
-
-		/*remover capa del mapa y de su control */
-		var removeLayer = function(remover,ctrl,ifRealTime){
-			if(ctrl){
-				mapa.removeLayer(remover);
-				layer.control.removeLayer(remover);
-				if(ifRealTime)remover.stop();
-				}
-			return false;
-			}
 
 		/*Funciones de Realtime */
 		var realTime = function(urlGeoJSON,ID){
-			realtime_ctrl = true;
 			return L.realtime(
 					function(success, error) {
 						L.Realtime
@@ -890,7 +742,174 @@ require([
 				);
 			}
 
-		/*funciones secundarias */
+		/* Seleccion de mapas */
+		function query_Planta(valor) {
+			var Planta = registry.byId("plantaQuery").item.plant;
+
+			maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
+			maule_cluster = removeLayer(layer.markers,maule_cluster,false);
+			est_cluster = removeLayer(layer.markers,est_cluster,false);
+			maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
+			feaktime_ctrl = removeLayer(layer.realtime,feaktime_ctrl,true);
+			gps_ctrl = removeLayer(layer.gps,gps_ctrl,true);
+			domConstruct.destroy("aviso");
+
+			domAttr.set(dom.byId('jobHM'), "src", 'images/punto.png');
+			domAttr.set(dom.byId('workHM'), "src", 'images/punto.png');
+			dom.byId("resultHeatmap").innerHTML = "planta: " + registry.byId("plantaQuery").item.name;
+
+			if(Planta === '*'){
+				mapa.setView(coordCENTRAL, 8);
+				layer.control.removeLayer(layer.maule);
+				}
+
+			if(Planta === 'pmaule'){
+				mapa.setView(coordMAULE, 16);
+				layer.control.addOverlay(layer.maule,'Planta Maule');
+				}
+
+			if(Planta === 'enap'){
+				mapa.setView(coordENAP, 15);
+				layer.control.removeLayer(layer.maule);
+				}
+
+			if(Planta === 'est'){
+				mapa.setView(coordEST, 18);
+				layer.control.removeLayer(layer.maule);
+				}
+			};
+
+		/* mapa de calor */
+		var heatMap =  function (){
+			var planta = registry.byId("plantaQuery").item.plant;
+
+			maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
+			maule_cluster = removeLayer(layer.markers,maule_cluster,false);
+			est_cluster = removeLayer(layer.markers,est_cluster,false);
+			maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
+			feaktime_ctrl = removeLayer(layer.realtime,feaktime_ctrl,true);
+			gps_ctrl = removeLayer(layer.gps,gps_ctrl,true);
+			domConstruct.destroy("aviso");
+
+			if(planta == 'pmaule'){
+				maule_heatmap = true;
+				layer.heatmap = L.tileLayer.wms(url.wmsroot, {
+					//layers: 'est40516:distinto',
+					layers: 'est40516:fakepeople',
+					transparent: true,
+					format: 'image/png',
+					styles: 'heatmap',
+					srs: 'EPSG:4326',
+					opacity: 1,
+					service: 'WMS',
+					version: '1.1.0',
+					request: 'GetMap'
+					});
+				layer.heatmap.addTo(mapa).bringToFront();
+				layer.control.addOverlay(layer.heatmap,'heatmap');
+
+				layer.realtime = realTime(url.fakeGeoJSON,'ALL').addTo(mapa).bringToFront().on('update', function(e) {console.log('heatmap: ',cont++)});
+				layer.control.addOverlay(layer.realtime,'Trabajadores');
+
+				domAttr.set(dom.byId('jobHM'), "src", url.leyendaTrabajador);
+				domAttr.set(dom.byId('workHM'), "src", url.leyendaPMaule_heatmap);
+				dom.byId("resultHeatmap").innerHTML = "Mapa de calor con areas de riesgo: " + registry.byId("plantaQuery").item.name;
+				}
+			else {
+				domAttr.set(dom.byId('jobHM'), "src", 'images/punto.png');
+				domAttr.set(dom.byId('workHM'), "src", 'images/punto.png');
+				dom.byId("resultHeatmap").innerHTML = "Mapa de calor con areas de riesgo: " + registry.byId("plantaQuery").item.name + " Sin Datos";
+				};
+			};
+
+		/* markerCluster */
+		var markerCluster =  function (){
+			var planta = registry.byId("plantaQuery").item.plant;
+
+			maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
+			maule_cluster = removeLayer(layer.markers,maule_cluster,false);
+			est_cluster = removeLayer(layer.markers,est_cluster,false);
+			maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
+			feaktime_ctrl = removeLayer(layer.realtime,feaktime_ctrl,true);
+			gps_ctrl = removeLayer(layer.gps,gps_ctrl,true);
+			domConstruct.destroy("aviso");
+
+			if(planta == 'pmaule'){
+				maule_cluster = true;
+
+				layer.realtime = realTime(url.fakeGeoJSON,'ALL').bringToFront().on('update', function(e) {console.log('heatmap: ',cont++)});
+				layer.control.addOverlay(layer.realtime,'Trabajadores');
+
+				/*Marker cluster*/
+				layer.markers = L.markerClusterGroup({ singleMarkerMode: true, spiderfyOnMaxZoom: false, showCoverageOnHover: false, zoomToBoundsOnClick: false});
+				layer.markers.addLayer(L.geoJson(xhrGeoJSON(url.fakeGeoJSON,'ALL'), {onEachFeature: function (feature, layer) {layer.bindPopup(feature.properties.nivel_ries);}})).addTo(mapa);
+				layer.markers.on('click', function (a) {
+					console.log('marker ' + a.layer);
+					});
+
+				layer.markers.on('clusterclick', function (a) {
+					// a.layer is actually a cluster
+					console.log('cluster ' + a.layer.getAllChildMarkers().length);
+					});
+				/*fin de marker cluster*/
+
+				domAttr.set(dom.byId('jobHM'), "src", url.leyendaTrabajador);
+				domAttr.set(dom.byId('workHM'), "src", 'images/punto.png');
+				dom.byId("resultHeatmap").innerHTML = "";
+				}
+			else if(planta == 'est'){
+				layer.markers = L.markerClusterGroup({ spiderfyOnMaxZoom: false, showCoverageOnHover: false, zoomToBoundsOnClick: false });
+				est_cluster = true;
+
+				function populate() {
+					for (var i = 0; i < 30; i++) {
+						var m = L.marker(getRandomLatLng(mapa));
+						layer.markers.addLayer(m);
+					}
+					return false;
+				}
+				function getRandomLatLng(mapa) {
+					var bounds = mapa.getBounds(),
+						southWest = bounds.getSouthWest(),
+						northEast = bounds.getNorthEast(),
+						lngSpan = northEast.lng - southWest.lng,
+						latSpan = northEast.lat - southWest.lat;
+
+					return L.latLng(
+							southWest.lat + latSpan * Math.random(),
+							southWest.lng + lngSpan * Math.random());
+				}
+
+				layer.markers.on('clusterclick', function (a) {
+					a.layer.spiderfy();
+				});
+
+				populate();
+				mapa.addLayer(layer.markers);
+				}
+			else {
+				domAttr.set(dom.byId('jobHM'), "src", 'images/punto.png');
+				domAttr.set(dom.byId('workHM'), "src", 'images/punto.png');
+				dom.byId("resultHeatmap").innerHTML = "sin datos";
+				};
+
+			};
+		/* consultas */
+		function query_CN(valor) {}
+		function query_Job(valor) {}
+
+		/*** funciones secundarias ***/
+
+		//remover capa del mapa y de su control
+		var removeLayer = function(remover,ctrl,ifRealTime){
+			if(ctrl){
+				mapa.removeLayer(remover);
+				layer.control.removeLayer(remover);
+				if(ifRealTime)remover.stop();
+				}
+			return false;
+			}
+
 		function ShowWMSLayersInfo(evt){
 			var urls = getFeatureInfoUrl(mapa,layer.maule,evt.latlng,{'info_format': 'text/html'});
 			var inner = '<iframe src="' + urls + '" width="100%" height="110px" style="border:none"></iframe>';
