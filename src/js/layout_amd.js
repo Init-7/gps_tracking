@@ -1,5 +1,3 @@
-
-
 require([
 	"dijit/layout/AccordionContainer", 
 	"dijit/layout/BorderContainer", 
@@ -24,152 +22,229 @@ require([
 	function(AccordionContainer,BorderContainer,ContentPane,FilteringSelect,Button,DateTextBox,registry,Memory,ready,on,mouse,aspect,domAttr,domConstruct,xhr,array,parser,dom){
 		var mapa; 
 		var feaktime_ctrl=false, gps_ctrl = false, maule_ctrl = false, maule_heatmap = false, est_cluster= false, maule_cluster= false; 
-		var db = {}, change = [], layer = [], url = {}, cont = 0;
-		var coordEST = [-36.778224,-73.080980];
-		var coordENAP = [-36.780,-73.125];
-		var coordMAULE = [-35.607,-71.588];
-		var coordCENTRAL = [-36.3,-72.3]
-		var coordMUNDO = [-37,-73];
+		var change = [], layer = [], cont = 0;
+
+		//coordenadas de interes...
+		var coord = [];
+		coord.EST = [-36.778224,-73.080980];
+		coord.ENAP = [-36.780,-73.125];
+		coord.MAULE = [-35.607,-71.588];
+		coord.CENTRAL = [-36.3,-72.3];
+
+		//Ejemplo de base de datos...
+		var db = {};
+		db.plantas =  [
+			{ plant: "*", value: "*", name: "todas las plantas", selected: true },
+
+			{ plant: "est", value: "est", name: "Oficina EST" },
+			{ plant: "pmaule", value: "pmaule", name: "CMPC-Planta Maule" },
+			{ plant: "enap", value: "enap", name: "ENAP" },
+			];
+
+		db.centros =  [
+			{ center: "*", plant: "*", value: "*", name: "Todos los centros", selected: true },
+
+			{ center: "gpsEST", plant: "est", value: "gpsEST", name: "GPS Pruebas EST" },
+			{ center: "mauleGeneral", plant: "pmaule", value: "mauleGeneral", name: "Maule General" },
+			];
+
+		db.trabajadores =  [
+			{ job: "*", center: "*", plant: "*", value: "*", name: "Todos los trabajadores", fEmer: "", fPers: "", cargo: "", nivel_riesgo: "", alergia: "",},
+
+			{ job: "1", center: "gpsEST", plant: "est", value: "1", name: "Carlos Hernandéz", fEmer: "133", fPers: "+56950645387", cargo: "Director EST", nivel_riesgo: "5", alergia: "nada", },
+			{ job: "21", center: "gpsEST", plant: "est", value: "21", name: "Lautaro Silva", fEmer: "133", fPers: "+56950645387", cargo: "Jefe Proyecto", nivel_riesgo: "4", alergia: "todo", },
+
+			{ job: "50001", center: "mauleGeneral", plant: "pmaule", value: "50001", name: "Patricio Alejandro Benavides YaÃ±ez", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "0", alergia: "Sin Información",},
+			{ job: "50002", center: "mauleGeneral", plant: "pmaule", value: "50002", name: "Bruno Jean Paul Cifuentes Pereira", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "0", alergia: "Sin Información",},
+			{ job: "50003", center: "mauleGeneral", plant: "pmaule", value: "50003", name: "Francisco Ignacio Diaz Diaz", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "3", alergia: "Sin Información",},
+			{ job: "50004", center: "mauleGeneral", plant: "pmaule", value: "50004", name: "Bayron Jeremy Diaz Godoy", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "1", alergia: "Sin Información",},
+			{ job: "50005", center: "mauleGeneral", plant: "pmaule", value: "50005", name: "Luis Patricio Fernandoy Acevedo", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "1", alergia: "Sin Información",},
+			{ job: "50006", center: "mauleGeneral", plant: "pmaule", value: "50006", name: "Fredy Alonzo NuÃ±ez Gonzalez", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "3", alergia: "Sin Información",},
+			{ job: "50007", center: "mauleGeneral", plant: "pmaule", value: "50007", name: "Maximiliano Benjamin Oses Iglesias", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "2", alergia: "Sin Información",},
+			{ job: "50008", center: "mauleGeneral", plant: "pmaule", value: "50008", name: "Jose Isaac Quijada Roa", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "2", alergia: "Sin Información",},
+			{ job: "50009", center: "mauleGeneral", plant: "pmaule", value: "50009", name: "Felipe Ignacio Salinas Jara", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "1", alergia: "Sin Información",},
+			{ job: "50010", center: "mauleGeneral", plant: "pmaule", value: "50010", name: "Ignacio Alejandro Torres Gonzalez", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "3", alergia: "Sin Información",},
+			{ job: "50011", center: "mauleGeneral", plant: "pmaule", value: "50011", name: "Pablo Rojas Soto", fEmer: "Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "1", alergia: "Sin Información",},
+			{ job: "50012", center: "mauleGeneral", plant: "pmaule", value: "50012", name: "Jorge Emanuel Gajardo Muñoz", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "3", alergia: "Sin Información",},
+			{ job: "50013", center: "mauleGeneral", plant: "pmaule", value: "50013", name: "Juan Carlos Gonzalez Gonzalez", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "3", alergia: "Sin Información",},
+			{ job: "50014", center: "mauleGeneral", plant: "pmaule", value: "50014", name: "Patricio Dominguez", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "3", alergia: "Sin Información",},
+			{ job: "50015", center: "mauleGeneral", plant: "pmaule", value: "50015", name: "Joshua Roan Cisterna Molina", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "2", alergia: "Sin Información",},
+			{ job: "50016", center: "mauleGeneral", plant: "pmaule", value: "50016", name: "Hector Rebolledo Cuevas", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "1", alergia: "Sin Información",},
+			];
+
+		db.alertas =  [
+			{ 
+				job: "1", 
+				value: "1", 
+				enviadas: " - sin alertas registradas.", 
+				recibidas: " - sin alertas registradas.",
+			},{ 
+				job: "21", 
+				value: "21", 
+				enviadas: " - sin alertas registradas.", 
+				recibidas: " - sin alertas registradas.",
+			},{ 
+				job: "50001", 
+				value: "50001", 
+				enviadas: " <b> S.O.S!! </b> Posible incidente.", 
+				recibidas: " - sin alertas registradas.",
+			},{ 
+				job: "50002", 
+				value: "50002", 
+				enviadas: " - sin alertas registradas.", 
+				recibidas: " - sin alertas registradas.",
+			},{ 
+				job: "50003", 
+				value: "50003", 
+				enviadas: " <b> S.O.S!! </b> Posible incidente..<br />Fecha: Mie feb 23, 2016<br /> Hora: 14:50:00 Hrs",
+				recibidas: "Mensaje: entrando a zona peligrosa, fuera de su aréa.<br />Fecha: Mie feb 23, 2016<br /> Hora: 14:50:00 Hrs",
+			},{ 
+				job: "50004", 
+				value: "50004",  
+				enviadas: " - sin alertas registradas.", 
+				recibidas: " - sin alertas registradas.",
+			},{ 
+				job: "50005", 
+				value: "50005", 
+				enviadas: " - sin alertas registradas.", 
+				recibidas: " - sin alertas registradas.",
+			},{ 
+				job: "50006", 
+				value: "50006", 
+				enviadas: " - sin alertas registradas.", 
+				recibidas: " - sin alertas registradas.",
+			},{ 
+				job: "50007", 
+				value: "50007", 
+				enviadas: " <b> S.O.S!! </b> Posible incidente.",  
+				recibidas: " - sin alertas registradas.",
+			},{ 
+				job: "50008", 
+				value: "50008", 
+				enviadas: " - sin alertas registradas.", 
+				recibidas: " - sin alertas registradas.",
+			},{ 
+				job: "50009", 
+				value: "50009", 
+				enviadas: " - sin alertas registradas.", 
+				recibidas: " - sin alertas registradas.",
+			},{ 
+				job: "50010", 
+				value: "50010", 
+				enviadas: " - sin alertas registradas.", 
+				recibidas: " - sin alertas registradas.",
+			},{ 
+				job: "50011", 
+				value: "50011", 
+				enviadas: " - Ninguna.",
+				recibidas: "Mensaje: entrando a zona peligrosa, fuera de su aréa.<br />Fecha: Mie feb 23, 2016<br /> Hora: 14:50:00 Hrs",
+			},{ 
+				job: "50012", 
+				value: "50012", 
+				enviadas: " - sin alertas registradas.",
+				recibidas: " - sin alertas registradas.",
+			},{ 
+				job: "50013", 
+				value: "50013", 
+				enviadas: " <b> S.O.S!! </b> Posible incidente..<br />Fecha: Mie feb 23, 2016<br /> Hora: 14:50:00 Hrs", 
+				recibidas: " - sin alertas registradas.",
+			},{ 
+				job: "50014", 
+				value: "50014", 
+				enviadas: " - sin alertas registradas.", 
+				recibidas: " - sin alertas registradas.",
+			},{ 
+				job: "50015", 
+				value: "50015", 
+				enviadas: " - sin alertas registradas.", 
+				recibidas: " - sin alertas registradas.",
+			},{ 
+				job: "50016", 
+				value: "50016", 
+				enviadas: " - sin alertas registradas.", 
+				recibidas: " - sin alertas registradas.",
+			},
+			];
+
+		//urls del servidor de mapas
+		var url = {};
+		url.wmsroot = 'http://104.196.40.15:8080/geoserver/est40516/wms';
+		url.owsroot = 'http://104.196.40.15:8080/geoserver/est40516/ows';
+
+		//generamos url de servicios de mapas, desde el servidor...
+		var ParamLydPMaule_edificacion = L.Util.extend({
+			request:'GetLegendGraphic',
+			version:'1.1.0',
+			format:'image/png',
+			width:'20',
+			height:'20',
+			legend_options:'forceLabels:on',
+			layer:'est40516:Edificacion',
+			opacity:'0.3',
+			style:'PMaule'
+			});
+		url.leyendaPMaule_edificacion = url.wmsroot + L.Util.getParamString(ParamLydPMaule_edificacion);
+
+		var ParamLydPMaule_heatmap = L.Util.extend({
+			request:'GetLegendGraphic',
+			version:'1.1.0',
+			format:'image/png',
+			width:'20',
+			height:'20',
+			legend_options:'forceLabels:on',
+			//layer:'est40516:distinto',
+			layer:'est40516:fakepeople',
+			opacity:'0.3',
+			style:'heatmap'
+			});
+		url.leyendaPMaule_heatmap = url.wmsroot + L.Util.getParamString(ParamLydPMaule_heatmap);
+
+		var ParamLydTrab = L.Util.extend({
+			request:'GetLegendGraphic',
+			version:'1.1.0',
+			format:'image/png',
+			width:'20',
+			height:'20',
+			legend_options:'forceLabels:on',
+			layer:'est40516:distinto',
+			style:'JOB_Peligro'
+			});
+		url.leyendaTrabajador = url.wmsroot + L.Util.getParamString(ParamLydTrab);
+
+		var ParamLydGPS = L.Util.extend({
+			request:'GetLegendGraphic',
+			version:'1.1.0',
+			format:'image/png',
+			width:'20',
+			height:'20',
+			legend_options:'forceLabels:on',
+			layer:'est40516:distinto',
+			style:'Trabajador'
+			});
+		url.leyendaGPS = url.wmsroot + L.Util.getParamString(ParamLydGPS);
+
+		var ParamGeoJSON = L.Util.extend({
+			service : 'WFS',
+			version : '1.0.0',
+			request : 'GetFeature',
+			typeName : 'est40516:distinto',
+			outputFormat : 'application/json',
+			style : 'JOB_Peligro'
+			//maxfeatures : 50
+			});
+		url.GeoJSON = url.owsroot + L.Util.getParamString(ParamGeoJSON);
+
+		var FakeGeoJSON = L.Util.extend({
+			service : 'WFS',
+			version : '1.0.0',
+			request : 'GetFeature',
+			typeName : 'est40516:fakepeople',
+			outputFormat : 'application/json',
+			style : 'JOB_Peligro'
+			});
+		url.fakeGeoJSON = url.owsroot + L.Util.getParamString(FakeGeoJSON);
 
 		ready(function(){
-			//Ejemplo de base de datos...
-			db.plantas =  [
-				{ plant: "*", value: "*", name: "todas las plantas", selected: true },
-
-				{ plant: "est", value: "est", name: "Oficina EST" },
-				{ plant: "pmaule", value: "pmaule", name: "CMPC-Planta Maule" },
-				{ plant: "enap", value: "enap", name: "ENAP" },
-				];
-
-			db.centros =  [
-				{ center: "*", plant: "*", value: "*", name: "Todos los centros", selected: true },
-
-				{ center: "gpsEST", plant: "est", value: "gpsEST", name: "GPS Pruebas EST" },
-				{ center: "mauleGeneral", plant: "pmaule", value: "mauleGeneral", name: "Maule General" },
-				];
-
-			db.trabajadores =  [
-				{ job: "*", center: "*", plant: "*", value: "*", name: "Todos los trabajadores", fEmer: "", fPers: "", cargo: "", nivel_riesgo: "", alergia: "",},
-
-				{ job: "1", center: "gpsEST", plant: "est", value: "1", name: "Carlos Hernandéz", fEmer: "133", fPers: "+56950645387", cargo: "Director EST", nivel_riesgo: "5", alergia: "nada", },
-				{ job: "21", center: "gpsEST", plant: "est", value: "21", name: "Lautaro Silva", fEmer: "133", fPers: "+56950645387", cargo: "Jefe Proyecto", nivel_riesgo: "4", alergia: "todo", },
-
-				{ job: "50001", center: "mauleGeneral", plant: "pmaule", value: "50001", name: "Patricio Alejandro Benavides YaÃ±ez", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "0", alergia: "Sin Información",},
-				{ job: "50002", center: "mauleGeneral", plant: "pmaule", value: "50002", name: "Bruno Jean Paul Cifuentes Pereira", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "0", alergia: "Sin Información",},
-				{ job: "50003", center: "mauleGeneral", plant: "pmaule", value: "50003", name: "Francisco Ignacio Diaz Diaz", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "3", alergia: "Sin Información",},
-				{ job: "50004", center: "mauleGeneral", plant: "pmaule", value: "50004", name: "Bayron Jeremy Diaz Godoy", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "1", alergia: "Sin Información",},
-				{ job: "50005", center: "mauleGeneral", plant: "pmaule", value: "50005", name: "Luis Patricio Fernandoy Acevedo", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "1", alergia: "Sin Información",},
-				{ job: "50006", center: "mauleGeneral", plant: "pmaule", value: "50006", name: "Fredy Alonzo NuÃ±ez Gonzalez", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "3", alergia: "Sin Información",},
-				{ job: "50007", center: "mauleGeneral", plant: "pmaule", value: "50007", name: "Maximiliano Benjamin Oses Iglesias", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "2", alergia: "Sin Información",},
-				{ job: "50008", center: "mauleGeneral", plant: "pmaule", value: "50008", name: "Jose Isaac Quijada Roa", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "2", alergia: "Sin Información",},
-				{ job: "50009", center: "mauleGeneral", plant: "pmaule", value: "50009", name: "Felipe Ignacio Salinas Jara", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "1", alergia: "Sin Información",},
-				{ job: "50010", center: "mauleGeneral", plant: "pmaule", value: "50010", name: "Ignacio Alejandro Torres Gonzalez", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "3", alergia: "Sin Información",},
-				{ job: "50011", center: "mauleGeneral", plant: "pmaule", value: "50011", name: "Pablo Rojas Soto", fEmer: "Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "1", alergia: "Sin Información",},
-				{ job: "50012", center: "mauleGeneral", plant: "pmaule", value: "50012", name: "Jorge Emanuel Gajardo Muñoz", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "3", alergia: "Sin Información",},
-				{ job: "50013", center: "mauleGeneral", plant: "pmaule", value: "50013", name: "Juan Carlos Gonzalez Gonzalez", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "3", alergia: "Sin Información",},
-				{ job: "50014", center: "mauleGeneral", plant: "pmaule", value: "50014", name: "Patricio Dominguez", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "3", alergia: "Sin Información",},
-				{ job: "50015", center: "mauleGeneral", plant: "pmaule", value: "50015", name: "Joshua Roan Cisterna Molina", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "2", alergia: "Sin Información",},
-				{ job: "50016", center: "mauleGeneral", plant: "pmaule", value: "50016", name: "Hector Rebolledo Cuevas", fEmer: " Sin Información", fPers: " Sin Información", cargo: "Sin Información", nivel_riesgo: "1", alergia: "Sin Información",},
-				];
-
-			db.alertas =  [
-				{ 
-					job: "1", 
-					value: "1", 
-					enviadas: " - sin alertas registradas.", 
-					recibidas: " - sin alertas registradas.",
-				},{ 
-					job: "21", 
-					value: "21", 
-					enviadas: " - sin alertas registradas.", 
-					recibidas: " - sin alertas registradas.",
-				},{ 
-					job: "50001", 
-					value: "50001", 
-					enviadas: " <b> S.O.S!! </b> Posible incidente.", 
-					recibidas: " - sin alertas registradas.",
-				},{ 
-					job: "50002", 
-					value: "50002", 
-					enviadas: " - sin alertas registradas.", 
-					recibidas: " - sin alertas registradas.",
-				},{ 
-					job: "50003", 
-					value: "50003", 
-					enviadas: " <b> S.O.S!! </b> Posible incidente..<br />Fecha: Mie feb 23, 2016<br /> Hora: 14:50:00 Hrs",
-					recibidas: "Mensaje: entrando a zona peligrosa, fuera de su aréa.<br />Fecha: Mie feb 23, 2016<br /> Hora: 14:50:00 Hrs",
-				},{ 
-					job: "50004", 
-					value: "50004",  
-					enviadas: " - sin alertas registradas.", 
-					recibidas: " - sin alertas registradas.",
-				},{ 
-					job: "50005", 
-					value: "50005", 
-					enviadas: " - sin alertas registradas.", 
-					recibidas: " - sin alertas registradas.",
-				},{ 
-					job: "50006", 
-					value: "50006", 
-					enviadas: " - sin alertas registradas.", 
-					recibidas: " - sin alertas registradas.",
-				},{ 
-					job: "50007", 
-					value: "50007", 
-					enviadas: " <b> S.O.S!! </b> Posible incidente.",  
-					recibidas: " - sin alertas registradas.",
-				},{ 
-					job: "50008", 
-					value: "50008", 
-					enviadas: " - sin alertas registradas.", 
-					recibidas: " - sin alertas registradas.",
-				},{ 
-					job: "50009", 
-					value: "50009", 
-					enviadas: " - sin alertas registradas.", 
-					recibidas: " - sin alertas registradas.",
-				},{ 
-					job: "50010", 
-					value: "50010", 
-					enviadas: " - sin alertas registradas.", 
-					recibidas: " - sin alertas registradas.",
-				},{ 
-					job: "50011", 
-					value: "50011", 
-					enviadas: " - Ninguna.",
-					recibidas: "Mensaje: entrando a zona peligrosa, fuera de su aréa.<br />Fecha: Mie feb 23, 2016<br /> Hora: 14:50:00 Hrs",
-				},{ 
-					job: "50012", 
-					value: "50012", 
-					enviadas: " - sin alertas registradas.",
-					recibidas: " - sin alertas registradas.",
-				},{ 
-					job: "50013", 
-					value: "50013", 
-					enviadas: " <b> S.O.S!! </b> Posible incidente..<br />Fecha: Mie feb 23, 2016<br /> Hora: 14:50:00 Hrs", 
-					recibidas: " - sin alertas registradas.",
-				},{ 
-					job: "50014", 
-					value: "50014", 
-					enviadas: " - sin alertas registradas.", 
-					recibidas: " - sin alertas registradas.",
-				},{ 
-					job: "50015", 
-					value: "50015", 
-					enviadas: " - sin alertas registradas.", 
-					recibidas: " - sin alertas registradas.",
-				},{ 
-					job: "50016", 
-					value: "50016", 
-					enviadas: " - sin alertas registradas.", 
-					recibidas: " - sin alertas registradas.",
-				},
-				];
-
-			//urls del servidor de mapas
-			url.wmsroot = 'http://104.196.40.15:8080/geoserver/est40516/wms';
-			url.owsroot = 'http://104.196.40.15:8080/geoserver/est40516/ows';
-
 			//formulario de seleccion...
 			new FilteringSelect({
 				id: "planta",
@@ -328,86 +403,14 @@ require([
 					}
 				}, "trabajadorQuery");
 
-			//generamos url de servicios de mapas, desde el servidor...
-			var ParamLydPMaule_edificacion = L.Util.extend({
-				request:'GetLegendGraphic',
-				version:'1.1.0',
-				format:'image/png',
-				width:'20',
-				height:'20',
-				legend_options:'forceLabels:on',
-				layer:'est40516:Edificacion',
-				opacity:'0.3',
-				style:'PMaule'
-				});
-			url.leyendaPMaule_edificacion = url.wmsroot + L.Util.getParamString(ParamLydPMaule_edificacion);
-
-			var ParamLydPMaule_heatmap = L.Util.extend({
-				request:'GetLegendGraphic',
-				version:'1.1.0',
-				format:'image/png',
-				width:'20',
-				height:'20',
-				legend_options:'forceLabels:on',
-				//layer:'est40516:distinto',
-				layer:'est40516:fakepeople',
-				opacity:'0.3',
-				style:'heatmap'
-				});
-			url.leyendaPMaule_heatmap = url.wmsroot + L.Util.getParamString(ParamLydPMaule_heatmap);
-
-			var ParamLydTrab = L.Util.extend({
-				request:'GetLegendGraphic',
-				version:'1.1.0',
-				format:'image/png',
-				width:'20',
-				height:'20',
-				legend_options:'forceLabels:on',
-				layer:'est40516:distinto',
-				style:'JOB_Peligro'
-				});
-			url.leyendaTrabajador = url.wmsroot + L.Util.getParamString(ParamLydTrab);
-
-			var ParamLydGPS = L.Util.extend({
-				request:'GetLegendGraphic',
-				version:'1.1.0',
-				format:'image/png',
-				width:'20',
-				height:'20',
-				legend_options:'forceLabels:on',
-				layer:'est40516:distinto',
-				style:'Trabajador'
-				});
-			url.leyendaGPS = url.wmsroot + L.Util.getParamString(ParamLydGPS);
-
-			var ParamGeoJSON = L.Util.extend({
-				service : 'WFS',
-				version : '1.0.0',
-				request : 'GetFeature',
-				typeName : 'est40516:distinto',
-				outputFormat : 'application/json',
-				style : 'JOB_Peligro'
-				//maxfeatures : 50
-				});
-			url.GeoJSON = url.owsroot + L.Util.getParamString(ParamGeoJSON);
 			console.log(url.GeoJSON);
-
-			var FakeGeoJSON = L.Util.extend({
-				service : 'WFS',
-				version : '1.0.0',
-				request : 'GetFeature',
-				typeName : 'est40516:fakepeople',
-				outputFormat : 'application/json',
-				style : 'JOB_Peligro'
-				});
-			url.fakeGeoJSON = url.owsroot + L.Util.getParamString(FakeGeoJSON);
 			console.log(url.fakeGeoJSON);
 
 			// **** INICIAMOS EL MAPA (LEAFLET) **** //
 			mapa = L.map('map');
 
 			//fijamos la primera vista....
-			mapa.setView(coordMUNDO,2);
+			mapa.setView(coord.CENTRAL,2);
 
 			//variables para mapas de google y bing
 			var bing = new L.BingLayer('LfO3DMI9S6GnXD7d0WGs~bq2DRVkmIAzSOFdodzZLvw~Arx8dclDxmZA0Y38tHIJlJfnMbGq5GXeYmrGOUIbS2VLFzRKCK0Yv_bAl6oe-DOc', {type: 'Aerial'});
@@ -435,14 +438,14 @@ require([
 			mapa.on('click', ShowWMSLayersInfo); 
 
 			//filtros para visualizar...
-			aspect.after(registry.byId("planta"), "onChange", selectJob_Planta, true);
-			aspect.after(registry.byId("centro"), "onChange", selectJob_CN, true);
-			aspect.after(registry.byId("trabajador"), "onChange", selectJob,true);
+			aspect.after(registry.byId("planta"), "onChange", showJob_Planta, true);
+			aspect.after(registry.byId("centro"), "onChange", showJob_CN, true);
+			aspect.after(registry.byId("trabajador"), "onChange", showJob,true);
 
 			// crear botones para consultas:
 			var BtnHeatmap = new Button({label: "Ver riesgo",onClick: heatMap}, "BtnHeatmap").startup();
 			var BtnCluster = new Button({label: "Clustering",onClick: markerCluster}, "BtnCluster").startup();
-			var BtnTiempoEnPlanta = new Button({label: "Tiempo en Planta",onClick: enDesarrollo}, "BtnTiempoEnPlanta").startup();
+			var BtnTiempoEnPlanta = new Button({label: "Tiempo en Planta",onClick: plantTime}, "BtnTiempoEnPlanta").startup();
 
 			//filtros para consultas...
 			aspect.after(registry.byId("plantaQuery"), "onChange", query_Planta, true);
@@ -451,7 +454,7 @@ require([
 		});
 
 		/* Seleccion de mapas */
-		function selectJob_Planta(valor) {if(change.pl){
+		function showJob_Planta(valor) {if(change.pl){
 			var Planta = registry.byId("planta").item.plant;
 
 			//limpiamos mapas...
@@ -466,7 +469,7 @@ require([
 			//PLano General
 			if(Planta === '*'){
 				//centramos mapas en un plano general
-				mapa.setView(coordCENTRAL, 8);
+				mapa.setView(coord.CENTRAL, 8);
 				//limpiamos la leyenda
 				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
 				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
@@ -474,7 +477,7 @@ require([
 
 			//Oficina EST
 			if(Planta === 'est'){
-				mapa.setView(coordEST, 16);
+				mapa.setView(coord.EST, 18);
 				/**/
 				gps_ctrl = true;
 				layer.gps = realTime(url.GeoJSON,'ALL').addTo(mapa).bringToFront().on('update', function(e) {console.log('gps est: ',cont++)});
@@ -487,9 +490,9 @@ require([
 			//Planta Maule
 			if(Planta === 'pmaule'){
 				//centramos mapas en la planta
-				mapa.setView(coordMAULE, 16);
+				mapa.setView(coord.MAULE, 16);
 
-				domConstruct.create('span', {id:'aviso', innerHTML:'6 trabajadores en estado de alto riesgo!<br /> Alertas enviadas'}, dom.byId('ALERTOIDE'));
+				domConstruct.create('span', {id:'aviso', innerHTML:'6 trabajadores en estado de alto riesgo!<br /> Alertas enviadas'}, dom.byId('divALERTAS'));
 
 				layer.maule.addTo(mapa); //Agregar la capa de la planta al mapa
 				layer.maule.bringToFront(); //traer capa al frente
@@ -510,14 +513,14 @@ require([
 
 			//Enap
 			if(Planta === 'enap'){
-				mapa.setView(coordENAP, 15);
+				mapa.setView(coord.ENAP, 15);
 
 				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
 				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
 				}
 			}};
 
-		function selectJob_CN(valor) {if(change.ce){
+		function showJob_CN(valor) {if(change.ce){
 			var Centro_negocio = registry.byId("centro").item.center;
 
 			maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
@@ -535,7 +538,7 @@ require([
 				}
 
 			if(Centro_negocio === 'gpsEST'){
-				mapa.setView(coordEST, 18);
+				mapa.setView(coord.EST, 18);
 
 				gps_ctrl = true;
 				layer.gps = realTime(url.GeoJSON,'ALL').addTo(mapa).bringToFront().on('update', function(e) {console.log('rt cn est: ',cont++)});
@@ -546,9 +549,9 @@ require([
 				}
 
 			if(Centro_negocio === 'mauleGeneral'){
-				mapa.setView(coordMAULE, 16);
+				mapa.setView(coord.MAULE, 16);
 
-				domConstruct.create('span', {id:'aviso', innerHTML:'6 trabajadores en estado de alto riesgo!<br /> Alertas enviadas'}, dom.byId('ALERTOIDE'));
+				domConstruct.create('span', {id:'aviso', innerHTML:'6 trabajadores en estado de alto riesgo!<br /> Alertas enviadas'}, dom.byId('divALERTAS'));
 
 				layer.maule.addTo(mapa).bringToFront();
 				layer.control.addOverlay(layer.maule,'Planta Maule');
@@ -563,7 +566,7 @@ require([
 				}
 			}};
 
-		function selectJob(valor) {if(change.tr){
+		function showJob(valor) {if(change.tr){
 			var jobId = registry.byId("trabajador").item.job;
 			var planta = registry.byId("trabajador").item.plant;
 
@@ -582,7 +585,7 @@ require([
 				}
 
 			if(planta == 'est'){
-				mapa.setView(coordEST, 18);
+				mapa.setView(coord.EST, 18);
 
 				var zoom = true;
 				gps_ctrl = true;
@@ -598,10 +601,10 @@ require([
 				}
 
 			if(planta == 'pmaule'){
-				mapa.setView(coordMAULE, 18);
+				mapa.setView(coord.MAULE, 18);
 
 				if(registry.byId("trabajador").item.nivel_riesgo == '3')
-					domConstruct.create('span', {id:'aviso', innerHTML:'Trabajador en estado de alto riesgo!<br /> Alerta enviada'}, dom.byId('ALERTOIDE'));
+					domConstruct.create('span', {id:'aviso', innerHTML:'Trabajador en estado de alto riesgo!<br /> Alerta enviada'}, dom.byId('divALERTAS'));
 
 				maule_ctrl = true;
 				layer.maule.addTo(mapa).bringToFront();
@@ -622,7 +625,7 @@ require([
 				}
 
 			if(planta == 'enap'){
-				mapa.setView(coordENAP, 15);
+				mapa.setView(coord.ENAP, 15);
 				domAttr.set(dom.byId('job'), "src", 'images/punto.png');
 				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
 				}
@@ -759,22 +762,22 @@ require([
 			dom.byId("resultHeatmap").innerHTML = "planta: " + registry.byId("plantaQuery").item.name;
 
 			if(Planta === '*'){
-				mapa.setView(coordCENTRAL, 8);
+				mapa.setView(coord.CENTRAL, 8);
 				layer.control.removeLayer(layer.maule);
 				}
 
 			if(Planta === 'pmaule'){
-				mapa.setView(coordMAULE, 16);
+				mapa.setView(coord.MAULE, 16);
 				layer.control.addOverlay(layer.maule,'Planta Maule');
 				}
 
 			if(Planta === 'enap'){
-				mapa.setView(coordENAP, 15);
+				mapa.setView(coord.ENAP, 15);
 				layer.control.removeLayer(layer.maule);
 				}
 
 			if(Planta === 'est'){
-				mapa.setView(coordEST, 18);
+				mapa.setView(coord.EST, 18);
 				layer.control.removeLayer(layer.maule);
 				}
 			};
@@ -901,11 +904,11 @@ require([
 		/*** funciones secundarias ***/
 
 		//remover capa del mapa y de su control
-		var removeLayer = function(remover,ctrl,ifRealTime){
+		var removeLayer = function(layerRemove,ctrl,ifRealTime){
 			if(ctrl){
-				mapa.removeLayer(remover);
-				layer.control.removeLayer(remover);
-				if(ifRealTime)remover.stop();
+				mapa.removeLayer(layerRemove);
+				layer.control.removeLayer(layerRemove);
+				if(ifRealTime)layerRemove.stop();
 				}
 			return false;
 			}
@@ -993,7 +996,7 @@ require([
 			if(change.tr)mapa.fitBounds(layer.realtime.getBounds());
 			}
 
-		function enDesarrollo() {
+		function plantTime() {
 			var inner = '<h2 style="align:center"> Tiempo en planta:<br />9 hrs, 17 min </h2>' +
 				'<b>Bodega:</b> 4 hrs, 17 min  <br />'+
 				'<b>Casino:</b> 0 hrs, 43 min  <br />'+
@@ -1014,5 +1017,7 @@ require([
 			else if(registry.byId("toDate").value == 'Invalid Date') dom.byId("resultJob").innerHTML = "Seleccione fecha final";
 			else dom.byId("resultJob").innerHTML = inner;
 			};
+
+		function enDesarrollo() {};
 		});
 /*END*/
