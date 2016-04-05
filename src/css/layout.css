@@ -120,14 +120,15 @@ h6{
 #SliderLabel { 
     padding: 5px 0 1px 0; 
     }
-
 .dijitTextBox {
     border: solid black 1px;
     #overflow: hidden;
     width: 13em;
     vertical-align: middle;
     }
-
+.dijitDateTextBox {
+    width: 7em;
+    }
 .dojoxCheckedMultiSelect .dojoxCheckedMultiSelectWrapper {
     border: solid white 1px;
     margin: 1px 0;
@@ -191,10 +192,6 @@ h6{
     text-align: justify;
     color: #fff;
     font-size:large;
-    }
-
-.date {
-    width: 7em;
     }
 
 .leaflet-cluster-anim .leaflet-marker-icon, .leaflet-cluster-anim .leaflet-marker-shadow {

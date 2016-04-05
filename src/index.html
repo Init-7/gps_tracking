@@ -105,9 +105,12 @@
 							<!--rango de fechas-->
 							<div id="SliderLabel">Rango Fecha:</div>
 							<div>
-								<input class="date" data-dojo-id="myFromDate" type="text" name="fromDate" id="fromDate" data-dojo-type="dijit/form/DateTextBox" required="true" onChange="myToDate.constraints.min = arguments[0];" />
+								<!--input name="fromDate" id="fromDate" />
 								<label for="toDate">-</label>
-								<input class="date" data-dojo-id="myToDate" type="text" name="toDate" id="toDate"  data-dojo-type="dijit/form/DateTextBox" required="true" onChange="myFromDate.constraints.max = arguments[0];" />
+								<input name="toDate" id="toDate" /-->
+								<input data-dojo-id="myFromDate" type="text" name="fromDate" id="fromDate" data-dojo-type="dijit/form/DateTextBox" required="true" onChange="myToDate.constraints.min = arguments[0];" />
+								<label for="toDate">-</label>
+								<input data-dojo-id="myToDate" type="text" name="toDate" id="toDate"  data-dojo-type="dijit/form/DateTextBox" required="true" onChange="myFromDate.constraints.max = arguments[0];" />
 							</div>
 							<div id="slider">&nbsp;</div>
 							<button id="BtnTiempoEnPlanta" type="button"></button>

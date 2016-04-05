@@ -20,9 +20,16 @@ require([
 	"dojo/domReady!"
 	], 
 	function(AccordionContainer,BorderContainer,ContentPane,FilteringSelect,Button,DateTextBox,registry,Memory,ready,on,mouse,aspect,domAttr,domConstruct,xhr,array,parser,dom){
-		var mapa; 
-		var feaktime_ctrl=false, gps_ctrl = false, maule_ctrl = false, maule_heatmap = false, est_cluster= false, maule_cluster= false; 
-		var change = [], layer = [], cont = 0;
+		var mapa, change = [], layer = [], cont = 0;
+
+		//control de capas...
+		var ctrl = [];
+		ctrl.feaktime = false;
+		ctrl.gps = false;
+		ctrl.maule = false; 
+		ctrl.maule_heatmap = false;
+		ctrl.maule_cluster= false;
+		ctrl.est_cluster= false;
 
 		//coordenadas de interes...
 		var coord = [];
@@ -413,13 +420,14 @@ require([
 			mapa.setView(coord.CENTRAL,2);
 
 			//variables para mapas de google y bing
-			var bing = new L.BingLayer('LfO3DMI9S6GnXD7d0WGs~bq2DRVkmIAzSOFdodzZLvw~Arx8dclDxmZA0Y38tHIJlJfnMbGq5GXeYmrGOUIbS2VLFzRKCK0Yv_bAl6oe-DOc', {type: 'Aerial'});
-			var bingWL = new L.BingLayer('LfO3DMI9S6GnXD7d0WGs~bq2DRVkmIAzSOFdodzZLvw~Arx8dclDxmZA0Y38tHIJlJfnMbGq5GXeYmrGOUIbS2VLFzRKCK0Yv_bAl6oe-DOc', {type: 'AerialWithLabels'});
-			var ggl = new L.Google(), gglH = new L.Google('HYBRID');
+			layer.bing = new L.BingLayer('LfO3DMI9S6GnXD7d0WGs~bq2DRVkmIAzSOFdodzZLvw~Arx8dclDxmZA0Y38tHIJlJfnMbGq5GXeYmrGOUIbS2VLFzRKCK0Yv_bAl6oe-DOc', {type: 'Aerial'});
+			layer.bingWL = new L.BingLayer('LfO3DMI9S6GnXD7d0WGs~bq2DRVkmIAzSOFdodzZLvw~Arx8dclDxmZA0Y38tHIJlJfnMbGq5GXeYmrGOUIbS2VLFzRKCK0Yv_bAl6oe-DOc', {type: 'AerialWithLabels'});
+			layer.ggl = new L.Google();
+			layer.gglH = new L.Google('HYBRID');
 
 			//se agrega al mapa la base seleccionada, en este caso AerialWithLabels de bing.
-			mapa.addLayer(bingWL);
-			layer.control = new L.Control.Layers( {'Bing':bing, 'Bing with Labels':bingWL, 'Google':ggl, 'Google Hibrido':gglH}, {});
+			mapa.addLayer(layer.bingWL);
+			layer.control = new L.Control.Layers( {'Bing':layer.bing, 'Bing with Labels':layer.bingWL, 'Google':layer.ggl, 'Google Hibrido':layer.gglH}, {});
 			mapa.addControl(layer.control);
 
 			//se agregan la capa desde wms (convenientes para edificacion)
@@ -438,19 +446,21 @@ require([
 			mapa.on('click', ShowWMSLayersInfo); 
 
 			//filtros para visualizar...
-			aspect.after(registry.byId("planta"), "onChange", showJob_Planta, true);
-			aspect.after(registry.byId("centro"), "onChange", showJob_CN, true);
-			aspect.after(registry.byId("trabajador"), "onChange", showJob,true);
+			aspect.after(registry.byId("planta"), "onChange", showJob_Planta);
+			aspect.after(registry.byId("centro"), "onChange", showJob_CN);
+			aspect.after(registry.byId("trabajador"), "onChange", showJob);
 
 			// crear botones para consultas:
-			var BtnHeatmap = new Button({label: "Ver riesgo",onClick: heatMap}, "BtnHeatmap").startup();
-			var BtnCluster = new Button({label: "Clustering",onClick: markerCluster}, "BtnCluster").startup();
-			var BtnTiempoEnPlanta = new Button({label: "Tiempo en Planta",onClick: plantTime}, "BtnTiempoEnPlanta").startup();
+			new Button({label: "Ver riesgo",onClick: heatMap}, "BtnHeatmap").startup();
+			new Button({label: "Clustering",onClick: markerCluster}, "BtnCluster").startup();
+			new Button({label: "Tiempo en Planta",onClick: plantTime}, "BtnTiempoEnPlanta").startup();
+			//new DateTextBox({id: "myFromDate", onChange: function (){myToDate.constraints.min = arguments[0];}},fromDate).startup();
+			//new DateTextBox({id: "myToDate", onChange: function (){myFromDate.constraints.max = arguments[0];}},toDate).startup();
 
 			//filtros para consultas...
-			aspect.after(registry.byId("plantaQuery"), "onChange", query_Planta, true);
-			aspect.after(registry.byId("centroQuery"), "onChange", query_CN, true);
-			aspect.after(registry.byId("trabajadorQuery"), "onChange", query_Job,true);
+			aspect.after(registry.byId("plantaQuery"), "onChange", query_Planta);
+			aspect.after(registry.byId("centroQuery"), "onChange", query_CN);
+			aspect.after(registry.byId("trabajadorQuery"), "onChange", query_Job);
 		});
 
 		/* Seleccion de mapas */
@@ -458,12 +468,12 @@ require([
 			var Planta = registry.byId("planta").item.plant;
 
 			//limpiamos mapas...
-			maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
-			maule_cluster = removeLayer(layer.markers,maule_cluster,false);
-			est_cluster = removeLayer(layer.markers,est_cluster,false);
-			maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
-			feaktime_ctrl = removeLayer(layer.realtime,feaktime_ctrl,true);
-			gps_ctrl = removeLayer(layer.gps,gps_ctrl,true);
+			ctrl.maule_heatmap = removeLayer(layer.heatmap,ctrl.maule_heatmap,false);
+			ctrl.maule_cluster = removeLayer(layer.markers,ctrl.maule_cluster,false);
+			ctrl.est_cluster = removeLayer(layer.markers,ctrl.est_cluster,false);
+			ctrl.maule = removeLayer(layer.maule,ctrl.maule,false);
+			ctrl.feaktime = removeLayer(layer.realtime,ctrl.feaktime,true);
+			ctrl.gps = removeLayer(layer.gps,ctrl.gps,true);
 			domConstruct.destroy("aviso");
 
 			//PLano General
@@ -479,7 +489,7 @@ require([
 			if(Planta === 'est'){
 				mapa.setView(coord.EST, 18);
 				/**/
-				gps_ctrl = true;
+				ctrl.gps = true;
 				layer.gps = realTime(url.GeoJSON,'ALL').addTo(mapa).bringToFront().on('update', function(e) {console.log('gps est: ',cont++)});
 				layer.control.addOverlay(layer.gps,'GPS');
 
@@ -497,9 +507,9 @@ require([
 				layer.maule.addTo(mapa); //Agregar la capa de la planta al mapa
 				layer.maule.bringToFront(); //traer capa al frente
 				layer.control.addOverlay(layer.maule,'Planta Maule');  //Agregar al control
-				maule_ctrl = true;
+				ctrl.maule = true;
 				/**/
-				feaktime_ctrl = true;
+				ctrl.feaktime = true;
 				layer.realtime = realTime(url.fakeGeoJSON,'ALL');
 				layer.realtime.addTo(mapa);
 				layer.realtime.bringToFront(); //traer capa al frente
@@ -523,12 +533,12 @@ require([
 		function showJob_CN(valor) {if(change.ce){
 			var Centro_negocio = registry.byId("centro").item.center;
 
-			maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
-			maule_cluster = removeLayer(layer.markers,maule_cluster,false);
-			est_cluster = removeLayer(layer.markers,est_cluster,false);
-			maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
-			feaktime_ctrl = removeLayer(layer.realtime,feaktime_ctrl,true);
-			gps_ctrl = removeLayer(layer.gps,gps_ctrl,true);
+			ctrl.maule_heatmap = removeLayer(layer.heatmap,ctrl.maule_heatmap,false);
+			ctrl.maule_cluster = removeLayer(layer.markers,ctrl.maule_cluster,false);
+			ctrl.est_cluster = removeLayer(layer.markers,ctrl.est_cluster,false);
+			ctrl.maule = removeLayer(layer.maule,ctrl.maule,false);
+			ctrl.feaktime = removeLayer(layer.realtime,ctrl.feaktime,true);
+			ctrl.gps = removeLayer(layer.gps,ctrl.gps,true);
 			domConstruct.destroy("aviso");
 
 			if(Centro_negocio === '*'){
@@ -540,7 +550,7 @@ require([
 			if(Centro_negocio === 'gpsEST'){
 				mapa.setView(coord.EST, 18);
 
-				gps_ctrl = true;
+				ctrl.gps = true;
 				layer.gps = realTime(url.GeoJSON,'ALL').addTo(mapa).bringToFront().on('update', function(e) {console.log('rt cn est: ',cont++)});
 				layer.control.addOverlay(layer.gps,'GPS');
 
@@ -555,9 +565,9 @@ require([
 
 				layer.maule.addTo(mapa).bringToFront();
 				layer.control.addOverlay(layer.maule,'Planta Maule');
-				maule_ctrl = true;
+				ctrl.maule = true;
 
-				feaktime_ctrl = true;
+				ctrl.feaktime = true;
 				layer.realtime = realTime(url.fakeGeoJSON,'ALL').addTo(mapa).bringToFront().on('update', function(e) {console.log('rt cn pmaule: ',cont++)});
 				layer.control.addOverlay(layer.realtime,'Trabajadores');
 
@@ -570,12 +580,12 @@ require([
 			var jobId = registry.byId("trabajador").item.job;
 			var planta = registry.byId("trabajador").item.plant;
 
-			maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
-			maule_cluster = removeLayer(layer.markers,maule_cluster,false);
-			est_cluster = removeLayer(layer.markers,est_cluster,false);
-			maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
-			feaktime_ctrl = removeLayer(layer.realtime,feaktime_ctrl,true);
-			gps_ctrl = removeLayer(layer.gps,gps_ctrl,true);
+			ctrl.maule_heatmap = removeLayer(layer.heatmap,ctrl.maule_heatmap,false);
+			ctrl.maule_cluster = removeLayer(layer.markers,ctrl.maule_cluster,false);
+			ctrl.est_cluster = removeLayer(layer.markers,ctrl.est_cluster,false);
+			ctrl.maule = removeLayer(layer.maule,ctrl.maule,false);
+			ctrl.feaktime = removeLayer(layer.realtime,ctrl.feaktime,true);
+			ctrl.gps = removeLayer(layer.gps,ctrl.gps,true);
 			domConstruct.destroy("aviso");
 
 			if(planta == '*'){
@@ -588,7 +598,7 @@ require([
 				mapa.setView(coord.EST, 18);
 
 				var zoom = true;
-				gps_ctrl = true;
+				ctrl.gps = true;
 				layer.gps = realTime(url.GeoJSON,jobId).addTo(mapa).bringToFront().on('update', function(e) {
 					if(zoom) mapa.fitBounds(layer.gps.getBounds());
 					zoom = false;
@@ -606,12 +616,12 @@ require([
 				if(registry.byId("trabajador").item.nivel_riesgo == '3')
 					domConstruct.create('span', {id:'aviso', innerHTML:'Trabajador en estado de alto riesgo!<br /> Alerta enviada'}, dom.byId('divALERTAS'));
 
-				maule_ctrl = true;
+				ctrl.maule = true;
 				layer.maule.addTo(mapa).bringToFront();
 				layer.control.addOverlay(layer.maule,'Planta Maule'); 
 
 				var zoom = true;
-				feaktime_ctrl = true;
+				ctrl.feaktime = true;
 
 				layer.realtime = realTime(url.fakeGeoJSON,jobId).addTo(mapa).bringToFront().on('update', function(e) {
 					if(zoom) mapa.fitBounds(layer.realtime.getBounds());
@@ -749,12 +759,12 @@ require([
 		function query_Planta(valor) {
 			var Planta = registry.byId("plantaQuery").item.plant;
 
-			maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
-			maule_cluster = removeLayer(layer.markers,maule_cluster,false);
-			est_cluster = removeLayer(layer.markers,est_cluster,false);
-			maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
-			feaktime_ctrl = removeLayer(layer.realtime,feaktime_ctrl,true);
-			gps_ctrl = removeLayer(layer.gps,gps_ctrl,true);
+			ctrl.maule_heatmap = removeLayer(layer.heatmap,ctrl.maule_heatmap,false);
+			ctrl.maule_cluster = removeLayer(layer.markers,ctrl.maule_cluster,false);
+			ctrl.est_cluster = removeLayer(layer.markers,ctrl.est_cluster,false);
+			ctrl.maule = removeLayer(layer.maule,ctrl.maule,false);
+			ctrl.feaktime = removeLayer(layer.realtime,ctrl.feaktime,true);
+			ctrl.gps = removeLayer(layer.gps,ctrl.gps,true);
 			domConstruct.destroy("aviso");
 
 			domAttr.set(dom.byId('jobHM'), "src", 'images/punto.png');
@@ -786,16 +796,16 @@ require([
 		var heatMap =  function (){
 			var planta = registry.byId("plantaQuery").item.plant;
 
-			maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
-			maule_cluster = removeLayer(layer.markers,maule_cluster,false);
-			est_cluster = removeLayer(layer.markers,est_cluster,false);
-			maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
-			feaktime_ctrl = removeLayer(layer.realtime,feaktime_ctrl,true);
-			gps_ctrl = removeLayer(layer.gps,gps_ctrl,true);
+			ctrl.maule_heatmap = removeLayer(layer.heatmap,ctrl.maule_heatmap,false);
+			ctrl.maule_cluster = removeLayer(layer.markers,ctrl.maule_cluster,false);
+			ctrl.est_cluster = removeLayer(layer.markers,ctrl.est_cluster,false);
+			ctrl.maule = removeLayer(layer.maule,ctrl.maule,false);
+			ctrl.feaktime = removeLayer(layer.realtime,ctrl.feaktime,true);
+			ctrl.gps = removeLayer(layer.gps,ctrl.gps,true);
 			domConstruct.destroy("aviso");
 
 			if(planta == 'pmaule'){
-				maule_heatmap = true;
+				ctrl.maule_heatmap = true;
 				layer.heatmap = L.tileLayer.wms(url.wmsroot, {
 					//layers: 'est40516:distinto',
 					layers: 'est40516:fakepeople',
@@ -829,19 +839,16 @@ require([
 		var markerCluster =  function (){
 			var planta = registry.byId("plantaQuery").item.plant;
 
-			maule_heatmap = removeLayer(layer.heatmap,maule_heatmap,false);
-			maule_cluster = removeLayer(layer.markers,maule_cluster,false);
-			est_cluster = removeLayer(layer.markers,est_cluster,false);
-			maule_ctrl = removeLayer(layer.maule,maule_ctrl,false);
-			feaktime_ctrl = removeLayer(layer.realtime,feaktime_ctrl,true);
-			gps_ctrl = removeLayer(layer.gps,gps_ctrl,true);
+			ctrl.maule_heatmap = removeLayer(layer.heatmap,ctrl.maule_heatmap,false);
+			ctrl.maule_cluster = removeLayer(layer.markers,ctrl.maule_cluster,false);
+			ctrl.est_cluster = removeLayer(layer.markers,ctrl.est_cluster,false);
+			ctrl.maule = removeLayer(layer.maule,ctrl.maule,false);
+			ctrl.feaktime = removeLayer(layer.realtime,ctrl.feaktime,true);
+			ctrl.gps = removeLayer(layer.gps,ctrl.gps,true);
 			domConstruct.destroy("aviso");
 
 			if(planta == 'pmaule'){
-				maule_cluster = true;
-
-				layer.realtime = realTime(url.fakeGeoJSON,'ALL').bringToFront().on('update', function(e) {console.log('heatmap: ',cont++)});
-				layer.control.addOverlay(layer.realtime,'Trabajadores');
+				ctrl.maule_cluster = true;
 
 				/*Marker cluster*/
 				layer.markers = L.markerClusterGroup({ singleMarkerMode: true, spiderfyOnMaxZoom: false, showCoverageOnHover: false, zoomToBoundsOnClick: false});
@@ -854,6 +861,7 @@ require([
 					// a.layer is actually a cluster
 					console.log('cluster ' + a.layer.getAllChildMarkers().length);
 					});
+				layer.control.addOverlay(layer.markers,'Trabajadores');
 				/*fin de marker cluster*/
 
 				domAttr.set(dom.byId('jobHM'), "src", url.leyendaTrabajador);
@@ -862,7 +870,7 @@ require([
 				}
 			else if(planta == 'est'){
 				layer.markers = L.markerClusterGroup({ spiderfyOnMaxZoom: false, showCoverageOnHover: false, zoomToBoundsOnClick: false });
-				est_cluster = true;
+				ctrl.est_cluster = true;
 
 				function populate() {
 					for (var i = 0; i < 30; i++) {
@@ -1011,7 +1019,6 @@ require([
 				'<b>Peligro bajo:</b> 1 hrs, 09 min  <br />'+
 				'<b>Peligro medio:</b> 8 hrs, 04 min  <br />'+
 				'<b>Peligro alto:</b> 0 hrs, 0 min  <br />';
-
 			if(registry.byId("trabajadorQuery").item.value == '*') dom.byId("resultJob").innerHTML = "Seleccione un trabajador";
 			else if(registry.byId("fromDate").value == 'Invalid Date') dom.byId("resultJob").innerHTML = "Seleccione fecha inicial";
 			else if(registry.byId("toDate").value == 'Invalid Date') dom.byId("resultJob").innerHTML = "Seleccione fecha final";
