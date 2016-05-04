@@ -41,8 +41,8 @@ html, body, #map {
 
 		function onLocationFound(e) {// Si encuentra la ubicación 
 		    var radius = e.accuracy / 2;
-			window.alert("Presicion "+ e.accuracy);
-			alert("latlng "+ e.latlng);
+			//window.alert("Presicion "+ e.accuracy);
+			//alert("latlng "+ e.latlng);
 		    L.marker(e.latlng).addTo(map)
 		        .bindPopup("You are within " + radius + " meters from this point. "+ e.latlng).openPopup();
 
