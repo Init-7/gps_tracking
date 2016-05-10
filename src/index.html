@@ -24,12 +24,15 @@
 		<script src="js/Google.js"></script>
 
 		<script src="js/layout_amd.js"></script>
+
 	</head>
+
+
 	<body class="claro">
-		<div id="mainWindow" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'sidebar', gutters:true, liveSplitters:true" style="width: 100%; height: 100%;">
+		<div id="mainWindow" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'sidebar', gutters:true" style="width: 100%; height: 100%;">
 
 			<!--CABECERA-->
-			<div id="header" class="roundedCorners shadow" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'">
+			<div id="header" class="roundedCorners shadow" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="minSize:800,region:'top'">
 				<a class="logoLeft" href="http://www.estchile.cl/" target="_blank">
 					<img id="h-logo-EST" src="./images/estchile.png" alt="EST Chile">
 				</a>
@@ -37,16 +40,20 @@
 				<a class="logoRight" href="http://www.corfo.cl/" target="_blank">
 					<img id="h-logo-corfo" src="./images/logo-corfo.png"  alt="Corfo | Corporación de Fomento de la Producción">
 				</a>
+				<button type="button" id="hideButton">Ocultar Info! </button>
+				<button type="button" id="showButton">Mostrar Info! </button>
 			</div>
 
 			<!--MAP-->
-			<div id="map" class="roundedCorners shadow" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:true, region:'center'" >
-				<div id="divALERTAS"></div><!--span id="aviso">ALERTA!!.</span-->
+			<div id="map" class="roundedCorners shadow" data-dojo-type="dijit/layout/ContentPane" data-dojo-props=" region:'center'" >
+				<div id="divALERTAS"><!--span id="aviso">ALERTA!!.</span>--></div>
 				<img id="logoMap" src="./images/estchile.png" style="max-height: 75px;">
-			</div>
 
+				<img id="infoT"  >
+
+			</div>	
 			<!--PANEL Derecho -->
-			<div id="rightPanel" class="roundedCorners shadow" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:true, region:'right'" >
+			<div id="rightPanel" class="roundedCorners shadow" data-dojo-type="dijit/layout/ContentPane" >
 				<div id="AccordionPanel" data-dojo-type="dijit/layout/AccordionContainer">
 					<!--Filtros de recorridos -->
 					<div id="filter" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="title:'Filtros y Leyenda', selected:true">
@@ -54,7 +61,7 @@
 							<!--Planta-->
 							<div id="SliderLabel">Planta:</div>
 							<div id="planta"></div>
-							<!--sector-->
+							<!--selector-->
 							<div id="SliderLabel">Centro de Negocio:</div>
 							<div id="centro"></div>
 							<!--Centro de Negocio-->
