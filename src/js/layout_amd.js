@@ -37,16 +37,15 @@ require([
 		    showFunc: coreFx.wipeIn,
 		    hideFunc: coreFx.wipeOut
 		  	});
-
+		
 		on(dom.byId("hideButton"), "click", function(e){
 		    	togglerRightPanel.hide();
-		    	
 		});
 		on(dom.byId("showButton"), "click", function(e){
 		    	togglerRightPanel.show();
 
 	  	});
-	  	
+
 		//control de capas...
 		var ctrl = [];
 		ctrl.feaktime = false;

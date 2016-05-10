@@ -40,21 +40,27 @@
 				<a class="logoRight" href="http://www.corfo.cl/" target="_blank">
 					<img id="h-logo-corfo" src="./images/logo-corfo.png"  alt="Corfo | Corporación de Fomento de la Producción">
 				</a>
-				<button type="button" id="hideButton">Ocultar Info! </button>
-				<button type="button" id="showButton">Mostrar Info! </button>
 			</div>
 
 			<!--MAP-->
-			<div id="map" class="roundedCorners shadow" data-dojo-type="dijit/layout/ContentPane" data-dojo-props=" region:'center'" >
+			<div id="map" class="roundedCorners shadow" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:true, region:'center'" >
 				<div id="divALERTAS"><!--span id="aviso">ALERTA!!.</span>--></div>
 				<img id="logoMap" src="./images/estchile.png" style="max-height: 75px;">
 
 				<img id="infoT"  >
 
-			</div>	
+
+
+
+
+			</div>
+	
 			<!--PANEL Derecho -->
+			<button type="button" id="showButton">Mostrar Información </button>
 			<div id="rightPanel" class="roundedCorners shadow" data-dojo-type="dijit/layout/ContentPane" >
-				<div id="AccordionPanel" data-dojo-type="dijit/layout/AccordionContainer">
+
+				<button type="button" id="hideButton">Ocultar Información </button>
+				<div id="AccordionPanel" data-dojo-type="dijit/layout/AccordionContainer" >
 					<!--Filtros de recorridos -->
 					<div id="filter" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="title:'Filtros y Leyenda', selected:true">
 						<div id="slider">
@@ -84,7 +90,7 @@
 						<div id="divInfoWMS">&nbsp;</div>
 					</div>
 					<!--query-->
-					<div id="query" class="fields" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="title:'Consultas e Informes'">
+					<div id="query" class="fields" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="title:'Consultas e Informes'" >
 						<div id="slider">
 							<!--Planta-->
 							<div id="SliderLabel">Planta:</div>
@@ -101,7 +107,7 @@
 							<div id="resultHeatmap"></div>
 							<div id="slider">&nbsp;</div>
 						</div>
-						<div id="slider">
+						<div id="slider" >
 							<H4 style="align:center">Informes Estadisticos</H4>
 							<!--Centro de Negocio-->
 							<div id="SliderLabel">Centro de Negocio:</div>

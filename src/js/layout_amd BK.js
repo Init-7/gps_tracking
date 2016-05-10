@@ -1,5 +1,5 @@
 require([
-		"dojo/fx/Toggler", //custom animation functions
+	"dojo/fx/Toggler", //custom animation functions
 	"dojo/fx",
 	"dijit/layout/AccordionContainer", 
 	"dijit/layout/BorderContainer", 
@@ -31,6 +31,11 @@ require([
 				    showFunc: coreFx.wipeIn,
 				    hideFunc: coreFx.wipeOut
 				  });
+		var togglerShowButton = new Toggler({
+				    node: "hideButton",
+				    showFunc: coreFx.wipeIn,
+				    hideFunc: coreFx.wipeOut
+				  });
 
 		var togglerRightPanel = new Toggler({
 		    node: "rightPanel",
@@ -44,6 +49,7 @@ require([
 		});
 		on(dom.byId("showButton"), "click", function(e){
 		    	togglerRightPanel.show();
+		    	togglerShowButton.hide();
 
 	  	});
 
