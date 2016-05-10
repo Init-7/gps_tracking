@@ -96,13 +96,19 @@ body {
     top: 15px;
     right: 20px;    
     width: 260px;
+    height: 30px;
 }
 
 #hideButton{
     width: 260px;
+    height: 30px;
 
 }
 
+
+.leaflet-right .leaflet-control {
+    margin-right: 300px;
+}
 
 #rightPanel{
     position: absolute;
