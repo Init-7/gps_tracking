@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Demo: dojox/grid/DataGrid Simple Structure</title>
+		<link rel="stylesheet" href="js/dojo.css" />
+		<link rel="stylesheet" href="js/claro.css" />
+		<link rel="stylesheet" href="js/Grid.css" />
+		<link rel="stylesheet" href="js/claroGrid.css" />
+		<link rel="stylesheet" href="js/style.css" media="screen">
+		<link rel="stylesheet" href="js/demo.css" media="screen">
+
+	</head>
+	<body class="claro">
+		<h1>Demo: dojox/grid/DataGrid Simple Structure</h1>
+
+		<br/>
+		<div id="grid"></div>
+		<!-- load dojo and provide config via data attribute -->
+		<script src="http://ajax.googleapis.com/ajax/libs/dojo/1.10.4/dojo/dojo.js" data-dojo-config="async: true"></script>
+
+		<script>
+
+		require([
+			"dojox/grid/DataGrid",
+			"dojo/store/Memory",
+			"dojo/data/ObjectStore",
+			"dojo/request",
+			"dojo/domReady!"
+		], function(DataGrid, Memory, ObjectStore, request){
+			var grid, dataStore;
+			request.get("js/plantas.json", {//aca deberia ir la url del json "Plantas.json"
+				handleAs: "json"
+			}).then(function(data){
+				dataStore =  new ObjectStore({ objectStore:new Memory({ data: data }) });//
+
+				grid = new DataGrid({
+					store: dataStore,
+					query: { id: "*" },
+					queryOptions: {},
+					structure: [//nombre columnas
+						{ name: "Model Name", field: "pk", width: "25%" },
+						{ name: "PK Name", field: "model", width: "25%" }
+					]
+				}, "grid");
+				grid.startup();
+			});
+		});
+
+		</script>
+	</body>
+</html>

@@ -37,7 +37,7 @@ require([
 		    showFunc: coreFx.wipeIn,
 		    hideFunc: coreFx.wipeOut
 		  	});
-		
+
 		on(dom.byId("hideButton"), "click", function(e){
 		    	togglerRightPanel.hide();
 		});
@@ -71,6 +71,8 @@ require([
 			{ plant: "pmaule", value: "pmaule", name: "CMPC-Planta Maule" },
 			{ plant: "enap", value: "enap", name: "ENAP" },
 			];
+
+
 
 		db.centros =  [
 			{ center: "*", plant: "*", value: "*", name: "Todos los centros", selected: true },
@@ -254,7 +256,10 @@ require([
 			});
 		url.leyendaGPS = url.wmsroot + L.Util.getParamString(ParamLydGPS);
 
-		var ParamGeoJSON = L.Util.extend({
+
+
+//Test http://192.168.0.36:8080/gps/plantas/
+/*		var ParamGeoJSON = L.Util.extend({
 			service : 'WFS',
 			version : '1.0.0',
 			request : 'GetFeature',
@@ -264,7 +269,7 @@ require([
 			//maxfeatures : 50
 			});
 		url.GeoJSON = url.owsroot + L.Util.getParamString(ParamGeoJSON);
-
+*/
 		var FakeGeoJSON = L.Util.extend({
 			service : 'WFS',
 			version : '1.0.0',
