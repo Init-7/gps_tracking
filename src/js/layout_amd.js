@@ -1,7 +1,6 @@
 require([	
 	"dojo/fx/Toggler", //custom animation functions
 	"dojo/fx",
-
 	"dojo/request",
 	"dijit/layout/AccordionContainer", 
 	"dijit/layout/BorderContainer", 
@@ -26,7 +25,6 @@ require([
 	function(Toggler, coreFx,AccordionContainer,request,BorderContainer,ContentPane,FilteringSelect, Button,DateTextBox,registry,Memory,ready,on,mouse,aspect,domAttr,domConstruct,xhr,array,parser,dom){
 		var mapa, change = [], layer = [], cont = 0;
 
-
 		//TEST MOSTRAR OCULTAR
 		var togglerInfoT = new Toggler({
 				    node: "infoT",
@@ -45,9 +43,9 @@ require([
 		    	
 		});
 		on(dom.byId("showButton"), "click", function(e){
-		    	togglerRightPanel.show();
+		    togglerRightPanel.show();
 
-	  	});
+	 	});
 
 		//control de capas...
 		var ctrl = [];

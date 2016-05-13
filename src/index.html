@@ -27,9 +27,74 @@
 
 		<script src="js/layout_amd.js"></script>
 
+
+		<script>
+
+		require([
+			"dojox/grid/DataGrid",
+			"dojo/store/Memory",
+			"dojo/on", 
+			"dojo/mouse",
+			"dojo/data/ObjectStore",
+			"dojo/request",
+			"dijit/form/DateTextBox",
+			"dojo/domReady!"
+		], function(DataGrid, Memory,on, mouse, ObjectStore, request,DateTextBox){
+			on(document.getElementById("qwerty"), "click", function(e){
+					var grid, dataStore;
+					var fechaFF,fechaII;
+					var dtb;
+					// get widget:
+					var dtb = dijit.byId("date1");
+					// get value
+					
+					fechaII = date1.value
+					//fechaII = "2016-03-01";
+					fechaFF = "2016-05-10";
+					var url = "http://localhost:8000/gps/datosinforme/ESTThno/2/22/"+ fechaII +"/"+ fechaFF+"/";
+					request.get(url, {
+						handleAs: "json"
+					}).then(function(data){
+						dataStore =  new ObjectStore({ objectStore:new Memory({ data: data }) });
+
+						grid = new DataGrid({
+							store: dataStore,
+							query: { id: "*" },
+							queryOptions: {},
+							structure: [//nombre columnas
+								{ name: "Nombre", field: "nombre", width: "25%" },
+								{ name: "Horas", field: "horas", width: "25%" },
+								{ name: "Minutos", field: "minutos", width: "25%" }
+							]
+						}, "gridDiv");
+						//console.log(date1.value);
+						grid.startup();
+					});
+
+							console.log("WENAAA");
+					    	console.log(date1.value);
+					    	
+			});
+
+
+		});
+
+		
+
+		</script>
+
 	</head>
 
+<div id="fechaaaa" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'right'" > 
+		<label for="date1">Drop down Date box:</label>
+	<input type="text" name="date1" id="date1" value="2016-03-01"
+    data-dojo-type="dijit/form/DateTextBox"
+    constraints="{datePattern:'yyyy-MM-dd', strict:true}" 
+    required="true" />
 
+	<button type="button"  id="qwerty">Mostrar Información </button>
+
+    </div>
 	<body class="claro">
 		<div id="mainWindow" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'sidebar', gutters:false" style="width: 100%; height: 100%;">
 
@@ -51,7 +116,17 @@
 				<div id="divALERTAS"><!--span id="aviso">ALERTA!!.</span>--></div>
 				<img id="logoMap" src="./images/estchile.png" style="max-height: 75px;">
 
-				<img id="infoT"  >			
+				<img id="gridDiv"  >	
+
+		
+
+				<img id="infoT"  >
+
+
+
+
+
+
 
 			</div>
 			<!--PANEL Derecho -->
@@ -119,8 +194,7 @@
 							<div>
 								<!--input name="fromDate" id="fromDate" />
 								<label for="toDate">-</label>
-								<input name="toDate" id="toDate" /-->
-								
+								<input name="toDate" id="toDate" /-->								
 
  							<input data-dojo-id="myFromDate" type="text" name="fromDate" id="fromDate" data-dojo-type="dijit/form/DateTextBox" required="true" onChange="myToDate.constraints.min = arguments[0];" />
 								<label for="toDate">-</label>
@@ -129,9 +203,6 @@
 
 
 					<!-- Segundo intento
-
-
-
 							<label for="date1">Desde:</label>
 							<input type="text" name="date1" id="date1" value=now
 							    data-dojo-type="dijit/form/DateTextBox"

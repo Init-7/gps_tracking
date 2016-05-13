@@ -238,6 +238,32 @@ h6{
     border: 2px solid #0099ff;
     }
 
+
+#gridDiv{
+
+    bottom:15px;
+    position:absolute;
+    right:300px;
+    padding: 5px;
+    height: 130px;
+    width: 220px;
+    z-index:1000;
+    bottom: 30px;
+    background: #3e647d;
+    -webkit-box-shadow: 10px 10px 19px 0px rgba(0,0,0,0.4);
+    -moz-box-shadow: 10px 10px 19px 0px rgba(0,0,0,0.4);
+    box-shadow: 10px 10px 19px 0px rgba(0,0,0,0.4);
+
+    border-radius: 10px 10px 10px 10px;
+    -moz-border-radius: 10px 10px 10px 10px;
+    -webkit-border-radius: 10px 10px 10px 10px;
+    border: 2px solid #0099ff;
+
+
+}
+
+
+
 #infoT img{
     border:none;
     max-height: 50px;
