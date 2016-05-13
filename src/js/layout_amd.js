@@ -1,6 +1,8 @@
 require([	
 	"dojo/fx/Toggler", //custom animation functions
 	"dojo/fx",
+
+	"dojo/request",
 	"dijit/layout/AccordionContainer", 
 	"dijit/layout/BorderContainer", 
 	"dijit/layout/ContentPane", 
@@ -21,7 +23,7 @@ require([
 	"dojo/dom",
 	"dojo/domReady!"
 	], 
-	function(Toggler, coreFx,AccordionContainer,BorderContainer,ContentPane,FilteringSelect,Button,DateTextBox,registry,Memory,ready,on,mouse,aspect,domAttr,domConstruct,xhr,array,parser,dom){
+	function(Toggler, coreFx,AccordionContainer,request,BorderContainer,ContentPane,FilteringSelect, Button,DateTextBox,registry,Memory,ready,on,mouse,aspect,domAttr,domConstruct,xhr,array,parser,dom){
 		var mapa, change = [], layer = [], cont = 0;
 
 
@@ -40,6 +42,7 @@ require([
 
 		on(dom.byId("hideButton"), "click", function(e){
 		    	togglerRightPanel.hide();
+		    	
 		});
 		on(dom.byId("showButton"), "click", function(e){
 		    	togglerRightPanel.show();

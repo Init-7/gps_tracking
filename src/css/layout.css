@@ -19,6 +19,10 @@ body {
     background: -moz-linear-gradient(top,  #fff,  #C0C0C0);
     height:50px;
     margin: 5px 110px 5px ;
+    pointer-events: auto;
+    position: absolute;
+    z-index: 1000;
+    
 
     }
 
@@ -97,6 +101,8 @@ body {
     right: 20px;    
     width: 260px;
     height: 30px;
+    
+
 }
 
 #hideButton{
@@ -111,9 +117,10 @@ body {
 }
 
 #rightPanel{
-    position: absolute;
-    top: 8px;
-    right: 16px;
+    //position: absolute;
+    right: 15px!important;
+    top: 10px !important; 
+    left: auto  !important;
     bottom: 40px;
     z-index: 130;
     font-size:10pt;
@@ -122,7 +129,7 @@ body {
     //margin:5px; 
     width:260px;
     //height: 80%;
-    float: right;
+    float: right !important;
     //spointer-events: auto;
     }    
 
