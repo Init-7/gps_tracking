@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>Demo: dojox/grid/DataGrid Simple Structure</title>
+		<title>Consulta Trabajdores</title>
 		<link rel="stylesheet" href="js/dojo.css" />
 		<link rel="stylesheet" href="js/claro.css" />
 		<link rel="stylesheet" href="js/Grid.css" />
@@ -12,7 +12,7 @@
 
 	</head>
 	<body class="claro">
-		<h1>Demo: dojox/grid/DataGrid Simple Structure</h1>
+		<h1> Consulta Plantas DataGrid </h1>
 
 		<br/>
 		<div id="grid"></div>
@@ -29,21 +29,26 @@
 			"dojo/domReady!"
 		], function(DataGrid, Memory, ObjectStore, request){
 			var grid, dataStore;
-			request.get("js/plantas.json", {//aca deberia ir la url del json "Plantas.json"
+			var url = "http://localhost:8000/gps/datosinforme/ESTThno/2/23/2016-01-01/2016-05-14/";
+			request.get(url, {
 				handleAs: "json"
 			}).then(function(data){
-				dataStore =  new ObjectStore({ objectStore:new Memory({ data: data }) });//
+				dataStore =  new ObjectStore({ objectStore:new Memory({ data: data}) });//
 
 				grid = new DataGrid({
 					store: dataStore,
 					query: { id: "*" },
 					queryOptions: {},
 					structure: [//nombre columnas
-						{ name: "Model Name", field: "pk", width: "25%" },
-						{ name: "PK Name", field: "model", width: "25%" }
+
+						{ name: "Nombre", field: "nombre", width: "25%" },
+						{ name: "Horas", field: "horas", width: "25%" },
+						{ name: "Minutos", field: "minutos", width: "25%" }
 					]
 				}, "grid");
+      			//console.log(result);
 				grid.startup();
+				
 			});
 		});
 

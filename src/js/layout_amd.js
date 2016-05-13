@@ -258,8 +258,7 @@ require([
 
 
 
-//Test http://192.168.0.36:8080/gps/plantas/
-/*		var ParamGeoJSON = L.Util.extend({
+		var ParamGeoJSON = L.Util.extend({
 			service : 'WFS',
 			version : '1.0.0',
 			request : 'GetFeature',
@@ -269,7 +268,7 @@ require([
 			//maxfeatures : 50
 			});
 		url.GeoJSON = url.owsroot + L.Util.getParamString(ParamGeoJSON);
-*/
+
 		var FakeGeoJSON = L.Util.extend({
 			service : 'WFS',
 			version : '1.0.0',

@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Demo: dojox/grid/DataGrid Simple Structure</title>
+		<link rel="stylesheet" href="js/dojo.css" />
+		<link rel="stylesheet" href="js/claro.css" />
+		<link rel="stylesheet" href="js/Grid.css" />
+		<link rel="stylesheet" href="js/claroGrid.css" />
+		<link rel="stylesheet" href="js/style.css" media="screen">
+		<link rel="stylesheet" href="js/demo.css" media="screen">
+
+	</head>
+	<body class="claro">
+		<h1>Demo: dojox/grid/DataGrid Simple Structure</h1>
+
+		<br/>
+		<div id="grid"></div>
+		<!-- load dojo and provide config via data attribute -->
+		<script src="http://ajax.googleapis.com/ajax/libs/dojo/1.10.4/dojo/dojo.js" data-dojo-config="async: true"></script>
+
+		<script>
+
+		require([
+			"dojox/grid/DataGrid",
+			"dojo/store/Memory",
+			"dojo/data/ObjectStore",
+			"dojo/request",
+			"dojo/domReady!"
+		], function(DataGrid, Memory, ObjectStore, request){
+			var grid, dataStore;
+			var url = "http://localhost:8000/gps/plantas.json/";
+			//var url = "TestDevice.json";
+			request.get(url, {//aca deberia ir la url del json "Plantas.json"
+				handleAs: "json"
+			}).then(function(data){
+				dataStore =  new ObjectStore({ objectStore:new Memory({ data: data}) });//
+
+				grid = new DataGrid({
+					store: dataStore,
+					query: { id: "*" },
+					queryOptions: {},
+					structure: [//nombre columnas
+
+						/*{ name: "deviceid", field: "deviceid", width: "25%" },
+						{ name: "fixtime", field: "fixtime", width: "25%" },
+						{ name: "lat", field: "lat", width: "25%" },
+						{ name: "lon", field: "lon", width: "25%" },
+						{ name: "attributes", field: "attributes", width: "25%" }
+*/
+						{ name: "deviceid", field: "model", width: "25%" },
+						{ name: "PK", field: "pk", width: "25%" },
+						{ name: "Nombre", field: 'fields'.object , width: "25%" }
+					]
+				}, "grid");
+				console.log(dataStore.objectStore.data[0].fields);//Funciona para obtener datos
+				//console.log(dataStore.query({"pk": "2"}));
+				//var result = dataStore.query({"pk": "2"});
+      			//console.log(result);
+				grid.startup();
+				
+				//grid.setQuery({pk: "2"});
+			});
+		});
+
+		</script>
+	</body>
+</html>
