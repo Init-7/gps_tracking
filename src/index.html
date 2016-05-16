@@ -38,19 +38,28 @@
 			"dojo/data/ObjectStore",
 			"dojo/request",
 			"dijit/form/DateTextBox",
+			"dijit/registry",
+			"dojo/dom-construct", 
 			"dojo/domReady!"
-		], function(DataGrid, Memory,on, mouse, ObjectStore, request,DateTextBox){
-			on(document.getElementById("qwerty"), "click", function(e){
-					var grid, dataStore;
-					var fechaFF,fechaII;
-					var dtb;
-					// get widget:
-					var dtb = dijit.byId("date1");
-					// get value
+		], function(DataGrid, Memory,on, mouse, ObjectStore, request,DateTextBox,registry,domConstruct){
+			
+				 			
 					
+
+				on(document.getElementById("qwerty"), "click", function(e){
+					if(typeof registry.byId("gridDiv") != "undefined"){
+                        	registry.byId("gridDiv").destroyRecursive();
+                        }
+                    var row = domConstruct.toDom("<div id='gridDiv'>	</div>");
+    						domConstruct.place(row, "divALERTAS");
+                    var grid, dataStore;
+					var fechaFF,fechaII;
+					
+					// get value
 					fechaII = date1.value
 					//fechaII = "2016-03-01";
-					fechaFF = "2016-05-10";
+					fechaFF = date2.value
+					//fechaFF = "2016-09-10";
 					var url = "http://localhost:8000/gps/datosinforme/ESTThno/2/22/"+ fechaII +"/"+ fechaFF+"/";
 					request.get(url, {
 						handleAs: "json"
@@ -66,32 +75,33 @@
 								{ name: "Horas", field: "horas", width: "25%" },
 								{ name: "Minutos", field: "minutos", width: "25%" }
 							]
-						}, "gridDiv");
-						//console.log(date1.value);
-						grid.startup();
+						}//).placeAt("gridDiv");
+						,"gridDiv");
+						grid.startup();	
+
 					});
 
-							console.log("WENAAA");
-					    	console.log(date1.value);
-					    	
+					console.log("Consulta");
+			    	console.log(url);
 			});
-
-
 		});
 
-		
 
 		</script>
 
 	</head>
 
-<div id="fechaaaa" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'right'" > 
-		<label for="date1">Drop down Date box:</label>
+	<div id="fechaaaa" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'right'" > 
+	<label for="date1">Desde Fecha:</label>
 	<input type="text" name="date1" id="date1" value="2016-03-01"
     data-dojo-type="dijit/form/DateTextBox"
     constraints="{datePattern:'yyyy-MM-dd', strict:true}" 
     required="true" />
-
+    <label for="date1">Hasta Fecha:</label>
+	<input type="text" name="date2" id="date2" value="now"
+    data-dojo-type="dijit/form/DateTextBox"
+    constraints="{datePattern:'yyyy-MM-dd', strict:true}" 
+    required="true" />
 	<button type="button"  id="qwerty">Mostrar Información </button>
 
     </div>
@@ -113,18 +123,17 @@
 				</a>
 			</div>
 
-				<div id="divALERTAS"><!--span id="aviso">ALERTA!!.</span>--></div>
-				<img id="logoMap" src="./images/estchile.png" style="max-height: 75px;">
+				<div id="divALERTAS"> <!--span id="aviso">ALERTA!!.</span>--> </div>
+					<img id="logoMap" src="./images/estchile.png" style="max-height: 75px;">
 
-				<img id="gridDiv"  >	
+				<!--	<div id="gridDiv">	</div> -->
 
-		
-
-				<img id="infoT"  >
-
+			
+					<div id="infoT" ></div>
 
 
 
+			
 
 
 
