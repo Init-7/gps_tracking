@@ -133,6 +133,15 @@ body {
     //spointer-events: auto;
     }    
 
+#divInfoWMS iframe{
+
+
+height: 190px;
+
+
+}
+
+
 h3 { 
     margin: 0 0 0 0; 
     border-bottom: 1px solid #444; 
@@ -218,16 +227,14 @@ h6{
     max-height: 50px;
     }
 
-
-#infoT{
+.infoFlotante{
     bottom:15px;
     position:absolute;
     right:5px;
     padding: 5px;
-
     z-index:30;
     bottom: 30px;
-    background: #3e647d;
+    background: #ccd9e2;
     -webkit-box-shadow: 10px 10px 19px 0px rgba(0,0,0,0.4);
     -moz-box-shadow: 10px 10px 19px 0px rgba(0,0,0,0.4);
     box-shadow: 10px 10px 19px 0px rgba(0,0,0,0.4);

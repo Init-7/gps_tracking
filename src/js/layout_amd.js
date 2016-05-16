@@ -27,13 +27,19 @@ require([
 
 		//TEST MOSTRAR OCULTAR
 		var togglerInfoT = new Toggler({
-				    node: "infoT",
+				    node: "infoTrabajador",
 				    showFunc: coreFx.wipeIn,
 				    hideFunc: coreFx.wipeOut
 				  });
 
 		var togglerRightPanel = new Toggler({
 		    node: "rightPanel",
+		    showFunc: coreFx.wipeIn,
+		    hideFunc: coreFx.wipeOut
+		  	});
+
+		var togglerInfoEdificacion = new Toggler({
+		    node: "infoEdificacion",
 		    showFunc: coreFx.wipeIn,
 		    hideFunc: coreFx.wipeOut
 		  	});
@@ -237,6 +243,7 @@ require([
 			request:'GetLegendGraphic',
 			version:'1.1.0',
 			format:'image/png',
+			transparent: true,
 			width:'20',
 			height:'20',
 			legend_options:'forceLabels:on',
@@ -524,6 +531,8 @@ require([
 
 				domAttr.set(dom.byId('job'), "src", url.leyendaGPS);
 				domAttr.set(dom.byId('work'), "src", 'images/punto.png');
+				togglerInfoT.hide();
+				togglerInfoEdificacion.hide();
 				}
 
 			//Planta Maule
@@ -546,8 +555,12 @@ require([
 
 				layer.control.addOverlay(layer.realtime,'Trabajadores');
 
-				domAttr.set(dom.byId('job'), "src", url.leyendaTrabajador);
+				//domAttr.set(dom.byId('job'), "src", url.leyendaTrabajador);
 				domAttr.set(dom.byId('work'), "src", url.leyendaPMaule_edificacion);
+				domAttr.set(dom.byId('infoEdificacion'), "src", url.leyendaPMaule_edificacion);
+				domAttr.set(dom.byId('infoTrabajador'), "src", url.leyendaTrabajador);
+    			togglerInfoT.show();
+    			togglerInfoEdificacion.show();
 				}
 
 			//Enap
