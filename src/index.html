@@ -24,12 +24,8 @@
 		<!--load interno-->
 		<script src="js/Bing.js"></script>
 		<script src="js/Google.js"></script>
-
 		<script src="js/layout_amd.js"></script>
-
-
 		<script>
-
 		require([
 			"dojox/grid/DataGrid",
 			"dojo/store/Memory",
@@ -42,16 +38,12 @@
 			"dojo/dom-construct", 
 			"dojo/domReady!"
 		], function(DataGrid, Memory,on, mouse, ObjectStore, request,DateTextBox,registry,domConstruct){
-			
-				 			
-					
-
 				on(document.getElementById("qwerty"), "click", function(e){
 					if(typeof registry.byId("gridDiv") != "undefined"){
                         	registry.byId("gridDiv").destroyRecursive();
                         }
                     var row = domConstruct.toDom("<div id='gridDiv'>	</div>");
-    						domConstruct.place(row, "divALERTAS");
+    						domConstruct.place(row, "divFecha");
                     var grid, dataStore;
 					var fechaFF,fechaII;
 					
@@ -65,46 +57,29 @@
 						handleAs: "json"
 					}).then(function(data){
 						dataStore =  new ObjectStore({ objectStore:new Memory({ data: data }) });
-
 						grid = new DataGrid({
 							store: dataStore,
 							query: { id: "*" },
 							queryOptions: {},
 							structure: [//nombre columnas
-								{ name: "Nombre", field: "nombre", width: "25%" },
+								{ name: "Nombre", field: "nombre", width: "50%" },
 								{ name: "Horas", field: "horas", width: "25%" },
 								{ name: "Minutos", field: "minutos", width: "25%" }
 							]
 						}//).placeAt("gridDiv");
 						,"gridDiv");
 						grid.startup();	
-
 					});
-
 					console.log("Consulta");
 			    	console.log(url);
 			});
 		});
-
-
 		</script>
 
 	</head>
 
-	<div id="fechaaaa" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'right'" > 
-	<label for="date1">Desde Fecha:</label>
-	<input type="text" name="date1" id="date1" value="2016-03-01"
-    data-dojo-type="dijit/form/DateTextBox"
-    constraints="{datePattern:'yyyy-MM-dd', strict:true}" 
-    required="true" />
-    <label for="date1">Hasta Fecha:</label>
-	<input type="text" name="date2" id="date2" value="now"
-    data-dojo-type="dijit/form/DateTextBox"
-    constraints="{datePattern:'yyyy-MM-dd', strict:true}" 
-    required="true" />
-	<button type="button"  id="qwerty">Mostrar Información </button>
 
-    </div>
+	
 	<body class="claro">
 		<div id="mainWindow" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'sidebar', gutters:false" style="width: 100%; height: 100%;">
 
@@ -122,21 +97,9 @@
 					<img id="h-logo-corfo" src="./images/logo-corfo.png"  alt="Corfo | Corporación de Fomento de la Producción">
 				</a>
 			</div>
-
 				<div id="divALERTAS"> <!--span id="aviso">ALERTA!!.</span>--> </div>
 					<img id="logoMap" src="./images/estchile.png" style="max-height: 75px;">
-
-				<!--	<div id="gridDiv">	</div> -->
-
-			
 					<div id="infoT" ></div>
-
-
-
-			
-
-
-
 			</div>
 			<!--PANEL Derecho -->
 			<button type="button"  id="showButton">Mostrar Información </button>
@@ -201,26 +164,29 @@
 							<!--rango de fechas-->
 							<div id="SliderLabel">Rango Fecha:</div>
 							<div>
-								<!--input name="fromDate" id="fromDate" />
-								<label for="toDate">-</label>
-								<input name="toDate" id="toDate" /-->								
-
- 							<input data-dojo-id="myFromDate" type="text" name="fromDate" id="fromDate" data-dojo-type="dijit/form/DateTextBox" required="true" onChange="myToDate.constraints.min = arguments[0];" />
-								<label for="toDate">-</label>
-								
-								<input data-dojo-id="myToDate" type="text" name="toDate" id="toDate"  data-dojo-type="dijit/form/DateTextBox" required="true" onChange="myFromDate.constraints.max = arguments[0];" />
-
-
-					<!-- Segundo intento
-							<label for="date1">Desde:</label>
-							<input type="text" name="date1" id="date1" value=now
+							<div id="divFecha" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'right'" > 
+								<label for="date1">Desde:</label>
+									<input type="text" name="date1" id="date1" value="2016-03-01"
+									data-dojo-id="fromDate"
+								    data-dojo-type="dijit/form/DateTextBox"
+								    constraints="{datePattern:'yyyy-MM-dd', strict:true}" 
+								    required="true"
+								    onChange="toDate.constraints.min = arguments[0];"
+								    /><br>
+							    <label for="date1">Hasta:</label>
+								<input type="text" name="date2" id="date2" value="now"
 							    data-dojo-type="dijit/form/DateTextBox"
-							    required="true" />
-					-->
+							    constraints="{datePattern:'yyyy-MM-dd', strict:true}" 
+							    required="true" 
+							    data-dojo-id="toDate" 
+							    onChange="fromDate.constraints.max = arguments[0];" />
+								<button type="button"  data-dojo-type="dijit/form/Button" id="qwerty">Mostrar Información </button>
+								
+							</div>
 
 							</div>
 							<div id="slider">&nbsp;</div>
-							<button id="BtnTiempoEnPlanta" type="button"></button>
+							<!--  <button id="BtnTiempoEnPlanta" type="button"></button> -->
 							<!--button id="BtnTiempoPorSector" type="button"></button-->
 							<div id="slider">&nbsp;</div>
 							<div id="resultJob"></div>

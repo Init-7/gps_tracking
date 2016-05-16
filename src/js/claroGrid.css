@@ -373,7 +373,7 @@
 	padding-left:25px;
 }
 .claro .dojoxGridLoading {
-	background-image:url("../../../dijit/themes/claro/images/loadingAnimation.gif");
+	background-image:url("../images/theme/loadingAnimation.gif");
 }
 .claro .dojoxGridError {
 	background-image: url('../../../dijit/icons/images/commonIconsObjActEnabled.png'); 
@@ -535,7 +535,7 @@
 	border:1px dashed darkblue !important;
 }
 .claro .dojoxGridRowOver .dojoxGridCell {
-	background:url("images/row_back.png") #ABD6FF repeat-x;
+	background:url("") #ABD6FF repeat-x;
 	border-top:1px solid #769DC0;
 	border-bottom:1px solid #769DC0;
 }
