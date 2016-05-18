@@ -368,6 +368,12 @@ require([
 				}, "trabajador");
 
 			//formulario de consultas...
+
+
+
+
+
+			
 			new FilteringSelect({
 				id: "plantaQuery",
 				value: "*",
@@ -984,7 +990,7 @@ require([
 			var defaultParams = {
 				request: 'GetFeatureInfo',
 				service: 'WMS',
-				srs: layer._crs.code,
+				//srs: layer._crs.code,//Generando error
 				styles: '',
 				version: layer._wmsVersion,
 				format: layer.options.format,

@@ -36,8 +36,12 @@
 			"dijit/form/DateTextBox",
 			"dijit/registry",
 			"dojo/dom-construct", 
+			"dijit/form/FilteringSelect",
 			"dojo/domReady!"
-		], function(DataGrid, Memory,on, mouse, ObjectStore, request,DateTextBox,registry,domConstruct){
+		], function(DataGrid, Memory,on, mouse, ObjectStore, request,DateTextBox,registry,domConstruct,FilteringSelect){
+				
+
+
 				on(document.getElementById("qwerty"), "click", function(e){
 					if(typeof registry.byId("gridDiv") != "undefined"){
                         	registry.byId("gridDiv").destroyRecursive();
@@ -70,21 +74,68 @@
 						,"gridDiv");
 						grid.startup();	
 					});
-					console.log("Consulta");
 			    	console.log(url);
 			});
+
+/**************************************************************************************/
+			request.get("plantas.json", {
+				handleAs: "json"
+			}).then(function(data){
+				stateStore =  new ObjectStore({ objectStore:new Memory({ data: data }) });
+
+				console.log(stateStore);
+
+				var filteringSelect = new dijit.form.FilteringSelect({
+		            id: "stateSelect",
+		            name: "state",
+		            value: "Maule",
+		            store: stateStore,
+		            searchAttr: "nombre"
+		        }, "stateSelect");	
+
+		        grid = new DataGrid({
+							store: stateStore,
+							query: { id: "*" },
+							queryOptions: {},
+							structure: [//nombre columnas
+								{ name: "Nombre", field: "nombre", width: "50%" },
+								{ name: "ID", field: "id", width: "25%" }
+							]
+						}//).placeAt("gridDiv");
+						,"gridDiv");
+						grid.startup();	
+
+
+
+
+			});	
+					
+				
+
+
+
+/**************************************************************************************/
 		});
 		</script>
 
 	</head>
 
 
+
+
 	
 	<body class="claro">
+		<div id="divTest" class="roundedCorners shadow" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="minSize:800,region:'top'" style="height: 200px;">
+
+		<input id="stateSelect">
+		<p>
+		    <button onClick="alert(dijit.byId('stateSelect').get('value'))">Get value</button>
+		    <button onClick="alert(dijit.byId('stateSelect').get('displayedValue'))">Get displayed value</button>
+		</p>
+		<div id="gridDiv"></div>
+		</div>
 		<div id="mainWindow" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'sidebar', gutters:false" style="width: 100%; height: 100%;">
-
-			
-
+		
 			<!--MAP-->
 			<div id="map" class="roundedCorners shadow" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'">
 			<!--CABECERA-->
