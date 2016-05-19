@@ -27,6 +27,7 @@
 		<script src="js/layout_amd.js"></script>
 		<script>
 		require([
+			"dijit/form/ComboBox", 
 			"dojox/grid/DataGrid",
 			"dojo/store/Memory",
 			"dojo/on", 
@@ -38,7 +39,7 @@
 			"dojo/dom-construct", 
 			"dijit/form/FilteringSelect",
 			"dojo/domReady!"
-		], function(DataGrid, Memory,on, mouse, ObjectStore, request,DateTextBox,registry,domConstruct,FilteringSelect){
+		], function(ComboBox,DataGrid, Memory,on, mouse, ObjectStore, request,DateTextBox,registry,domConstruct,FilteringSelect){
 				
 
 
@@ -78,61 +79,88 @@
 			});
 
 /**************************************************************************************/
+	/////Consulta JSON Plantas
 			request.get("plantas.json", {
 				handleAs: "json"
 			}).then(function(data){
-				stateStore =  new ObjectStore({ objectStore:new Memory({ data: data }) });
-
-				console.log(stateStore);
-
+				storePlanta =  new ObjectStore({ objectStore:new Memory({ data: data }) });
+				
 				var filteringSelect = new dijit.form.FilteringSelect({
-		            id: "stateSelect",
-		            name: "state",
-		            value: "Maule",
-		            store: stateStore,
-		            searchAttr: "nombre"
-		        }, "stateSelect");	
-
-		        grid = new DataGrid({
-							store: stateStore,
+		            id: "selectPlanta",
+		            name: "id",
+		            value: "1",
+		            autoComplete: true,
+		            store: storePlanta,
+		            //searchAttr: "name"
+		        }, "selectPlanta");	
+		        
+		        /*grid = new DataGrid({
+							store: storePlanta,
 							query: { id: "*" },
 							queryOptions: {},
 							structure: [//nombre columnas
-								{ name: "Nombre", field: "nombre", width: "50%" },
+								{ name: "Nombre", field: "name", width: "50%" },
 								{ name: "ID", field: "id", width: "25%" }
 							]
 						}//).placeAt("gridDiv");
 						,"gridDiv");
 						grid.startup();	
-
-
-
-
+				*/
 			});	
-					
-				
-
-
-
+			////////////
 /**************************************************************************************/
+///Centro Negocio
+			request.get("negocios.json", {
+				handleAs: "json"
+			}).then(function(data){
+				storeNegocio =  new ObjectStore({ objectStore:new Memory({ data: data }) });
+				
+		    var comboBox = new ComboBox({
+		        id: "selectNegocio",
+		        name: "name",
+		        value: "1",
+		        store: storeNegocio,
+		        autoComplete: true,
+        		query: {selectPlanta: /.*/},
+		        searchAttr: "id",
+		        onChange: function(selectNegocio){
+		            console.log("combobox onchange ", selectNegocio, this.item);
+		            dijit.byId('selectPlanta').set('value', this.item ? this.item.id : null);
+		        }
+
+		    }, "selectNegocio").startup();
+		        grid2 = new DataGrid({
+							store: storeNegocio,
+							query: { id: "*" },
+							queryOptions: {},
+							structure: [//nombre columnas
+								{ name: "Nombre", field: "name", width: "50%" },
+								{ name: "ID", field: "id", width: "25%" }
+							]
+						}//).placeAt("gridDiv");
+						,"gridDiv2");
+						grid2.startup();	
+			});	
 		});
 		</script>
 
 	</head>
 
-
-
-
 	
 	<body class="claro">
-		<div id="divTest" class="roundedCorners shadow" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="minSize:800,region:'top'" style="height: 200px;">
+		<div id="divTest" class="roundedCorners shadow" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'" style="height: 200px;">
 
-		<input id="stateSelect">
+		<input id="selectPlanta">
 		<p>
-		    <button onClick="alert(dijit.byId('stateSelect').get('value'))">Get value</button>
-		    <button onClick="alert(dijit.byId('stateSelect').get('displayedValue'))">Get displayed value</button>
+		<button onclick="alert(dijit.byId('selectPlanta').get('value'))">Get value</button>
+		<button onclick="alert(dijit.byId('selectPlanta').get('displayedValue'))">Get displayed value</button>
 		</p>
-		<div id="gridDiv"></div>
+
+
+		<div id="gridDiv" ></div>
+		<input id="selectNegocio">
+		<div id="gridDiv2" style="left:100px; width:200px;"></div>
+
 		</div>
 		<div id="mainWindow" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'sidebar', gutters:false" style="width: 100%; height: 100%;">
 		

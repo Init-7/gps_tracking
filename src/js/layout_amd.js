@@ -565,6 +565,7 @@ require([
 				domAttr.set(dom.byId('work'), "src", url.leyendaPMaule_edificacion);
 				domAttr.set(dom.byId('infoEdificacion'), "src", url.leyendaPMaule_edificacion);
 				domAttr.set(dom.byId('infoTrabajador'), "src", url.leyendaTrabajador);
+    			
     			togglerInfoT.show();
     			togglerInfoEdificacion.show();
 				}
