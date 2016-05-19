@@ -78,69 +78,6 @@
 			    	console.log(url);
 			});
 
-/**************************************************************************************/
-	/////Consulta JSON Plantas
-			request.get("plantas.json", {
-				handleAs: "json"
-			}).then(function(data){
-				storePlanta =  new ObjectStore({ objectStore:new Memory({ data: data }) });
-				
-				var filteringSelect = new dijit.form.FilteringSelect({
-		            id: "selectPlanta",
-		            name: "id",
-		            value: "1",
-		            autoComplete: true,
-		            store: storePlanta,
-		            //searchAttr: "name"
-		        }, "selectPlanta");	
-		        
-		        /*grid = new DataGrid({
-							store: storePlanta,
-							query: { id: "*" },
-							queryOptions: {},
-							structure: [//nombre columnas
-								{ name: "Nombre", field: "name", width: "50%" },
-								{ name: "ID", field: "id", width: "25%" }
-							]
-						}//).placeAt("gridDiv");
-						,"gridDiv");
-						grid.startup();	
-				*/
-			});	
-			////////////
-/**************************************************************************************/
-///Centro Negocio
-			request.get("negocios.json", {
-				handleAs: "json"
-			}).then(function(data){
-				storeNegocio =  new ObjectStore({ objectStore:new Memory({ data: data }) });
-				
-		    var comboBox = new ComboBox({
-		        id: "selectNegocio",
-		        name: "name",
-		        value: "1",
-		        store: storeNegocio,
-		        autoComplete: true,
-        		query: {selectPlanta: /.*/},
-		        searchAttr: "id",
-		        onChange: function(selectNegocio){
-		            console.log("combobox onchange ", selectNegocio, this.item);
-		            dijit.byId('selectPlanta').set('value', this.item ? this.item.id : null);
-		        }
-
-		    }, "selectNegocio").startup();
-		        grid2 = new DataGrid({
-							store: storeNegocio,
-							query: { id: "*" },
-							queryOptions: {},
-							structure: [//nombre columnas
-								{ name: "Nombre", field: "name", width: "50%" },
-								{ name: "ID", field: "id", width: "25%" }
-							]
-						}//).placeAt("gridDiv");
-						,"gridDiv2");
-						grid2.startup();	
-			});	
 		});
 		</script>
 
@@ -148,20 +85,7 @@
 
 	
 	<body class="claro">
-		<div id="divTest" class="roundedCorners shadow" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'" style="height: 200px;">
 
-		<input id="selectPlanta">
-		<p>
-		<button onclick="alert(dijit.byId('selectPlanta').get('value'))">Get value</button>
-		<button onclick="alert(dijit.byId('selectPlanta').get('displayedValue'))">Get displayed value</button>
-		</p>
-
-
-		<div id="gridDiv" ></div>
-		<input id="selectNegocio">
-		<div id="gridDiv2" style="left:100px; width:200px;"></div>
-
-		</div>
 		<div id="mainWindow" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'sidebar', gutters:false" style="width: 100%; height: 100%;">
 		
 			<!--MAP-->
