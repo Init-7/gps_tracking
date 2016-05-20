@@ -1,0 +1,385 @@
+html,body {
+    height:100%;
+    width:100%;
+    margin:0;
+    padding:0;
+    }
+
+
+
+body {
+    background-color:#FFF;
+    overflow:hidden;
+    font-family: "Helvetica";
+    }
+
+#header {
+    border:solid 1px #A8A8A8;
+    overflow:hidden;
+    background-color:#999;
+    background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#C0C0C0));
+    background: -moz-linear-gradient(top,  #fff,  #C0C0C0);
+    height:50px;
+    margin: 5px 110px 5px ;
+    pointer-events: auto;
+    position: absolute;
+    z-index: 1000;
+    
+
+    }
+
+#header a.logoLeft{
+    float: left;
+    text-decoration: none;
+    }
+#header a.logoRight{
+    float: right;
+    text-decoration: none;
+    }
+.roundedCorners {
+    -o-border-radius:4px;
+    -moz-border-radius:4px;
+    -webkit-border-radius:4px;
+    border-radius:4px;
+    }
+
+#h-logo-corfo {
+    max-height: 35px;
+    }
+
+#h-logo-EST{
+    max-height: 50px;
+    }
+
+.shadow {
+    -webkit-box-shadow:4px 4px 8px #adadad;
+    -moz-box-shadow:4px 4px 8px #adadad;
+    -o-box-shadow:4px 4px 8px #adadad;
+    box-shadow:4px 4px 8px #adadad;
+    }
+#title{
+    float: left;
+    padding: 13px;
+    color:#000;
+    font-size:12pt;
+    text-align:left;
+    text-shadow: 0px 1px 0px #e5e5ee;
+    font-weight:700;
+    display: inline;
+    }
+#logo {
+    display: inline-block;
+    padding-right: 10px;
+    }
+#logo a, #logo a:hover, #logo a:active, #logo a:visited {
+    text-decoration: none;
+    }
+#map {
+    background-color:#FFF;
+    border:solid 2px #B8B8B8;
+    //position: relative;
+    top:0;bottom:0;right:0;left:0;
+    margin:5px;
+    padding:0;
+    z-index: -1;
+
+    }
+.nav {
+    padding: 5px 10px;
+    background: #4479BA;
+    color: #FFF;
+    border-radius: 5px;
+    border: solid 1px #20538D;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.4);
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 1px 1px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 1px 1px rgba(0, 0, 0, 0.2);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 1px 1px rgba(0, 0, 0, 0.2);
+    }
+
+#showButton{
+    float: right;
+    position: absolute;
+    top: 15px;
+    right: 20px;    
+    width: 272px;
+    height: 30px;
+    
+
+}
+
+#hideButton{
+    width: 272px;
+    height: 30px;
+
+}
+
+
+.leaflet-right .leaflet-control {
+    margin-right: 300px;
+}
+
+#rightPanel{
+    //position: absolute;
+    right: 15px!important;
+    top: 10px !important; 
+    left: auto  !important;
+    bottom: 40px;
+    z-index: 130;
+    font-size:10pt;
+    background-color:#E8E8E8;
+    border:solid 2px #B8B8B8;
+    //margin:5px; 
+    width:272px;
+    //height: 80%;
+    float: right !important;
+    //spointer-events: auto;
+    }    
+
+#divInfoWMS iframe{
+
+    margin-top: 20px;
+  margin-bottom: 30px;
+
+  -moz-border-radius: 12px;
+  -webkit-border-radius: 12px;
+  border-radius: 12px;
+
+  -moz-box-shadow: 4px 4px 14px #000;
+  -webkit-box-shadow: 4px 4px 14px #000;
+  box-shadow: 4px 4px 14px #000;
+
+  -moz-transform:rotate(20deg);
+  -webkit-transform:rotate(20deg);
+  -o-transform:rotate(20deg);
+  -ms-transform:rotate(20deg);
+  filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=.2);
+    height: 190px;
+
+
+}
+
+
+h3 { 
+    margin: 0 0 0 0; 
+    border-bottom: 1px solid #444; 
+    text-align: center;
+    }
+h5{
+    margin: 1px 0 1px 0;
+    border-bottom: 0px;
+    }
+h6{
+    margin: 1px 0 1px 0;
+    border-bottom: 0px;
+    }
+
+.note { 
+    font-size: 80%; 
+    text-align: center;
+    color: #666; 
+    }
+#slider {
+    color: #666;
+    }
+#SliderLabel { 
+    padding: 5px 0 1px 0; 
+    }
+.dijitTextBox {
+    border: solid black 1px;
+    #overflow: hidden;
+    width: 13em;
+    vertical-align: middle;
+    }
+.dijitDateTextBox {
+    width: 7em;
+    }
+.dojoxCheckedMultiSelect .dojoxCheckedMultiSelectWrapper {
+    border: solid white 1px;
+    margin: 1px 0;
+    overflow: auto;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    height: 100%;
+    }
+.claro .dojoxCheckedMultiSelect .dojoxCheckedMultiSelectWrapper {
+    border: 1px solid #fff;
+    background-color: #fff;
+    line-height: normal;
+    -webkit-transition-property:background-color, border;
+    -webkit-transition-duration:.35s;
+    }
+.claro .dojoxCheckedMultiSelectHover .dojoxCheckedMultiSelectWrapper {
+    border-color: #fff;
+    background-color: #fff;
+    background-image: -moz-linear-gradient(rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 2px);
+    background-image: -webkit-linear-gradient(rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 2px);
+    background-image: linear-gradient(rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 2px);
+    background-repeat: repeat-x;
+    -webkit-transition-duration:.25s;
+    }
+
+.claro .dijitContentPane {
+    padding: 4px;
+    }
+
+#Cal1 .dijitCalendarDisabledDate {
+    background-color: #333;
+    text-decoration: none;
+    }
+
+#Cal1 .dijitCalendarContainer {
+    margin: 25px auto;
+    }
+
+/*Style for company logo added to the map*/
+#logoMap{
+    bottom:15px;
+    position:absolute;
+    //right:5px;
+    z-index:30;
+
+    }
+#logoMap img{
+    border:none;
+    max-height: 50px;
+    }
+
+.infoFlotante{
+    bottom:15px;
+    position:absolute;
+    right:5px;
+    padding: 5px;
+    z-index:30;
+    bottom: 30px;
+    background: #ccd9e2;
+    -webkit-box-shadow: 10px 10px 19px 0px rgba(0,0,0,0.4);
+    -moz-box-shadow: 10px 10px 19px 0px rgba(0,0,0,0.4);
+    box-shadow: 10px 10px 19px 0px rgba(0,0,0,0.4);
+
+    border-radius: 10px 10px 10px 10px;
+    -moz-border-radius: 10px 10px 10px 10px;
+    -webkit-border-radius: 10px 10px 10px 10px;
+    border: 2px solid #0099ff;
+    }
+
+#gridDiv{
+
+    position:relative;
+    //right:300px;
+    padding: 5px;
+    //height: 170px;
+    width: 200px;
+    z-index:1000;
+    /*bottom: 30px;
+    //background: #3e647d;
+    -webkit-box-shadow: 10px 10px 19px 0px rgba(0,0,0,0.4);
+    -moz-box-shadow: 10px 10px 19px 0px rgba(0,0,0,0.4);
+    box-shadow: 10px 10px 19px 0px rgba(0,0,0,0.4);
+
+    border-radius: 10px 10px 10px 10px;
+    -moz-border-radius: 10px 10px 10px 10px;
+    -webkit-border-radius: 10px 10px 10px 10px;
+    border: 2px solid #0099ff;
+*/
+
+}
+
+
+
+#infoT img{
+    border:none;
+    max-height: 50px;
+    }
+
+#aviso{
+    position:absolute;
+    top:10px;
+    left:50px;
+    padding: 6px;
+    background-color: #FF0000;
+    border-radius: 4px;
+    border: solid 1px #333;
+    z-index:99;
+    max-width: 200px;
+    text-align: justify;
+    color: #fff;
+    font-size:large;
+    }
+
+.leaflet-cluster-anim .leaflet-marker-icon, .leaflet-cluster-anim .leaflet-marker-shadow {
+    -webkit-transition: -webkit-transform 0.3s ease-out, opacity 0.3s ease-in;
+    -moz-transition: -moz-transform 0.3s ease-out, opacity 0.3s ease-in;
+    -o-transition: -o-transform 0.3s ease-out, opacity 0.3s ease-in;
+    transition: transform 0.3s ease-out, opacity 0.3s ease-in;
+    }
+
+.leaflet-cluster-spider-leg {
+    /* stroke-dashoffset (duration and function) should match with leaflet-marker-icon transform in order to track it exactly */
+    -webkit-transition: -webkit-stroke-dashoffset 0.3s ease-out, -webkit-stroke-opacity 0.3s ease-in;
+    -moz-transition: -moz-stroke-dashoffset 0.3s ease-out, -moz-stroke-opacity 0.3s ease-in;
+    -o-transition: -o-stroke-dashoffset 0.3s ease-out, -o-stroke-opacity 0.3s ease-in;
+    transition: stroke-dashoffset 0.3s ease-out, stroke-opacity 0.3s ease-in;
+    }
+
+
+    /* MARKERCLUSTER */
+.marker-cluster-small {
+    background-color: rgba(181, 226, 140, 0.6);
+    }
+.marker-cluster-small div {
+    background-color: rgba(110, 204, 57, 0.6);
+    }
+
+.marker-cluster-medium {
+    background-color: rgba(241, 211, 87, 0.6);
+    }
+.marker-cluster-medium div {
+    background-color: rgba(240, 194, 12, 0.6);
+    }
+
+.marker-cluster-large {
+    background-color: rgba(253, 156, 115, 0.6);
+    }
+.marker-cluster-large div {
+    background-color: rgba(241, 128, 23, 0.6);
+    }
+
+    /* IE 6-8 fallback colors */
+.leaflet-oldie .marker-cluster-small {
+    background-color: rgb(181, 226, 140);
+    }
+.leaflet-oldie .marker-cluster-small div {
+    background-color: rgb(110, 204, 57);
+    }
+
+.leaflet-oldie .marker-cluster-medium {
+    background-color: rgb(241, 211, 87);
+    }
+.leaflet-oldie .marker-cluster-medium div {
+    background-color: rgb(240, 194, 12);
+    }
+
+.leaflet-oldie .marker-cluster-large {
+    background-color: rgb(253, 156, 115);
+    }
+.leaflet-oldie .marker-cluster-large div {
+    background-color: rgb(241, 128, 23);
+    }
+
+.marker-cluster {
+    background-clip: padding-box;
+    border-radius: 20px;
+    }
+.marker-cluster div {
+    width: 30px;
+    height: 30px;
+    margin-left: 5px;
+    margin-top: 5px;
+
+    text-align: center;
+    border-radius: 15px;
+    font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+    }
+.marker-cluster span {
+    line-height: 30px;
+    }
