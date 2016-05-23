@@ -6,6 +6,13 @@
 		<link rel="icon" href="images/favicon2.png">
 		<title>::ESTChile:: SISTEMA DE MONITOREO DE SEGURIDAD GPS</title>
 		
+
+
+
+
+
+
+
 		<!-- Load estilos-->
 		<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/dojo/1.10.4/dijit/themes/claro/claro.css" />
 		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
@@ -20,14 +27,29 @@
 		<!-- Load externo -->
 
 		<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+				<!-- Load externo GeoJson Leaflet-->
+		<script type="text/javascript" src="./dist/leaflet.ajax.js"></script>
+		<script src="spin.js"></script>
+		<script src="leaflet.spin.js"></script>
+
+		
 		<script src="http://ajax.googleapis.com/ajax/libs/dojo/1.10.4/dojo/dojo.js" data-dojo-config="async: true, parseOnLoad: true"></script>
 		<script src="http://maps.google.com/maps/api/js?v=3"></script>
 		<script src="js/Bing.js"></script>
 		<script src="js/Google.js"></script>
 		<script src="js/layout_amd_2.js"></script>
 
+
+
+
+
 	</head>
 	<body class="claro">
+
+	<button type="button"  id="cargarjson">Cargar JSON </button>
+
+
+
 		<div id="mainWindow" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'sidebar', gutters:false" style="width: 100%; height: 100%;">
 			<!--MAP-->
 			<div id="map" class="roundedCorners shadow" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'">

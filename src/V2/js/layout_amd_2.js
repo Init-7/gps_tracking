@@ -50,9 +50,6 @@ require([
     });
 
 
-
-
-
     //coordenadas de interes...
         var coord = [];
         coord.EST = [-36.778224,-73.080980];
@@ -186,6 +183,8 @@ require([
 
 
     var map = new L.Map('map', {center: coord.CENTRAL, zoom: 2});
+
+
     
     var osm = new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
 
@@ -230,9 +229,44 @@ require([
             "Construcciones": edificios
         };
 
+
+
     //L.control.layers(baseLayers,overlays).addTo(map);
 
     map.addLayer(ggl);
     map.addControl(new L.Control.Layers( {'OSM':osm, 'Google':ggl, 'Countries, then boundaries':ctb}, overlays));
    
+
+
+
+
+
+
+    /**********************************/
+function popUp(f,l){
+    var out = [];
+    if (f.properties){
+        for(key in f.properties){
+            out.push(key+": "+f.properties[key]);
+        }
+        l.bindPopup(out.join("<br />"));
+    }
+}
+
+var url2 = "http://104.196.40.15:8080/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:distinto&maxFeatures=50&outputFormat=application%2Fjson";
+
+/*Json Distinto2*/
+var url = "http://104.196.40.15:8080/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:DistintoV2&maxFeatures=50&outputFormat=application%2Fjson";
+//var url = "trabajadores.json";
+var jsonTest = new L.GeoJSON.AJAX([url,"counties.geojson"],{onEachFeature:popUp}).addTo(map);
+////////////////////////////////
+
+
+
+
+
+
+
+
+
 });

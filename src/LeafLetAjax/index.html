@@ -34,6 +34,8 @@ var mopt = {
     url: 'http://otile{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.jpeg',
     options: {attribution:mapQuestAttr + osmDataAttr, subdomains:'1234'}
   };
+
+
 var mq=L.tileLayer(mopt.url,mopt.options);
 
 mq.addTo(m);
@@ -50,8 +52,9 @@ function popUp(f,l){
     }
 }
 
-var url = "http://104.196.40.15:8080/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:fakepeople&maxFeatures=50&outputFormat=text%2Fjavascript";
-//var url = "trabajadores.json";
+
+
+var url = "trabajadores.json";
 var jsonTest = new L.GeoJSON.AJAX([url,"counties.geojson"],{onEachFeature:popUp}).addTo(m);
 </script>
 
