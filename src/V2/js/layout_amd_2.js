@@ -105,8 +105,12 @@ require([
                                     domConstruct.place(row, "TB"); // "TB" es la id donde se creará "row"
 
                                 /* Lectura archivo Json Trabajadores*/
-                                var tb= dijit.byId('negocio').get('Value');
-                                var url= defaultUrl+ "/gps/trabajadores/"+tb+"/";
+
+
+                                //
+                                //var tb= dijit.byId('negocio').get('Value');
+                                //var url= defaultUrl+ "/gps/trabajadores/"+tb+"/";
+                                var url= "trabajadores.json";
                                 request.get(url, {
                                     handleAs: "json"
                                 }).then(function(data){
@@ -120,6 +124,11 @@ require([
                                        //dijit.byId('negocio').query.planta = this.item.planta || /.*/;             
                                         //alert(dijit.byId('trabajador').get('value'));
                                         //alert(dijit.byId('trabajador').get('displayedValue'));
+
+
+
+
+                                        
                                     }
                                 }, "trabajador").startup();
 
