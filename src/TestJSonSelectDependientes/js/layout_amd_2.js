@@ -1,23 +1,64 @@
 require([
 	"dojo/on", //Captura eventos en objetos ejemplo onChange: function(planta){
 	"dojo/mouse", // Captura eventos desde el mouse
-	"dojo/request", // Carga datos desde la url definida ejemplo: request.get(defaultUrl+ "/gps/plantas/"
+	"dijit/layout/BorderContainer", 
+    "dojo/fx/Toggler", //custom animation functions
+    "dojo/fx",
+    "dojo/request", // Carga datos desde la url definida ejemplo: request.get(defaultUrl+ "/gps/plantas/"
     "dojo/store/Memory", // usado adaptar datos obtenidos Json ejemplo store: new Memory({ idProperty: "id", data: data }),
     "dijit/registry", //usado en la busqueda por id ejemplo: registry.byId("negocio").destroyRecursive();
-        "dijit/layout/ContentPane", 
-        "dijit/form/DateTextBox",
-
+    "dijit/layout/ContentPane", 
+    "dijit/form/DateTextBox",
+    "dojo/dom",
     "dijit/layout/AccordionContainer", 
-            "dojox/grid/DataGrid",
+    "dojox/grid/DataGrid",
     "dijit/form/Button",
-            "dojo/data/ObjectStore",
+    "dojo/data/ObjectStore",
     "dojo/dom-construct", // constructor objetos ejemplo: domConstruct.toDom(" <input id='negocio' />");
     "dijit/form/FilteringSelect", // Crear desplegables con información dijit.form.FilteringSelect({
     "dojo/domReady!"
-], function(on, mouse, request, Memory, registry,ContentPane, DateTextBox,AccordionContainer,DataGrid,Button,ObjectStore, domConstruct, FilteringSelect){
+], function(on, mouse,BorderContainer,Toggler, coreFx, request, Memory, registry,ContentPane, DateTextBox,dom,AccordionContainer,DataGrid,Button,ObjectStore, domConstruct, FilteringSelect){
     var defaultUrl ="http://localhost:8000";
 	
 
+    //TEST MOSTRAR OCULTAR
+    var togglerInfoT = new Toggler({
+        node: "infoTrabajador",
+        showFunc: coreFx.wipeIn,
+        hideFunc: coreFx.wipeOut
+    });
+
+    var togglerRightPanel = new Toggler({
+        node: "rightPanel",
+        showFunc: coreFx.wipeIn,
+        hideFunc: coreFx.wipeOut
+    });
+
+    var togglerInfoEdificacion = new Toggler({
+        node: "infoEdificacion",
+        showFunc: coreFx.wipeIn,
+        hideFunc: coreFx.wipeOut
+        });
+
+    on(dom.byId("hideButton"), "click", function(e){
+        togglerRightPanel.hide();  
+    });
+
+    on(dom.byId("showButton"), "click", function(e){
+        togglerRightPanel.show();
+
+    });
+
+
+
+
+
+    //coordenadas de interes...
+        var coord = [];
+        coord.EST = [-36.778224,-73.080980];
+        coord.ENAP = [-36.780,-73.125];
+        coord.MAULE = [-35.607,-71.588];
+        coord.CENTRAL = [-36.3,-72.3];
 
     /*Lista de Desplegables*/			
     /* Lectura archivo Json Plantas*/
@@ -132,10 +173,57 @@ require([
                     console.log(url);
             });
 
+/****TODO MAPA*****/
 
 
+    var map = new L.Map('map', {center: coord.CENTRAL, zoom: 2});
+    
+    var osm = new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
 
+    var ctb = new L.tileLayer.wms('http://demo.opengeo.org/geoserver/ows?', {
+        layers: 'ne:ne_10m_admin_0_countries,ne:ne_10m_admin_0_boundary_lines_land'});
+
+    var cities = new L.LayerGroup();
+
+        L.marker([39.61, -105.02]).bindPopup('This is Littleton, CO.').addTo(cities),
+        L.marker([39.74, -104.99]).bindPopup('This is Denver, CO.').addTo(cities),
+        L.marker([39.73, -104.8]).bindPopup('This is Aurora, CO.').addTo(cities),
+        L.marker([39.77, -105.23]).bindPopup('This is Golden, CO.').addTo(cities);
+
+//Primera Forma de mostrar los edificios
+
+    var edificios = new L.tileLayer.wms('http://104.196.40.15:8080/geoserver/wms?', {
+                layers: 'est40516:Edificacion',
+                transparent: true,
+                format: 'image/png',
+                //styles: 'PMaule',
+                //attribution: 'Edificacion',
+                crs:L.CRS.EPSG4326,
+                opacity: 0.7
+                }
+        );
+
+    var styles = [
+        {
+          featureType: 'all',
+          stylers: [{hue: '#ff0000'}]
+        }
+     ];
+
+    var ggl = new L.Google('HYBRID', {
+            mapOptions: {
+            //styles: styles
+        }
+    });
+
+    var overlays = {//Capa con marcadores 
+            "Cities": cities,
+            "Construcciones": edificios
+        };
+
+    //L.control.layers(baseLayers,overlays).addTo(map);
+
+    map.addLayer(ggl);
+    map.addControl(new L.Control.Layers( {'OSM':osm, 'Google':ggl, 'Countries, then boundaries':ctb}, overlays));
    
-
-
 });

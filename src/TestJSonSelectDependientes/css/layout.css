@@ -66,6 +66,7 @@ body {
     text-shadow: 0px 1px 0px #e5e5ee;
     font-weight:700;
     display: inline;
+    color: #0167b4;
     }
 #logo {
     display: inline-block;
@@ -75,14 +76,9 @@ body {
     text-decoration: none;
     }
 #map {
-    background-color:#FFF;
-    border:solid 2px #B8B8B8;
-    //position: relative;
-    top:0;bottom:0;right:0;left:0;
-    margin:5px;
-    padding:0;
     z-index: -1;
-
+    width: 100% !important; 
+    height: 100% !important;
     }
 .nav {
     padding: 5px 10px;
