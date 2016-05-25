@@ -18,7 +18,7 @@
         "nombre_emergencia": "Tetis",
         "nro_emergencia": "123456",
         "nombre": "Jhonny Sins",
-        "id": null,
+        "id": 1,
         "tipo_contacto": "POLOLO"
       }
     },
@@ -35,11 +35,11 @@
         "fono": 696969,
         "cargo": "Actor Porno3",
         "foto": "/media/avatar/jhonnysins_BAdYgjs.jpg",
-        "nivel_riesgo": 4,
+        "nivel_riesgo": 3,
         "nombre_emergencia": "Tetis",
         "nro_emergencia": "123456",
         "nombre": "Jhonny Sins",
-        "id": null,
+        "id": 2,
         "tipo_contacto": "POLOLO"
       }
     },
@@ -60,7 +60,7 @@
         "nombre_emergencia": "Tetis",
         "nro_emergencia": "123456",
         "nombre": "Jhonny Sins",
-        "id": null,
+        "id": 3,
         "tipo_contacto": "POLOLO"
       }
     }

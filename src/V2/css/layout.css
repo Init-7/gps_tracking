@@ -1,8 +1,6 @@
 /*CARD*/
 .leaflet-popup-content-wrapper{
     margin-top: 70px !important;
-
-    border:solid 1px #A8A8A8;
     overflow:hidden;
     background-color:#999;
     background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#C0C0C0));
@@ -10,6 +8,10 @@
 }
 .leaflet-popup-close-button{
     margin-top: 70px !important;
+}
+
+.leaflet-popup-tip{
+    background-color: #C0C0C0!important;
 }
 
 

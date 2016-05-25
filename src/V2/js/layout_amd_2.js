@@ -50,6 +50,12 @@ require([
     });
 
 
+    on(dom.byId("cargarjson"), "click", function(e){
+        map.fitBounds(polyline.getBounds());
+    });
+
+
+
     //coordenadas de interes...
         var coord = [];
         coord.EST = [-36.778224,-73.080980];
@@ -233,43 +239,65 @@ require([
    
     /**********************************/
 function popUp(f,l){
+
      l.bindPopup("<div id='wrapperCard'><img id='logoEstCard' src='./images/estchile.png' ><img id='imgQRCard' src='./images/estchile.png' ><div id='datosTrabajadorCard'><b>Nombre : "+f.properties["nombre"]+"</b></br><b>CARGO : "+f.properties["cargo"]+"</b></br><b>Fono : "+f.properties["fono"]+"</b></br><b>Riesgo : "+f.properties["nivel_riesgo"]+"</b></br></div><img id='imgTrabajadorCard' src='http://localhost:8000"+f.properties["foto"]+"' ></div>"); 
 
-
-        if(f.properties["nivel_riesgo"] < 5){
-        l.setIcon(hombreAmarillo);}
-        if(f.properties["nivel_riesgo"] < 2){
-        l.setIcon(hombreNormal);}        
-        if(f.properties["nivel_riesgo"] >= 5){
-        l.setIcon(hombreRojo);}
-
+    if(f.properties["nivel_riesgo"] < 5){
+    l.setIcon(hombreAmarillo);}
+    if(f.properties["nivel_riesgo"] < 2){
+    l.setIcon(hombreNormal);}        
+    if(f.properties["nivel_riesgo"] >= 5){
+    l.setIcon(hombreRojo);}
+    
+    l.on('dblclick', onClick)
 }
 
-var url2 = "http://104.196.40.15:8080/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:distinto&maxFeatures=50&outputFormat=application%2Fjson";
+function onClick(e) {
+
+    var tempLatLng =this.getLatLng()
+    console.log(tempLatLng.lat);
+    map.setView([tempLatLng.lat,tempLatLng.lng], 18)
+}
+
+    
+
+
+    /********ICONOS PERSONALIZADO***************/
+    var LeafIcon = L.Icon.extend({
+                options: {
+                    //shadowUrl: './images/leaf-shadow.png',
+                    iconSize:     [38, 95],
+                    //shadowSize:   [50, 64],
+                    iconAnchor:   [22, 94],
+                    //shadowAnchor: [4, 62],
+                    popupAnchor:  [-3, -76]
+                }
+            });
+    var hombreNormal = new LeafIcon({iconUrl: './images/ico/hombre-normal.png'}),
+        hombreAmarillo = new LeafIcon({iconUrl: './images/ico/hombre-amarillo.png'}),
+        hombreRojo = new LeafIcon({iconUrl: './images/ico/hombre-rojo.png'});
+    ///////////////****************////////////////
+
+var shipLayer = L.layerGroup();
+    L.marker([51.5, -0.09], {icon: hombreNormal}).addTo(map).bindPopup("I am a green leaf.");
 
 /*Json Distinto2*/
-//var url = "http://104.196.40.15:8080/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:DistintoV2&maxFeatures=50&outputFormat=application%2Fjson";
-var url = "trabajadores2.geojson";
 
+    var url2 = "trabajadores2.geojson";
 
-/********ICONOS PERSONALIZADO***************/
-var LeafIcon = L.Icon.extend({
-            options: {
-                //shadowUrl: './images/leaf-shadow.png',
-                iconSize:     [38, 95],
-                shadowSize:   [50, 64],
-                iconAnchor:   [22, 94],
-                shadowAnchor: [4, 62],
-                popupAnchor:  [-3, -76]
-            }
-        });
-var hombreNormal = new LeafIcon({iconUrl: './images/ico/hombre-normal.png'}),
-    hombreAmarillo = new LeafIcon({iconUrl: './images/ico/hombre-amarillo.png'}),
-    hombreRojo = new LeafIcon({iconUrl: './images/ico/hombre-rojo.png'});
+    realtime = L.realtime({
+            url: 'trabajadores2.geojson',
+            crossOrigin: true,
+            type: 'json'
+        }, 
+        {
+            interval: 3 * 1000
+        ,        
+        onEachFeature:popUp
+    }).addTo(map);
 
-L.marker([51.5, -0.09], {icon: hombreNormal}).addTo(map).bindPopup("I am a green leaf.");
+    //console.log(realtime);
 
-
-var jsonTest = new L.GeoJSON.AJAX([url/*,"counties.geojson"*/],{onEachFeature:popUp}).addTo(map);
-////////////////////////////////
+    //var jsonTest = new L.GeoJSON.AJAX([url2/*,"counties.geojson"*/],{onEachFeature:popUp}).addTo(map);
+    ////////////////////////////////
 });
