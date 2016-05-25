@@ -211,23 +211,21 @@ require([
                 }
         );
 
-    var styles = [
-        {
+    var styles = [{
           featureType: 'all',
           stylers: [{hue: '#ff0000'}]
-        }
-     ];
+        }];
 
     var ggl = new L.Google('HYBRID', {
             mapOptions: {
             //styles: styles
-        }
-    });
+        }});
 
     var overlays = {//Capa con marcadores 
             "Cities": cities,
             "Construcciones": edificios
         };
+
     //L.control.layers(baseLayers,overlays).addTo(map);
 
     map.addLayer(ggl);
@@ -235,7 +233,16 @@ require([
    
     /**********************************/
 function popUp(f,l){
-     l.bindPopup("<div id='wrapperCard'><img id='logoEstCard' src='./images/estchile.png' ><img id='imgQRCard' src='./images/estchile.png' ><div id='datosTrabajadorCard'><b>Nombre : "+f.properties["nombre"]+"</b></br><b>CARGO : "+f.properties["cargo"]+"</b></br><b>Riesgo : "+f.properties["nivel_riesgo"]+"</b></br></div><img id='imgTrabajadorCard' src='http://localhost:8000"+f.properties["foto"]+"' ></div>"); 
+     l.bindPopup("<div id='wrapperCard'><img id='logoEstCard' src='./images/estchile.png' ><img id='imgQRCard' src='./images/estchile.png' ><div id='datosTrabajadorCard'><b>Nombre : "+f.properties["nombre"]+"</b></br><b>CARGO : "+f.properties["cargo"]+"</b></br><b>Fono : "+f.properties["fono"]+"</b></br><b>Riesgo : "+f.properties["nivel_riesgo"]+"</b></br></div><img id='imgTrabajadorCard' src='http://localhost:8000"+f.properties["foto"]+"' ></div>"); 
+
+
+        if(f.properties["nivel_riesgo"] < 5){
+        l.setIcon(hombreAmarillo);}
+        if(f.properties["nivel_riesgo"] < 2){
+        l.setIcon(hombreNormal);}        
+        if(f.properties["nivel_riesgo"] >= 5){
+        l.setIcon(hombreRojo);}
+
 }
 
 var url2 = "http://104.196.40.15:8080/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:distinto&maxFeatures=50&outputFormat=application%2Fjson";
@@ -248,7 +255,7 @@ var url = "trabajadores2.geojson";
 /********ICONOS PERSONALIZADO***************/
 var LeafIcon = L.Icon.extend({
             options: {
-                shadowUrl: './images/leaf-shadow.png',
+                //shadowUrl: './images/leaf-shadow.png',
                 iconSize:     [38, 95],
                 shadowSize:   [50, 64],
                 iconAnchor:   [22, 94],
@@ -256,22 +263,13 @@ var LeafIcon = L.Icon.extend({
                 popupAnchor:  [-3, -76]
             }
         });
-var greenIcon = new LeafIcon({iconUrl: './images/leaf-green.png'}),
-    redIcon = new LeafIcon({iconUrl: './images/leaf-red.png'}),
-    orangeIcon = new LeafIcon({iconUrl: './images/leaf-orange.png'});
+var hombreNormal = new LeafIcon({iconUrl: './images/ico/hombre-normal.png'}),
+    hombreAmarillo = new LeafIcon({iconUrl: './images/ico/hombre-amarillo.png'}),
+    hombreRojo = new LeafIcon({iconUrl: './images/ico/hombre-rojo.png'});
 
-L.marker([51.5, -0.09], {icon: greenIcon}).addTo(map).bindPopup("I am a green leaf.");
+L.marker([51.5, -0.09], {icon: hombreNormal}).addTo(map).bindPopup("I am a green leaf.");
 
 
 var jsonTest = new L.GeoJSON.AJAX([url/*,"counties.geojson"*/],{onEachFeature:popUp}).addTo(map);
 ////////////////////////////////
-
-
-
-
-
-
-
-
-
 });
