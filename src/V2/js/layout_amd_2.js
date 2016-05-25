@@ -18,9 +18,9 @@ require([
     "dijit/form/FilteringSelect", // Crear desplegables con información dijit.form.FilteringSelect({
     "dojo/domReady!"
 ], function(on, mouse,BorderContainer,Toggler, coreFx, request, Memory, registry,ContentPane, DateTextBox,dom,AccordionContainer,DataGrid,Button,ObjectStore, domConstruct, FilteringSelect){
+    
     var defaultUrl ="http://localhost:8000";
 	
-
     //TEST MOSTRAR OCULTAR
     var togglerInfoT = new Toggler({
         node: "infoTrabajador",
@@ -65,7 +65,8 @@ require([
 
     /*Lista de Desplegables*/			
     /* Lectura archivo Json Plantas*/
-    request.get(defaultUrl+ "/gps/plantas/", {
+    //request.get(defaultUrl+ "/gps/plantas/", {
+    request.get("plantas.json", {
             handleAs: "json"
         }).then(function(data){
         new dijit.form.FilteringSelect({
@@ -113,8 +114,8 @@ require([
                                 //
                                 //var tb= dijit.byId('negocio').get('Value');
                                 //var url= defaultUrl+ "/gps/trabajadores/"+tb+"/";
-                                var url= "trabajadores.json";
-                                request.get(url, {
+                                var url2= "trabajadores.json";
+                                request.get(url2, {
                                     handleAs: "json"
                                 }).then(function(data){
                                 
@@ -127,11 +128,6 @@ require([
                                        //dijit.byId('negocio').query.planta = this.item.planta || /.*/;             
                                         //alert(dijit.byId('trabajador').get('value'));
                                         //alert(dijit.byId('trabajador').get('displayedValue'));
-
-
-
-
-                                        
                                     }
                                 }, "trabajador").startup();
 
@@ -163,8 +159,8 @@ require([
                     //fechaFF = "2016-09-10";
                     //var url = "http://localhost:8000/gps/datosinforme/ESTThno/2/22/"+ fechaII +"/"+ fechaFF+"/";
                     
-                    var url = "http://localhost:8000/gps/datosinforme/ESTThno/02/29/2016-05-11/2016-05-30/";
-                    request.get(url, {
+                    var url3 = "http://localhost:8000/gps/datosinforme/ESTThno/02/29/2016-05-11/2016-05-30/";
+                    request.get(url3, {
                         handleAs: "json"
                     }).then(function(data){
                         dataStore =  new ObjectStore({ objectStore:new Memory({ data: data }) });
@@ -182,7 +178,7 @@ require([
                         ,"gridDiv");
                         grid.startup(); 
                     });
-                    console.log(url);
+                    console.log(url3);
             });
 
 /****TODO MAPA*****/
@@ -190,8 +186,6 @@ require([
 
     var map = new L.Map('map', {center: coord.CENTRAL, zoom: 2});
 
-
-    
     var osm = new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
 
     var ctb = new L.tileLayer.wms('http://demo.opengeo.org/geoserver/ows?', {
@@ -238,28 +232,24 @@ require([
     map.addControl(new L.Control.Layers( {'OSM':osm, 'Google':ggl, 'Countries, then boundaries':ctb}, overlays));
    
     /**********************************/
-function popUp(f,l){
+    function popUp(f,l){
 
-     l.bindPopup("<div id='wrapperCard'><img id='logoEstCard' src='./images/estchile.png' ><img id='imgQRCard' src='./images/estchile.png' ><div id='datosTrabajadorCard'><b>Nombre : "+f.properties["nombre"]+"</b></br><b>CARGO : "+f.properties["cargo"]+"</b></br><b>Fono : "+f.properties["fono"]+"</b></br><b>Riesgo : "+f.properties["nivel_riesgo"]+"</b></br></div><img id='imgTrabajadorCard' src='http://localhost:8000"+f.properties["foto"]+"' ></div>"); 
+         l.bindPopup("<div id='wrapperCard'><img id='logoEstCard' src='./images/estchile.png' ><img id='imgQRCard' src='./images/estchile.png' ><div id='datosTrabajadorCard'><b>Nombre : "+f.properties["nombre"]+"</b></br><b>CARGO : "+f.properties["cargo"]+"</b></br><b>Fono : "+f.properties["fono"]+"</b></br><b>Riesgo : "+f.properties["nivel_riesgo"]+"</b></br></div><img id='imgTrabajadorCard' src='http://localhost:8000"+f.properties["foto"]+"' ></div>"); 
 
-    if(f.properties["nivel_riesgo"] < 5){
-    l.setIcon(hombreAmarillo);}
-    if(f.properties["nivel_riesgo"] < 2){
-    l.setIcon(hombreNormal);}        
-    if(f.properties["nivel_riesgo"] >= 5){
-    l.setIcon(hombreRojo);}
-    
-    l.on('dblclick', onClick)
-}
+        if(f.properties["nivel_riesgo"] < 5){
+        l.setIcon(hombreAmarillo);}
+        if(f.properties["nivel_riesgo"] < 2){
+        l.setIcon(hombreNormal);}        
+        if(f.properties["nivel_riesgo"] >= 5){
+        l.setIcon(hombreRojo);}
+        
+        l.on('dblclick', onClick)
+    }
 
-function onClick(e) {
-
-    var tempLatLng =this.getLatLng()
-    console.log(tempLatLng.lat);
-    map.setView([tempLatLng.lat,tempLatLng.lng], 18)
-}
-
-    
+    function onClick(e) {
+        var tempLatLng =this.getLatLng();    
+        map.setView([tempLatLng.lat,tempLatLng.lng], 18);
+    }   
 
 
     /********ICONOS PERSONALIZADO***************/
@@ -278,26 +268,20 @@ function onClick(e) {
         hombreRojo = new LeafIcon({iconUrl: './images/ico/hombre-rojo.png'});
     ///////////////****************////////////////
 
-var shipLayer = L.layerGroup();
-    L.marker([51.5, -0.09], {icon: hombreNormal}).addTo(map).bindPopup("I am a green leaf.");
+    //L.marker([51.5, -0.09], {icon: hombreNormal}).addTo(map).bindPopup("I am a green leaf.");
 
-/*Json Distinto2*/
-
-    var url2 = "trabajadores2.geojson";
+    var url = "http://localhost:8000/gps/ESTThno/EST08/puntos2/";
 
     realtime = L.realtime({
-            url: 'trabajadores2.geojson',
+            url: url,
             crossOrigin: true,
             type: 'json'
         }, 
         {
-            interval: 3 * 1000
+            interval: 10 * 1000
         ,        
         onEachFeature:popUp
     }).addTo(map);
 
-    //console.log(realtime);
-
-    //var jsonTest = new L.GeoJSON.AJAX([url2/*,"counties.geojson"*/],{onEachFeature:popUp}).addTo(map);
-    ////////////////////////////////
+    //var jsonTest = new L.GeoJSON.AJAX([url/*,"counties.geojson"*/],{onEachFeature:popUp}).addTo(map);
 });
