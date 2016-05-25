@@ -1,3 +1,47 @@
+/*CARD*/
+.leaflet-popup-content-wrapper{
+    margin-top: 70px !important;
+}
+
+    #wrapperCard{
+        height: 204px;    
+        width: 325px;
+    }   
+
+    #logoEstCard{
+        display: flex;
+        float: left;
+        height: 50px;
+        width: 100px;
+        //margin-left: 5px;
+        //margin-top: 5px;
+    }
+
+    #imgTrabajadorCard{
+        float: left;
+        height: 120px;
+        //margin-left: 10px;
+        width: 90px;
+    }
+    #imgQRCard{
+        opacity: 0;
+        float: right;
+        height: 40px;
+        //margin-top: 20px;
+        padding-right: 20px;
+        width: 40px;
+
+    }
+    #datosTrabajadorCard{
+        float: right;
+        font-family: caption;
+        font-size: 10pt;
+        height: 90px;
+        margin-top: 30px;
+        width: 160px;
+    }
+
+/*Fin Card*/
 html,body {
     height:100%;
     width:100%;

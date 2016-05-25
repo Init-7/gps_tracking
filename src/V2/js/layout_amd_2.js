@@ -228,37 +228,42 @@ require([
             "Cities": cities,
             "Construcciones": edificios
         };
-
-
-
     //L.control.layers(baseLayers,overlays).addTo(map);
 
     map.addLayer(ggl);
     map.addControl(new L.Control.Layers( {'OSM':osm, 'Google':ggl, 'Countries, then boundaries':ctb}, overlays));
    
-
-
-
-
-
-
     /**********************************/
 function popUp(f,l){
-    var out = [];
-    if (f.properties){
-        for(key in f.properties){
-            out.push(key+": "+f.properties[key]);
-        }
-        l.bindPopup(out.join("<br />"));
-    }
+     l.bindPopup("<div id='wrapperCard'><img id='logoEstCard' src='./images/estchile.png' ><img id='imgQRCard' src='./images/estchile.png' ><div id='datosTrabajadorCard'><b>Nombre : "+f.properties["nombre"]+"</b></br><b>CARGO : "+f.properties["cargo"]+"</b></br><b>Riesgo : "+f.properties["nivel_riesgo"]+"</b></br></div><img id='imgTrabajadorCard' src='http://localhost:8000"+f.properties["foto"]+"' ></div>"); 
 }
 
 var url2 = "http://104.196.40.15:8080/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:distinto&maxFeatures=50&outputFormat=application%2Fjson";
 
 /*Json Distinto2*/
-var url = "http://104.196.40.15:8080/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:DistintoV2&maxFeatures=50&outputFormat=application%2Fjson";
-//var url = "trabajadores.json";
-var jsonTest = new L.GeoJSON.AJAX([url,"counties.geojson"],{onEachFeature:popUp}).addTo(map);
+//var url = "http://104.196.40.15:8080/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:DistintoV2&maxFeatures=50&outputFormat=application%2Fjson";
+var url = "trabajadores2.geojson";
+
+
+/********ICONOS PERSONALIZADO***************/
+var LeafIcon = L.Icon.extend({
+            options: {
+                shadowUrl: './images/leaf-shadow.png',
+                iconSize:     [38, 95],
+                shadowSize:   [50, 64],
+                iconAnchor:   [22, 94],
+                shadowAnchor: [4, 62],
+                popupAnchor:  [-3, -76]
+            }
+        });
+var greenIcon = new LeafIcon({iconUrl: './images/leaf-green.png'}),
+    redIcon = new LeafIcon({iconUrl: './images/leaf-red.png'}),
+    orangeIcon = new LeafIcon({iconUrl: './images/leaf-orange.png'});
+
+L.marker([51.5, -0.09], {icon: greenIcon}).addTo(map).bindPopup("I am a green leaf.");
+
+
+var jsonTest = new L.GeoJSON.AJAX([url/*,"counties.geojson"*/],{onEachFeature:popUp}).addTo(map);
 ////////////////////////////////
 
 
