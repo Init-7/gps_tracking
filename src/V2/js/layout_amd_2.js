@@ -18,9 +18,18 @@ require([
     "dijit/form/FilteringSelect", // Crear desplegables con información dijit.form.FilteringSelect({
     "dojo/domReady!"
 ], function(on, mouse,BorderContainer,Toggler, coreFx, request, Memory, registry,ContentPane, DateTextBox,dom,AccordionContainer,DataGrid,Button,ObjectStore, domConstruct, FilteringSelect){
-    
+   
+    //coordenadas de interes...
+    var coord = [];
+    coord.EST = [-36.778224,-73.080980];
+    coord.ENAP = [-36.780,-73.125];
+    coord.MAULE = [-35.607,-71.588];
+    coord.CENTRAL = [-36.3,-72.3];
+
     var defaultUrl ="http://localhost:8000";
-	
+
+	var map = new L.Map('map', {center: coord.CENTRAL, zoom: 2});
+
     //TEST MOSTRAR OCULTAR
     var togglerInfoT = new Toggler({
         node: "infoTrabajador",
@@ -54,22 +63,12 @@ require([
         map.fitBounds(polyline.getBounds());
     });
 
-
-
-    //coordenadas de interes...
-        var coord = [];
-        coord.EST = [-36.778224,-73.080980];
-        coord.ENAP = [-36.780,-73.125];
-        coord.MAULE = [-35.607,-71.588];
-        coord.CENTRAL = [-36.3,-72.3];
-
     /*Lista de Desplegables*/			
     /* Lectura archivo Json Plantas*/
-    //request.get(defaultUrl+ "/gps/plantas/", {
-    request.get("plantas.json", {
+    request.get(defaultUrl+ "/gps/plantas/", {
             handleAs: "json"
         }).then(function(data){
-        new dijit.form.FilteringSelect({
+            new dijit.form.FilteringSelect({
             id: "planta",
             store: new Memory({ idProperty: "id", data: data }),
             autoComplete: true,          
@@ -112,9 +111,9 @@ require([
 
 
                                 //
-                                //var tb= dijit.byId('negocio').get('Value');
-                                //var url= defaultUrl+ "/gps/trabajadores/"+tb+"/";
-                                var url2= "trabajadores.json";
+                                var tb= dijit.byId('negocio').get('Value');
+                                var url2= defaultUrl+ "/gps/trabajadores/"+tb+"/";
+                                //console.log(url2);
                                 request.get(url2, {
                                     handleAs: "json"
                                 }).then(function(data){
@@ -125,6 +124,12 @@ require([
                                     autoComplete: true,
                                     style: "width: 150px;",
                                     onChange: function(trabajador){
+
+                                        console.log(data);
+                                        //console.log(data.[Object].lat);
+
+                                        console.log(data.lon);
+                                        //map.setView([data.lat,data.lng], 18);
                                        //dijit.byId('negocio').query.planta = this.item.planta || /.*/;             
                                         //alert(dijit.byId('trabajador').get('value'));
                                         //alert(dijit.byId('trabajador').get('displayedValue'));
@@ -184,7 +189,7 @@ require([
 /****TODO MAPA*****/
 
 
-    var map = new L.Map('map', {center: coord.CENTRAL, zoom: 2});
+    
 
     var osm = new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
 
@@ -272,7 +277,7 @@ require([
 
     var url = "http://localhost:8000/gps/ESTThno/EST08/puntos2/";
 
-    realtime = L.realtime({
+    /*realtime = L.realtime({
             url: url,
             crossOrigin: true,
             type: 'json'
@@ -282,6 +287,6 @@ require([
         ,        
         onEachFeature:popUp
     }).addTo(map);
-
-    //var jsonTest = new L.GeoJSON.AJAX([url/*,"counties.geojson"*/],{onEachFeature:popUp}).addTo(map);
+*/
+    var jsonTest = new L.GeoJSON.AJAX([url/*,"counties.geojson"*/],{onEachFeature:popUp}).addTo(map);
 });
