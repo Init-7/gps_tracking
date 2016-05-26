@@ -74,7 +74,17 @@ require([
             autoComplete: true,
             //value: data[0].id,          
             style: "width: 150px;",
-            onChange: function(planta){  
+            onChange: function(planta){ 
+
+                var posicion = dijit.byId('planta').get('value');
+                var zoom;
+                if(data[posicion].name=== "Todos"){
+                    zoom=2;
+                }
+                else {
+                    zoom= 17;
+                }
+                 map.setView([data[posicion].lat,data[posicion].lon], zoom);
                 //alert(dijit.byId('planta').get('value'));
                 //alert(dijit.byId('planta').get('displayedValue'));  
 
@@ -99,10 +109,13 @@ require([
                             required: true,
                             //value: data[0].id,
                             searchAttr: "name",
-                            onChange: function(negocio){                    
+                            onChange: function(negocio){   
+
                                 /* Funcion Buscar si existe registro en caso afirmativo lo elimina 
                                 de lo contrario lo crea*/
+                                
 
+                                       
                                 if(typeof registry.byId("trabajador") != "undefined"){
                                     registry.byId("trabajador").destroyRecursive();
                                 }
@@ -110,7 +123,6 @@ require([
                                     domConstruct.place(row, "TB"); // "TB" es la id donde se creará "row"
 
                                 /* Lectura archivo Json Trabajadores*/
-
 
                                 //
                                 var tb= dijit.byId('negocio').get('Value');
@@ -197,6 +209,8 @@ require([
 
     var cities = new L.LayerGroup();
 
+    var trabajadores = new L.LayerGroup();
+
         L.marker([39.61, -105.02]).bindPopup('This is Littleton, CO.').addTo(cities),
         L.marker([39.74, -104.99]).bindPopup('This is Denver, CO.').addTo(cities),
         L.marker([39.73, -104.8]).bindPopup('This is Aurora, CO.').addTo(cities),
@@ -227,16 +241,23 @@ require([
 
     var overlays = {//Capa con marcadores 
             "Cities": cities,
-            "Construcciones": edificios
+            "Construcciones": edificios,
+            "Trabajadores": trabajadores
+
         };
 
     //L.control.layers(baseLayers,overlays).addTo(map);
 
+
+
     map.addLayer(ggl);
-    map.addControl(new L.Control.Layers( {'OSM':osm, 'Google':ggl, 'Countries, then boundaries':ctb}, overlays));
+    lcontrol = L.control.layers({'OSM':osm, 'Google':ggl, 'Countries, then boundaries':ctb}, overlays).addTo(map);
+    
+
+    //map.addControl(new L.Control.Layers( , ));
    
     /**********************************/
-    function popUp(f,l){
+    function popUpPersona(f,l){
 
          l.bindPopup("<div id='wrapperCard'><img id='logoEstCard' src='./images/estchile.png' ><img id='imgQRCard' src='./images/estchile.png' ><div id='datosTrabajadorCard'><b>Nombre : "+f.properties["nombre"]+"</b></br><b>CARGO : "+f.properties["cargo"]+"</b></br><b>Fono : "+f.properties["fono"]+"</b></br><b>Riesgo : "+f.properties["nivel_riesgo"]+"</b></br></div><img id='imgTrabajadorCard' src='http://localhost:8000"+f.properties["foto"]+"' ></div>"); 
 
@@ -247,13 +268,31 @@ require([
         if(f.properties["nivel_riesgo"] >= 5){
         l.setIcon(hombreRojo);}
         
-        l.on('dblclick', onClick)
+        l.on('dblclick', onClick);
+        l.addTo(trabajadores);
+       
+
+
+        
+
     }
 
     function onClick(e) {
         var tempLatLng =this.getLatLng();    
         map.setView([tempLatLng.lat,tempLatLng.lng], 18);
+        //map.removeControl();
+
     }   
+    function popUpEdificios(f,l){
+        var out = [];
+        if (f.properties){
+            for(key in f.properties){
+                out.push(key+": "+f.properties[key]);
+            }
+            l.bindPopup(out.join("<br />"));
+        }
+        l.addTo(trabajadores);
+    }
 
 
     /********ICONOS PERSONALIZADO***************/
@@ -275,7 +314,7 @@ require([
     //L.marker([51.5, -0.09], {icon: hombreNormal}).addTo(map).bindPopup("I am a green leaf.");
 
    var url = "http://localhost:8000/gps/ESTThno/EST08/puntos2/";
-    /*realtime = L.realtime({
+    realtime = L.realtime({
             url: url,
             crossOrigin: true,
             type: 'json'
@@ -283,8 +322,10 @@ require([
         {
             interval: 3 * 1000
         ,        
-        onEachFeature:popUp
+        onEachFeature:popUpPersona
     }).addTo(map);
-*/
-    var jsonTest = new L.GeoJSON.AJAX([url/*,"counties.geojson"*/],{onEachFeature:popUp}).addTo(map);
+    map.addLayer(trabajadores);
+
+    var urlGeoserverEdificios= "http://104.196.40.15:8080/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:est_zona&maxFeatures=50&outputFormat=application%2Fjson"
+    var jsonTest = new L.GeoJSON.AJAX([urlGeoserverEdificios/*,"counties.geojson"*/],{onEachFeature:popUpEdificios}).addTo(map);
 });
