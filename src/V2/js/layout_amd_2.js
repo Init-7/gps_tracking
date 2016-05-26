@@ -71,7 +71,8 @@ require([
             new dijit.form.FilteringSelect({
             id: "planta",
             store: new Memory({ idProperty: "id", data: data }),
-            autoComplete: true,          
+            autoComplete: true,
+            //value: data[0].id,          
             style: "width: 150px;",
             onChange: function(planta){  
                 //alert(dijit.byId('planta').get('value'));
@@ -96,6 +97,7 @@ require([
                             autoComplete: true,
                             style: "width: 150px;",
                             required: true,
+                            //value: data[0].id,
                             searchAttr: "name",
                             onChange: function(negocio){                    
                                 /* Funcion Buscar si existe registro en caso afirmativo lo elimina 
@@ -122,15 +124,12 @@ require([
                                     id: "trabajador",
                                     store: new Memory({idProperty: "id", data: data }),
                                     autoComplete: true,
-                                    style: "width: 150px;",
+                                    style: "width: 150px;", 
+                                    //value: data[0].id,                                   
                                     onChange: function(trabajador){
-
-                                        console.log(data);
-                                        //console.log(data.[Object].lat);
-
-                                        console.log(data.lon);
-                                        //map.setView([data.lat,data.lng], 18);
-                                       //dijit.byId('negocio').query.planta = this.item.planta || /.*/;             
+                                        var posicion = dijit.byId('trabajador').get('value');
+                                        map.setView([data[posicion].lat,data[posicion].lon], 18);
+                                       
                                         //alert(dijit.byId('trabajador').get('value'));
                                         //alert(dijit.byId('trabajador').get('displayedValue'));
                                     }
@@ -275,15 +274,14 @@ require([
 
     //L.marker([51.5, -0.09], {icon: hombreNormal}).addTo(map).bindPopup("I am a green leaf.");
 
-    var url = "http://localhost:8000/gps/ESTThno/EST08/puntos2/";
-
+   var url = "http://localhost:8000/gps/ESTThno/EST08/puntos2/";
     /*realtime = L.realtime({
             url: url,
             crossOrigin: true,
             type: 'json'
         }, 
         {
-            interval: 10 * 1000
+            interval: 3 * 1000
         ,        
         onEachFeature:popUp
     }).addTo(map);
