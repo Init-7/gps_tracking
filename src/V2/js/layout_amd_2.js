@@ -75,7 +75,6 @@ require([
             //value: data[0].id,          
             style: "width: 150px;",
             onChange: function(planta){ 
-
                 var posicion = dijit.byId('planta').get('value');
                 var zoom;
                 if(data[posicion].name=== "Todos"){
@@ -84,6 +83,10 @@ require([
                 else {
                     zoom= 17;
                 }
+
+                map.addLayer(edificios);
+
+
                  map.setView([data[posicion].lat,data[posicion].lon], zoom);
                 //alert(dijit.byId('planta').get('value'));
                 //alert(dijit.byId('planta').get('displayedValue'));  
@@ -207,15 +210,16 @@ require([
     var ctb = new L.tileLayer.wms('http://demo.opengeo.org/geoserver/ows?', {
         layers: 'ne:ne_10m_admin_0_countries,ne:ne_10m_admin_0_boundary_lines_land'});
 
-    var cities = new L.LayerGroup();
+    var zonas = new L.LayerGroup();
 
     var trabajadores = new L.LayerGroup();
-
-        L.marker([39.61, -105.02]).bindPopup('This is Littleton, CO.').addTo(cities),
-        L.marker([39.74, -104.99]).bindPopup('This is Denver, CO.').addTo(cities),
-        L.marker([39.73, -104.8]).bindPopup('This is Aurora, CO.').addTo(cities),
-        L.marker([39.77, -105.23]).bindPopup('This is Golden, CO.').addTo(cities);
-
+    
+/*
+        L.marker([39.61, -105.02]).bindPopup('This is Littleton, CO.').addTo(zonas),
+        L.marker([39.74, -104.99]).bindPopup('This is Denver, CO.').addTo(zonas),
+        L.marker([39.73, -104.8]).bindPopup('This is Aurora, CO.').addTo(zonas),
+        L.marker([39.77, -105.23]).bindPopup('This is Golden, CO.').addTo(zonas);
+*/
 //Primera Forma de mostrar los edificios
 
     var edificios = new L.tileLayer.wms('http://104.196.40.15:8080/geoserver/wms?', {
@@ -240,7 +244,7 @@ require([
         }});
 
     var overlays = {//Capa con marcadores 
-            "Cities": cities,
+            "Zonas": zonas,
             "Construcciones": edificios,
             "Trabajadores": trabajadores
 
@@ -251,31 +255,33 @@ require([
 
 
     map.addLayer(ggl);
-    lcontrol = L.control.layers({'OSM':osm, 'Google':ggl, 'Countries, then boundaries':ctb}, overlays).addTo(map);
+    lcontrol = L.control.layers({'OSM':osm, 
+        'Google':ggl, 
+        'Countries, then boundaries':ctb
+    }, overlays).addTo(map);
     
 
     //map.addControl(new L.Control.Layers( , ));
    
     /**********************************/
     function popUpPersona(f,l){
+        console.log(f.geometry.coordinates);
 
-         l.bindPopup("<div id='wrapperCard'><img id='logoEstCard' src='./images/estchile.png' ><img id='imgQRCard' src='./images/estchile.png' ><div id='datosTrabajadorCard'><b>Nombre : "+f.properties["nombre"]+"</b></br><b>CARGO : "+f.properties["cargo"]+"</b></br><b>Fono : "+f.properties["fono"]+"</b></br><b>Riesgo : "+f.properties["nivel_riesgo"]+"</b></br></div><img id='imgTrabajadorCard' src='http://localhost:8000"+f.properties["foto"]+"' ></div>"); 
+        l.bindPopup("<div id='wrapperCard'><img id='logoEstCard' src='./images/estchile.png' ><img id='imgQRCard' src='./images/estchile.png' ><div id='datosTrabajadorCard'><b>Nombre : "+f.properties["nombre"]+"</b></br><b>CARGO : "+f.properties["cargo"]+"</b></br><b>Fono : "+f.properties["fono"]+"</b></br><b>Riesgo : "+f.properties["nivel_riesgo"]+"</b></br></div><img id='imgTrabajadorCard' src='http://localhost:8000"+f.properties["foto"]+"' ></div>"); 
 
         if(f.properties["nivel_riesgo"] < 5){
-        l.setIcon(hombreAmarillo);}
+            l.setIcon(hombreAmarillo);}
         if(f.properties["nivel_riesgo"] < 2){
-        l.setIcon(hombreNormal);}        
+            l.setIcon(hombreNormal);}        
         if(f.properties["nivel_riesgo"] >= 5){
-        l.setIcon(hombreRojo);}
+            l.setIcon(hombreRojo);}
         
         l.on('dblclick', onClick);
         l.addTo(trabajadores);
-       
 
-
-        
 
     }
+
 
     function onClick(e) {
         var tempLatLng =this.getLatLng();    
@@ -283,6 +289,7 @@ require([
         //map.removeControl();
 
     }   
+
     function popUpEdificios(f,l){
         var out = [];
         if (f.properties){
@@ -291,7 +298,7 @@ require([
             }
             l.bindPopup(out.join("<br />"));
         }
-        l.addTo(trabajadores);
+        l.addTo(zonas);
     }
 
 
@@ -299,16 +306,17 @@ require([
     var LeafIcon = L.Icon.extend({
                 options: {
                     //shadowUrl: './images/leaf-shadow.png',
-                    iconSize:     [38, 95],
+                    iconSize:     [20, 50],
                     //shadowSize:   [50, 64],
-                    iconAnchor:   [22, 94],
+                    iconAnchor:   [10, 50],
                     //shadowAnchor: [4, 62],
                     popupAnchor:  [-3, -76]
                 }
             });
-    var hombreNormal = new LeafIcon({iconUrl: './images/ico/hombre-normal.png'}),
-        hombreAmarillo = new LeafIcon({iconUrl: './images/ico/hombre-amarillo.png'}),
-        hombreRojo = new LeafIcon({iconUrl: './images/ico/hombre-rojo.png'});
+
+    var hombreNormal = new LeafIcon({iconUrl: './images/ico/pegman-front-big.png'}),
+        hombreAmarillo = new LeafIcon({iconUrl: './images/ico/pegman-front-big.png'}),
+        hombreRojo = new LeafIcon({iconUrl: './images/ico/pegman-front-big.png'});
     ///////////////****************////////////////
 
     //L.marker([51.5, -0.09], {icon: hombreNormal}).addTo(map).bindPopup("I am a green leaf.");
@@ -320,10 +328,11 @@ require([
             type: 'json'
         }, 
         {
-            interval: 3 * 1000
+            interval: 40* 1000
         ,        
         onEachFeature:popUpPersona
     }).addTo(map);
+
     map.addLayer(trabajadores);
 
     var urlGeoserverEdificios= "http://104.196.40.15:8080/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:est_zona&maxFeatures=50&outputFormat=application%2Fjson"
