@@ -26,6 +26,10 @@ require([
     coord.MAULE = [-35.607,-71.588];
     coord.CENTRAL = [-36.3,-72.3];
 
+    var alerta= false;
+
+    var out2 = [];
+
     var defaultUrl ="http://localhost:8000";
 
 	var map = new L.Map('map', {center: coord.CENTRAL, zoom: 2});
@@ -36,6 +40,13 @@ require([
         showFunc: coreFx.wipeIn,
         hideFunc: coreFx.wipeOut
     });
+
+    var togglerAlerta = new Toggler({
+        node: "divALERTAS",
+        showFunc: coreFx.wipeIn,
+        hideFunc: coreFx.wipeOut
+    });
+
 
     var togglerRightPanel = new Toggler({
         node: "rightPanel",
@@ -56,11 +67,6 @@ require([
     on(dom.byId("showButton"), "click", function(e){
         togglerRightPanel.show();
 
-    });
-
-
-    on(dom.byId("cargarjson"), "click", function(e){
-        map.fitBounds(polyline.getBounds());
     });
 
     /*Lista de Desplegables*/			
@@ -135,20 +141,32 @@ require([
                                     handleAs: "json"
                                 }).then(function(data){
                                 
-                                new dijit.form.FilteringSelect({
-                                    id: "trabajador",
-                                    store: new Memory({idProperty: "id", data: data }),
-                                    autoComplete: true,
-                                    style: "width: 150px;", 
-                                    //value: data[0].id,                                   
-                                    onChange: function(trabajador){
-                                        var posicion = dijit.byId('trabajador').get('value');
-                                        map.setView([data[posicion].lat,data[posicion].lon], 18);
-                                       
-                                        //alert(dijit.byId('trabajador').get('value'));
-                                        //alert(dijit.byId('trabajador').get('displayedValue'));
-                                    }
-                                }, "trabajador").startup();
+                                    new dijit.form.FilteringSelect({
+                                        id: "trabajador",
+                                        store: new Memory({idProperty: "id", data: data }),
+                                        autoComplete: true,
+                                        style: "width: 150px;", 
+                                        //value: data[0].id,                                   
+                                        onChange: function(trabajador){
+
+
+                                            var posicion = dijit.byId('trabajador').get('value');
+                                            map.setView([data[posicion].lat,data[posicion].lon], 18);
+                                           /***FUNCION POSICION ACTUALIZADA FUNCIONAL PERO EXISTE TIEMPO DE ESPERA***/
+                                            //alert(dijit.byId('trabajador').get('value'));
+/*                                          console.log(data);
+                                            var url3= defaultUrl+ "/gps/trabajador/"+data[posicion].i+"/";
+                                            //console.log(url3);
+                                            request.get(url3, {
+                                                    handleAs: "json"
+                                                }).then(function(data){    
+                                                        //console.log(data[0].lat);
+                                                        map.setView([data[0].lat,data[0].lon], 18);
+                                            });
+*/
+                                            /**********************/
+                                        }
+                                    }, "trabajador").startup();
 
                             });
                             }
@@ -202,9 +220,6 @@ require([
 
 /****TODO MAPA*****/
 
-
-    
-
     var osm = new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
 
     var ctb = new L.tileLayer.wms('http://demo.opengeo.org/geoserver/ows?', {
@@ -252,49 +267,55 @@ require([
 
     //L.control.layers(baseLayers,overlays).addTo(map);
 
-
-
     map.addLayer(ggl);
     lcontrol = L.control.layers({'OSM':osm, 
         'Google':ggl, 
         'Countries, then boundaries':ctb
     }, overlays).addTo(map);
     
-
-    //map.addControl(new L.Control.Layers( , ));
-   
+  
     /**********************************/
-    function popUpPersona(f,l){
-        console.log(f.geometry.coordinates);
+    function popUpPersona(f,l){//Consulta por cada uno de los objetos     
 
-        l.bindPopup("<div id='wrapperCard'><img id='logoEstCard' src='./images/estchile.png' ><img id='imgQRCard' src='./images/estchile.png' ><div id='datosTrabajadorCard'><b>Nombre : "+f.properties["nombre"]+"</b></br><b>CARGO : "+f.properties["cargo"]+"</b></br><b>Fono : "+f.properties["fono"]+"</b></br><b>Riesgo : "+f.properties["nivel_riesgo"]+"</b></br></div><img id='imgTrabajadorCard' src='http://localhost:8000"+f.properties["foto"]+"' ></div>"); 
+        //console.log(f.geometry.coordinates);//
+        //console.log(f);
+        l.bindPopup("<div id='wrapperCard'><img id='logoEstCard' src='./images/estchile.png' ><img id='imgQRCard' src='./images/estchile.png' ><div id='datosTrabajadorCard'><b>Nombre : "+f.properties["nombre"]+"</b></br><b>CARGO : "+f.properties["cargo"]+"</b></br><b>Fono : "+f.properties["fono"]+"</b></br><b>Riesgo : "+f.properties["nivel_riesgo"]+"</b></br><b>Fono Emergencia : "+f.properties["nro_emergencia"]+"</b></br><b>Contacto : "+f.properties["tipo_contacto"]+"</b></br></div><img id='imgTrabajadorCard' src='http://localhost:8000"+f.properties["foto"]+"' ></div>"); 
 
-        if(f.properties["nivel_riesgo"] < 5){
+        if(f.properties["nivel_riesgo"] < 5 ){
             l.setIcon(hombreAmarillo);}
-        if(f.properties["nivel_riesgo"] < 2){
+        if(f.properties["nivel_riesgo"] < 2 ){
             l.setIcon(hombreNormal);}        
-        if(f.properties["nivel_riesgo"] >= 5){
-            l.setIcon(hombreRojo);}
+        if(f.properties["nivel_riesgo"] >= 5 ){
+            alerta=true;
+            l.setIcon(hombreRojo);
+            togglerAlerta.show();
+
+            /*
+            if (f.properties){
+                for(key in f.properties){
+                    out2.push( "<b>"+  key+"</b>"+" : "+f.properties[key]);
+                }
+                out2.join("<br />");
+            }*/
+                
+        }
         
+        console.log(f.properties["nivel_riesgo"]);
         l.on('dblclick', onClick);
         l.addTo(trabajadores);
-
-
     }
-
 
     function onClick(e) {
         var tempLatLng =this.getLatLng();    
         map.setView([tempLatLng.lat,tempLatLng.lng], 18);
         //map.removeControl();
-
     }   
 
     function popUpEdificios(f,l){
         var out = [];
         if (f.properties){
             for(key in f.properties){
-                out.push(key+": "+f.properties[key]);
+                out.push( "<b>"+  key+"</b>"+" : "+f.properties[key]);
             }
             l.bindPopup(out.join("<br />"));
         }
@@ -306,20 +327,24 @@ require([
     var LeafIcon = L.Icon.extend({
                 options: {
                     //shadowUrl: './images/leaf-shadow.png',
-                    iconSize:     [20, 50],
+                    iconSize:     [50, 50],
                     //shadowSize:   [50, 64],
-                    iconAnchor:   [10, 50],
+                    iconAnchor:   [25, 50],
                     //shadowAnchor: [4, 62],
-                    popupAnchor:  [-3, -76]
+                    popupAnchor:  [0, -46]
                 }
             });
 
-    var hombreNormal = new LeafIcon({iconUrl: './images/ico/pegman-front-big.png'}),
-        hombreAmarillo = new LeafIcon({iconUrl: './images/ico/pegman-front-big.png'}),
-        hombreRojo = new LeafIcon({iconUrl: './images/ico/pegman-front-big.png'});
+    var hombreNormal = new LeafIcon({iconUrl: './images/ico/marker.png'}),
+        hombreAmarillo = new LeafIcon({iconUrl: './images/ico/alerta.png'}),
+        hombreRojo = new LeafIcon({iconUrl: './images/ico/peligro.png'});
     ///////////////****************////////////////
 
     //L.marker([51.5, -0.09], {icon: hombreNormal}).addTo(map).bindPopup("I am a green leaf.");
+
+   
+
+
 
    var url = "http://localhost:8000/gps/ESTThno/EST08/puntos2/";
     realtime = L.realtime({
@@ -328,13 +353,36 @@ require([
             type: 'json'
         }, 
         {
-            interval: 40* 1000
+            interval: 10* 1000
         ,        
         onEachFeature:popUpPersona
     }).addTo(map);
 
+    realtime.on('update', function() {//
+        if(!alerta) {
+            togglerAlerta.hide();
+            console.log(alerta);
+        }
+        console.log("PASO");
+        alerta=false;
+
+
+/*
+        if(typeof registry.byId("aviso") != "undefined"){
+                registry.byId("negocio").destroyRecursive();
+            }
+        var row = domConstruct.toDom("<span id='aviso'>ALERTA!!</span>");
+                domConstruct.place(row, "CN"); // "CN" es la id donde se creará "row"
+
+*/
+
+
+    });
+
+    map.addLayer(zonas);
     map.addLayer(trabajadores);
 
-    var urlGeoserverEdificios= "http://104.196.40.15:8080/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:est_zona&maxFeatures=50&outputFormat=application%2Fjson"
+
+    var urlGeoserverEdificios= "http://104.196.40.15:8080/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:est_zona&maxFeatures=50&outputFormat=application%2Fjson";
     var jsonTest = new L.GeoJSON.AJAX([urlGeoserverEdificios/*,"counties.geojson"*/],{onEachFeature:popUpEdificios}).addTo(map);
 });
