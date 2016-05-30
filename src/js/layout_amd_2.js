@@ -276,6 +276,7 @@ require([
   
     /**********************************/
     function popUpPersona(f,l){//Consulta por cada uno de los objetos     
+         
 
         //console.log(f.geometry.coordinates);//
         //console.log(f);
@@ -288,16 +289,11 @@ require([
         if(f.properties["nivel_riesgo"] >= 5 ){
             alerta=true;
             l.setIcon(hombreRojo);
-            togglerAlerta.show();
+            togglerAlerta.show();            
 
-            /*
-            if (f.properties){
-                for(key in f.properties){
-                    out2.push( "<b>"+  key+"</b>"+" : "+f.properties[key]);
-                }
-                out2.join("<br />");
-            }*/
-                
+            out2.push( "<p>"+f.properties["nombre"]+"</p>");
+            //document.getElementById("aviso").innerHTML = out2;
+            //out2.join("<br />");          
         }
         
         console.log(f.properties["nivel_riesgo"]);
@@ -327,9 +323,9 @@ require([
     var LeafIcon = L.Icon.extend({
                 options: {
                     //shadowUrl: './images/leaf-shadow.png',
-                    iconSize:     [50, 50],
+                    iconSize:     [25, 50],
                     //shadowSize:   [50, 64],
-                    iconAnchor:   [25, 50],
+                    iconAnchor:   [12, 50],
                     //shadowAnchor: [4, 62],
                     popupAnchor:  [0, -46]
                 }
@@ -364,17 +360,22 @@ require([
             console.log(alerta);
         }
         console.log("PASO");
+        console.log(out2);
         alerta=false;
 
 
+        document.getElementById("aviso").innerHTML = "ALERTA!!"+out2;
 /*
         if(typeof registry.byId("aviso") != "undefined"){
-                registry.byId("negocio").destroyRecursive();
-            }
-        var row = domConstruct.toDom("<span id='aviso'>ALERTA!!</span>");
-                domConstruct.place(row, "CN"); // "CN" es la id donde se creará "row"
+                registry.byId("aviso").destroyRecursive();
 
+            }
+        var row = domConstruct.toDom("<div id='aviso'>ALERTA!!"+out2+"</div>");
+                domConstruct.place(row, "divALERTAS"); // "CN" es la id donde se creará "row"
 */
+        var temp = [];
+        out2= temp;
+
 
 
     });
