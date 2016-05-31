@@ -249,7 +249,7 @@ require([
                                             var posicion = dijit.byId('trabajador2').get('value');
                                             //map.setView([data[posicion].lat,data[posicion].lon], 18);                                            
 
-                                            urlINFORME = "http://localhost:8000/gps/datosinforme/ESTThno"+"/02/"+data[posicion].i+"/";
+                                            urlINFORME = defaultUrl+"/gps/datosinforme/ESTThno"+"/02/"+data[posicion].i+"/";
                     
                                             //var url3 = "http://localhost:8000/gps/datosinforme/ESTThno/02/29/2016-05-11/2016-05-30/";
 
@@ -369,7 +369,7 @@ require([
 
         //console.log(f.geometry.coordinates);//
         //console.log(f);
-        l.bindPopup("<div id='wrapperCard'><img id='logoEstCard' src='./images/estchile.png' ><img id='imgQRCard' src='./images/estchile.png' ><div id='datosTrabajadorCard'><b>Nombre : "+f.properties["nombre"]+"</b></br><b>CARGO : "+f.properties["cargo"]+"</b></br><b>Fono : "+f.properties["fono"]+"</b></br><b>Riesgo : "+f.properties["nivel_riesgo"]+"</b></br><b>Fono Emergencia : "+f.properties["nro_emergencia"]+"</b></br><b>Contacto : "+f.properties["tipo_contacto"]+"</b></br></div><img id='imgTrabajadorCard' src='http://localhost:8000"+f.properties["foto"]+"' ></div>"); 
+        l.bindPopup("<div id='wrapperCard'><img id='logoEstCard' src='./images/estchile.png' ><img id='imgQRCard' src='./images/estchile.png' ><div id='datosTrabajadorCard'><b>Nombre : "+f.properties["nombre"]+"</b></br><b>CARGO : "+f.properties["cargo"]+"</b></br><b>Fono : "+f.properties["fono"]+"</b></br><b>Riesgo : "+f.properties["nivel_riesgo"]+"</b></br><b>Fono Emergencia : "+f.properties["nro_emergencia"]+"</b></br><b>Contacto : "+f.properties["tipo_contacto"]+"</b></br></div><img id='imgTrabajadorCard' src="+defaultUrl+f.properties["foto"]+"></div>"); 
 
         if(f.properties["nivel_riesgo"] < 5 ){
             l.setIcon(hombreAmarillo);}
@@ -430,7 +430,7 @@ require([
    
 
     //urlRealTime = "http://localhost:8000/gps/ESTThno/EST08/puntos2/";
-    var urlRealTime = "http://localhost:8000/gps/puntos3/";
+    var urlRealTime = defaultUrl+"/gps/puntos3/";
    //var url = "http://localhost:8000/gps/ESTThno/EST08/puntos2/";
     realtime = L.realtime({
             url: urlRealTime,
@@ -455,7 +455,7 @@ require([
         alerta=false;
 
 
-        document.getElementById("divALERTAS").innerHTML = "<div id='aviso'>ALERTA!!"+out2+"</div> ";
+        document.getElementById("divALERTAS").innerHTML = "<div id='aviso'><h2>ALERTA!!</h1>"+out2+"</div> ";
 /*
         if(typeof registry.byId("aviso") != "undefined"){
                 registry.byId("aviso").destroyRecursive();

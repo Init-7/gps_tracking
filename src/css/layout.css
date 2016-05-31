@@ -352,43 +352,38 @@ h6{
     background-color: #FF0000;
     z-index:99;
     //max-width: 200px;
-    text-align: justify;
     color: #fff;
-    font-size:large;
-
-
-
+    font-size:0px;
     font-weight:bold; color: #ffffff;
     letter-spacing:4pt;word-spacing:2pt;
-    font-size:25px;
     text-align:center;
     font-family:impact, sans-serif;
     line-height:1;
     //margin:0px;
     //padding:0px;
     width:280px;
-
-
     border-radius: 13px 13px 13px 13px;
     -moz-border-radius: 13px 13px 13px 13px;
     -webkit-border-radius: 13px 13px 13px 13px;
     border: 0px solid #000000;
 
-        -webkit-box-shadow: 10px 10px 18px 4px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 10px 10px 18px 4px rgba(0,0,0,0.75);
     -moz-box-shadow: 10px 10px 18px 4px rgba(0,0,0,0.75);
     box-shadow: 10px 10px 18px 4px rgba(0,0,0,0.75);
 
     }
 
 #aviso p{
-    font-size: 16px;
-    
+    font-size: 16px;    
     margin-bottom: 0px;
     margin-top: 0px;
-
-
 }
 
+#aviso h2{
+    font-size: 25px;    
+    margin-bottom: 0px;
+    margin-top: 0px;
+}
 
 
 .leaflet-cluster-anim .leaflet-marker-icon, .leaflet-cluster-anim .leaflet-marker-shadow {
