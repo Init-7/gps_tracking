@@ -53,7 +53,7 @@
 						<img id="h-logo-corfo" src="./images/logo-corfo.png"  alt="Corfo | Corporación de Fomento de la Producción">
 					</a>
 				</div>
-				<div id="divALERTAS"> <div id="aviso"></div> </div>
+				<div id="divALERTAS"> </div>
 				<img id="logoMap" src="./images/estchile.png" style="max-height: 75px;">
 				<img id="infoTrabajador" class="infoFlotante">
 				<img id="infoEdificacion" class="infoFlotante">
@@ -90,45 +90,14 @@
 						<div id="divInfoWMS">&nbsp;</div>
 					</div>
 					<!--query-->
-					<div id="query" class="fields" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="title:'Consultas e Informes'" >
-						<div id="slider">
-
-
-							<label id="labelPlanta" for="planta">Plantas:</label>
-							<input id="planta" />
-							<label id="CN" for="negocio">Centros:</label>
-							<label id="TB" for="trabajador">Trabajadores:</label>
-
-
-
-
-
-
-
-
-							<!--Planta-->
-							<div id="SliderLabel">Planta:</div>
-							<div id="plantaQuery"></div>
-							<div id="slider">&nbsp;</div>
-							<button id="BtnHeatmap" type="button"></button>
-							<button id="BtnCluster" type="button"></button>
-							<div id="slider">
-								<p>Trabajadores:</p>
-								<img id="jobHM" src="./images/punto.png">
-								<p>Areas:</p>
-								<img id="workHM" src="./images/punto.png">
-							</div>
-							<div id="resultHeatmap"></div>
-							<div id="slider">&nbsp;</div>
-						</div>
-						<div id="slider" >
+					<div id="query" class="fields" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="title:'Consultas e Informes'" >		
 							<H4 style="align:center">Informes Estadisticos</H4>
-							<!--Centro de Negocio-->
-							<div id="SliderLabel">Centro de Negocio:</div>
-							<div id="centroQuery"></div>
-							<!--trabajador-->
-							<div id="SliderLabel">Trabajador:</div>
-							<div id="trabajadorQuery"></div>
+							<div id="slider321">
+								<label id="labelPlanta2" for="planta2">Plantas:</label>
+								<input id="planta2" />
+								<label id="CN2" for="negocio2">Centros:</label>
+								<label id="TB2" for="trabajador2">Trabajadores:</label>
+							</div>
 							<!--rango de fechas-->
 							<div id="SliderLabel">Rango Fecha:</div>
 							<div id="divFecha" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'right'" > 
@@ -152,7 +121,21 @@
 							<div id="slider">&nbsp;</div>
 							<div id="slider">&nbsp;</div>
 							<div id="resultJob"></div>
-							<div id="divInforme">&nbsp;</div>							
+							<div id="divInforme">&nbsp;</div>	
+							<div id="slider">
+								<!--Planta-->							
+								<button id="BtnHeatmap" type="button"></button>
+								<button id="BtnCluster" type="button"></button>
+								<div id="slider">
+									<p>Trabajadores:</p>
+									<img id="jobHM" src="./images/punto.png">
+									<p>Areas:</p>
+									<img id="workHM" src="./images/punto.png">
+								</div>
+								<div id="resultHeatmap"></div>
+								<div id="slider">&nbsp;</div>
+							</div>
+							<div id="slider" >						
 						</div>
 					</div>
 				</div>

@@ -90,16 +90,19 @@ require([
                 else {
                     zoom= 17;
                 }
-
                 map.addLayer(edificios);
-
-
-                 map.setView([data[posicion].lat,data[posicion].lon], zoom);
+                map.setView([data[posicion].lat,data[posicion].lon], zoom);
                 //alert(dijit.byId('planta').get('value'));
                 //alert(dijit.byId('planta').get('displayedValue'));  
 
                 /* Lectura archivo Json Negocios*/
                 var cn= dijit.byId('planta').get('displayedValue');
+
+
+
+                urlRealTime = defaultUrl+"/gps/trabajadores/"+cn+"/puntos2/";
+
+
                 request.get(defaultUrl+ "/gps/centrosdenegocio/"+cn+"/", {
                         handleAs: "json"
                     }).then(function(data){
@@ -120,7 +123,7 @@ require([
                             //value: data[0].id,
                             searchAttr: "name",
                             onChange: function(negocio){   
-                                urlRealTime = "http://localhost:8000/gps/trabajadores/CMMA01/puntos2/";
+                                //urlRealTime = "http://localhost:8000/gps/trabajadores/CMMA01/puntos2/";
 
                                 /* Funcion Buscar si existe registro en caso afirmativo lo elimina 
                                 de lo contrario lo crea*/
@@ -179,7 +182,91 @@ require([
     });
     /*Fin Listas Desplegables*/
 
-            
+
+    var urlINFORME;
+
+        /*consulta informes*/           
+    /* Lectura archivo Json Plantas*/
+    request.get(defaultUrl+ "/gps/plantas/", {
+            handleAs: "json"
+        }).then(function(data){
+            new dijit.form.FilteringSelect({
+            id: "planta2",
+            store: new Memory({ idProperty: "id", data: data }),
+            autoComplete: true,
+            //value: data[0].id,          
+            style: "width: 150px;",
+            onChange: function(planta2){ 
+                var posicion = dijit.byId('planta2').get('value');
+                /* Lectura archivo Json Negocios*/
+                var cn= dijit.byId('planta2').get('displayedValue');
+                request.get(defaultUrl+ "/gps/centrosdenegocio/"+cn+"/", {
+                        handleAs: "json"
+                    }).then(function(data){
+                        /* Funcion Buscar si existe registro en caso afirmativo lo elimina 
+                        de lo contrario lo crea*/
+                        if(typeof registry.byId("negocio2") != "undefined"){
+                            registry.byId("negocio2").destroyRecursive();
+                        }
+                        var row = domConstruct.toDom(" <input id='negocio2' />");
+                            domConstruct.place(row, "CN2"); // "CN" es la id donde se creará "row"
+
+                        new dijit.form.FilteringSelect({
+                            id: "negocio2",
+                            store: new Memory({idProperty:"id", data: data }),
+                            autoComplete: true,
+                            style: "width: 150px;",
+                            required: true,
+                            //value: data[0].id,
+                            searchAttr: "name",
+                            onChange: function(negocio2){
+                                /* Funcion Buscar si existe registro en caso afirmativo lo elimina 
+                                de lo contrario lo crea*/
+                                       
+                                if(typeof registry.byId("trabajador2") != "undefined"){
+                                    registry.byId("trabajador2").destroyRecursive();
+                                }
+                                var row = domConstruct.toDom(" <input id='trabajador2' />");
+                                    domConstruct.place(row, "TB2"); // "TB" es la id donde se creará "row"
+
+                                /* Lectura archivo Json Trabajadores*/
+                                //
+                                var tb= dijit.byId('negocio2').get('Value');
+                                var url2= defaultUrl+ "/gps/trabajadores/"+tb+"/";
+                                request.get(url2, {
+                                    handleAs: "json"
+                                }).then(function(data){                                
+                                    new dijit.form.FilteringSelect({
+                                        id: "trabajador2",
+                                        store: new Memory({idProperty: "id", data: data }),
+                                        autoComplete: true,
+                                        style: "width: 150px;", 
+                                        //value: data[0].id,                                   
+                                        onChange: function(trabajador2){
+
+
+                                            
+                                            var posicion = dijit.byId('trabajador2').get('value');
+                                            //map.setView([data[posicion].lat,data[posicion].lon], 18);                                            
+
+                                            urlINFORME = "http://localhost:8000/gps/datosinforme/ESTThno"+"/02/"+data[posicion].i+"/";
+                    
+                                            //var url3 = "http://localhost:8000/gps/datosinforme/ESTThno/02/29/2016-05-11/2016-05-30/";
+
+
+                                         }
+                                    }, "trabajador2").startup();
+
+                            });
+                            }
+                        }, "negocio2").startup();
+                });
+            }
+        }, "planta2").startup();
+    });
+    /*Fin Listas Desplegables*/
+
+
 /* Informe Fecha */
 
             on(document.getElementById("qwerty"), "click", function(e){
@@ -196,7 +283,7 @@ require([
                     //fechaII = "2016-03-01";
                     fechaFF = date2.value
                     //fechaFF = "2016-09-10";
-                    //var url = "http://localhost:8000/gps/datosinforme/ESTThno/2/22/"+ fechaII +"/"+ fechaFF+"/";
+                    var url3 = urlINFORME+ fechaII +"/"+ fechaFF+"/";
                     
                     //var url3 = "http://localhost:8000/gps/datosinforme/ESTThno/02/29/2016-05-11/2016-05-30/";
                     request.get(url3, {
@@ -298,7 +385,7 @@ require([
             //out2.join("<br />");          
         }
         
-        console.log(f.properties["nivel_riesgo"]);
+        //console.log(f.properties["nivel_riesgo"]);w
         l.on('dblclick', onClick);
         l.addTo(trabajadores);
     }
@@ -343,10 +430,10 @@ require([
    
 
     //urlRealTime = "http://localhost:8000/gps/ESTThno/EST08/puntos2/";
-   var url = "http://localhost:8000/gps/puntos3/";
+    var urlRealTime = "http://localhost:8000/gps/puntos3/";
    //var url = "http://localhost:8000/gps/ESTThno/EST08/puntos2/";
     realtime = L.realtime({
-            url: url,
+            url: urlRealTime,
             crossOrigin: true,
             type: 'json'
         }, 
@@ -359,7 +446,7 @@ require([
     realtime.on('update', function() {//
         if(!alerta) {
             togglerAlerta.hide();
-            console.log(alerta);
+            //console.log(alerta);
         }
         //console.log("PASO");
         //console.log(out2);
@@ -368,7 +455,7 @@ require([
         alerta=false;
 
 
-        document.getElementById("aviso").innerHTML = "ALERTA!!"+out2;
+        document.getElementById("divALERTAS").innerHTML = "<div id='aviso'>ALERTA!!"+out2+"</div> ";
 /*
         if(typeof registry.byId("aviso") != "undefined"){
                 registry.byId("aviso").destroyRecursive();
