@@ -16,11 +16,14 @@
 
 
     #wrapperCard{
-        height: 204px;    
+        height: 170px;    
         width: 325px;
 
 
     }   
+
+
+
 
     #logoEstCard{
         display: flex;
@@ -52,8 +55,8 @@
         float: right;
         font-family: caption;
         font-size: 9pt;
-        height: 90px;
-        margin-top: 30px;
+        height: 165px;
+        margin-top: 10px;
         width: 190px;
     }
 
@@ -80,7 +83,7 @@ body {
     background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#C0C0C0));
     background: -moz-linear-gradient(top,  #fff,  #C0C0C0);
     height:50px;
-    margin: 5px 110px 5px ;
+    margin: 5px 40px 5px ;
     pointer-events: auto;
     position: absolute;
     z-index: 1000;
@@ -170,7 +173,7 @@ body {
 
 
 .leaflet-right .leaflet-control {
-    margin-right: 300px;
+    margin-right: 320px;
 }
 
 #rightPanel{
@@ -302,10 +305,10 @@ h6{
 .infoFlotante{
     bottom:15px;
     position:absolute;
-    right:5px;
+    right:25px;
     padding: 5px;
     z-index:30;
-    bottom: 30px;
+    bottom: 15px;
     background: #ccd9e2;
     -webkit-box-shadow: 10px 10px 19px 0px rgba(0,0,0,0.4);
     -moz-box-shadow: 10px 10px 19px 0px rgba(0,0,0,0.4);
@@ -379,10 +382,19 @@ h6{
     margin-top: 0px;
 }
 
+#alertaImg{
+    margin-left: 20px;
+    height: 70px;
+    width: 70px;
+    float: left;
+}
+
 #aviso h2{
-    font-size: 25px;    
-    margin-bottom: 0px;
-    margin-top: 0px;
+    float: left;
+    font-size: 30px;    
+    margin-bottom: 10px;
+    margin-left: 10px;
+    margin-top: 22px;
 }
 
 

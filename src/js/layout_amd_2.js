@@ -10,6 +10,8 @@ require([
     "dijit/layout/ContentPane", 
     "dijit/form/DateTextBox",
     "dojo/dom",
+
+    "dojo/dom-attr",
     "dijit/layout/AccordionContainer", 
     "dojox/grid/DataGrid",
     "dijit/form/Button",
@@ -17,8 +19,14 @@ require([
     "dojo/dom-construct", // constructor objetos ejemplo: domConstruct.toDom(" <input id='negocio' />");
     "dijit/form/FilteringSelect", // Crear desplegables con información dijit.form.FilteringSelect({
     "dojo/domReady!"
-], function(on, mouse,BorderContainer,Toggler, coreFx, request, Memory, registry,ContentPane, DateTextBox,dom,AccordionContainer,DataGrid,Button,ObjectStore, domConstruct, FilteringSelect){
+], function(on, mouse,BorderContainer,Toggler, coreFx, request, Memory, registry,ContentPane, DateTextBox,dom,domAttr,AccordionContainer,DataGrid,Button,ObjectStore, domConstruct, FilteringSelect){
    
+
+
+
+
+
+
     //coordenadas de interes...
     var coord = [];
     coord.EST = [-36.778224,-73.080980];
@@ -31,6 +39,8 @@ require([
     var out2 = [];
 
     var defaultUrl ="http://localhost:8000";
+    var defaultUrlGeoServer ="http://104.196.40.15:8080";
+
     var urlRealTime;
 
 	var map = new L.Map('map', {center: coord.CENTRAL, zoom: 2});
@@ -70,7 +80,33 @@ require([
 
     });
 
-    /*Lista de Desplegables*/			
+/********************************************/
+
+        var url = {};
+        url.wmsroot = 'http://104.196.40.15:8080/geoserver/est40516/wms';
+        url.owsroot = 'http://104.196.40.15:8080/geoserver/est40516/ows';
+
+        //generamos url de servicios de mapas, desde el servidor...
+        var ParamLydPMaule_edificacion = L.Util.extend({
+            request:'GetLegendGraphic',
+            version:'1.1.0',
+            format:'image/png',
+            width:'20',
+            height:'20',
+            legend_options:'forceLabels:on',
+            layer:'est40516:Edificacion',
+            opacity:'0.3',
+            style:'PMaule'
+            });
+        url.leyendaPMaule_edificacion = url.wmsroot + L.Util.getParamString(ParamLydPMaule_edificacion);
+
+
+
+                    
+
+/********************************************/
+
+    /*Lista de Desplegables*/	
     /* Lectura archivo Json Plantas*/
     request.get(defaultUrl+ "/gps/plantas/", {
             handleAs: "json"
@@ -82,14 +118,24 @@ require([
             //value: data[0].id,          
             style: "width: 150px;",
             onChange: function(planta){ 
+                                
+                
                 var posicion = dijit.byId('planta').get('value');
                 var zoom;
-                if(data[posicion].name=== "Todos"){
-                    zoom=2;
+                if(data[posicion].name=== "Todos"){zoom=2;}
+                else {zoom= 17;}
+
+                if(data[posicion].name=== "Maule"){
+                    domAttr.set(dom.byId('work'), "src", url.leyendaPMaule_edificacion);
+                    domAttr.set(dom.byId('infoEdificacion'), "src", url.leyendaPMaule_edificacion);
+                    togglerInfoEdificacion.show();
                 }
-                else {
-                    zoom= 17;
+                else {  
+                    domAttr.set(dom.byId('infoEdificacion'), "src","" );
+                    
+                    togglerInfoEdificacion.hide();            
                 }
+
                 map.addLayer(edificios);
                 map.setView([data[posicion].lat,data[posicion].lon], zoom);
                 //alert(dijit.byId('planta').get('value'));
@@ -325,8 +371,8 @@ require([
         L.marker([39.77, -105.23]).bindPopup('This is Golden, CO.').addTo(zonas);
 */
 //Primera Forma de mostrar los edificios
-
-    var edificios = new L.tileLayer.wms('http://104.196.40.15:8080/geoserver/wms?', {
+    //var tempUrl= defaultUrlGeoServer+ 
+    var edificios = new L.tileLayer.wms(defaultUrlGeoServer+'/geoserver/wms?', {
                 layers: 'est40516:Edificacion',
                 transparent: true,
                 format: 'image/png',
@@ -336,6 +382,11 @@ require([
                 opacity: 0.7
                 }
         );
+
+
+
+
+
 
     var styles = [{
           featureType: 'all',
@@ -431,7 +482,6 @@ require([
 
     //urlRealTime = "http://localhost:8000/gps/ESTThno/EST08/puntos2/";
     var urlRealTime = defaultUrl+"/gps/puntos3/";
-   //var url = "http://localhost:8000/gps/ESTThno/EST08/puntos2/";
     realtime = L.realtime({
             url: urlRealTime,
             crossOrigin: true,
@@ -451,19 +501,9 @@ require([
         //console.log("PASO");
         //console.log(out2);
         console.log(urlRealTime);
-        //urlRealTime = "http://localhost:8000/gps/trabajadores/CMMA01/puntos2/";
         alerta=false;
 
-
-        document.getElementById("divALERTAS").innerHTML = "<div id='aviso'><h2>ALERTA!!</h1>"+out2+"</div> ";
-/*
-        if(typeof registry.byId("aviso") != "undefined"){
-                registry.byId("aviso").destroyRecursive();
-
-            }
-        var row = domConstruct.toDom("<div id='aviso'>ALERTA!!"+out2+"</div>");
-                domConstruct.place(row, "divALERTAS"); // "CN" es la id donde se creará "row"
-*/
+        document.getElementById("divALERTAS").innerHTML = "<div id='aviso'><img id='alertaImg' src='./images/ico/Alerta.png'><h2>ALERTA!!</h1>"+out2+"</div> ";
         var temp = [];
         out2= temp;
 
@@ -475,6 +515,6 @@ require([
     map.addLayer(trabajadores);
 
 
-    var urlGeoserverEdificios= "http://104.196.40.15:8080/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:est_zona&maxFeatures=50&outputFormat=application%2Fjson";
+    var urlGeoserverEdificios= defaultUrlGeoServer+"/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:est_zona&maxFeatures=50&outputFormat=application%2Fjson";
     var jsonTest = new L.GeoJSON.AJAX([urlGeoserverEdificios/*,"counties.geojson"*/],{onEachFeature:popUpEdificios}).addTo(map);
 });
