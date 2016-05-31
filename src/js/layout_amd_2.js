@@ -342,7 +342,7 @@ require([
                             queryOptions: {},
                             structure: [//nombre columnas
                                 { name: "Nombre", field: "name", width: "50%" },
-                                { name: "ID", field: "id", width: "25%" }
+                                { name: "Tiempo", field: "id", width: "25%" }
                                 //{ name: "Horas", field: "horas", width: "25%" },
                                 //{ name: "Minutos", field: "minutos", width: "25%" }
                             ]
@@ -420,7 +420,7 @@ require([
 
         //console.log(f.geometry.coordinates);//
         //console.log(f);
-        l.bindPopup("<div id='wrapperCard'><img id='logoEstCard' src='./images/estchile.png' ><img id='imgQRCard' src='./images/estchile.png' ><div id='datosTrabajadorCard'><b>Nombre : "+f.properties["nombre"]+"</b></br><b>CARGO : "+f.properties["cargo"]+"</b></br><b>Fono : "+f.properties["fono"]+"</b></br><b>Riesgo : "+f.properties["nivel_riesgo"]+"</b></br><b>Fono Emergencia : "+f.properties["nro_emergencia"]+"</b></br><b>Contacto : "+f.properties["tipo_contacto"]+"</b></br></div><img id='imgTrabajadorCard' src="+defaultUrl+f.properties["foto"]+"></div>"); 
+        l.bindPopup("<div id='wrapperCard'><img id='logoEstCard' src='./images/estchile.png' ><img id='imgQRCard' src='./images/estchile.png' ><div id='datosTrabajadorCard'><b>Nombre : </b>"+f.properties["nombre"]+"</br><b>Cargo : </b>"+f.properties["cargo"]+"</br><b>Fono : </b>"+f.properties["fono"]+"</br><b>Riesgo : </b>"+f.properties["nivel_riesgo"]+"</br><b>Fono Emergencia : </b>"+f.properties["nro_emergencia"]+"</br><b>Contacto : </b>"+f.properties["tipo_contacto"]+"</br></div><img id='imgTrabajadorCard' src="+defaultUrl+f.properties["foto"]+"></div>"); 
 
         if(f.properties["nivel_riesgo"] < 5 ){
             l.setIcon(hombreAmarillo);}
@@ -503,7 +503,7 @@ require([
         console.log(urlRealTime);
         alerta=false;
 
-        document.getElementById("divALERTAS").innerHTML = "<div id='aviso'><img id='alertaImg' src='./images/ico/Alerta.png'><h2>ALERTA!!</h1>"+out2+"</div> ";
+        document.getElementById("divALERTAS").innerHTML = "<div id='aviso'><img id='alertaImg' src='./images/ico/Alerta.png'><h2>¡¡ALERTA!!</h1>"+out2+"</div> ";
         var temp = [];
         out2= temp;
 

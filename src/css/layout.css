@@ -53,11 +53,11 @@
 
         color: #0167b4;
         float: right;
-        font-family: caption;
+        font-family: Verdana;
         font-size: 9pt;
         height: 165px;
-        margin-top: 10px;
-        width: 190px;
+        margin-top: 30px;
+        width: 170px;
     }
 
 /*Fin Card*/
@@ -358,9 +358,9 @@ h6{
     color: #fff;
     font-size:0px;
     font-weight:bold; color: #ffffff;
-    letter-spacing:4pt;word-spacing:2pt;
+    letter-spacing:2pt;word-spacing:2pt;
     text-align:center;
-    font-family:impact, sans-serif;
+    font-family:arial, sans-serif;
     line-height:1;
     //margin:0px;
     //padding:0px;
@@ -377,13 +377,16 @@ h6{
     }
 
 #aviso p{
+    float: left;
     font-size: 16px;    
     margin-bottom: 0px;
     margin-top: 0px;
+    width: 285px;
+
 }
 
 #alertaImg{
-    margin-left: 20px;
+    margin-left: 15px;
     height: 70px;
     width: 70px;
     float: left;
