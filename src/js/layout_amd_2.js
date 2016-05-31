@@ -31,6 +31,7 @@ require([
     var out2 = [];
 
     var defaultUrl ="http://localhost:8000";
+    var urlRealTime;
 
 	var map = new L.Map('map', {center: coord.CENTRAL, zoom: 2});
 
@@ -119,6 +120,7 @@ require([
                             //value: data[0].id,
                             searchAttr: "name",
                             onChange: function(negocio){   
+                                urlRealTime = "http://localhost:8000/gps/trabajadores/CMMA01/puntos2/";
 
                                 /* Funcion Buscar si existe registro en caso afirmativo lo elimina 
                                 de lo contrario lo crea*/
@@ -196,7 +198,7 @@ require([
                     //fechaFF = "2016-09-10";
                     //var url = "http://localhost:8000/gps/datosinforme/ESTThno/2/22/"+ fechaII +"/"+ fechaFF+"/";
                     
-                    var url3 = "http://localhost:8000/gps/datosinforme/ESTThno/02/29/2016-05-11/2016-05-30/";
+                    //var url3 = "http://localhost:8000/gps/datosinforme/ESTThno/02/29/2016-05-11/2016-05-30/";
                     request.get(url3, {
                         handleAs: "json"
                     }).then(function(data){
@@ -340,16 +342,16 @@ require([
 
    
 
-
-
-   var url = "http://localhost:8000/gps/ESTThno/EST08/puntos2/";
+    //urlRealTime = "http://localhost:8000/gps/ESTThno/EST08/puntos2/";
+   var url = "http://localhost:8000/gps/puntos3/";
+   //var url = "http://localhost:8000/gps/ESTThno/EST08/puntos2/";
     realtime = L.realtime({
             url: url,
             crossOrigin: true,
             type: 'json'
         }, 
         {
-            interval: 10* 1000
+            interval: 20* 1000
         ,        
         onEachFeature:popUpPersona
     }).addTo(map);
@@ -359,8 +361,10 @@ require([
             togglerAlerta.hide();
             console.log(alerta);
         }
-        console.log("PASO");
-        console.log(out2);
+        //console.log("PASO");
+        //console.log(out2);
+        console.log(urlRealTime);
+        //urlRealTime = "http://localhost:8000/gps/trabajadores/CMMA01/puntos2/";
         alerta=false;
 
 
