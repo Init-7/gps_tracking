@@ -410,12 +410,33 @@ require([
     
   
     /**********************************/
+    function getColor(d) { //retorna un color de acuerdo al valor de la variable d (density) ojo tambien se usa para el color de la leyenda
+            //console.log(d);
+            return d > 5 ? '#800026' : 
+                   d > 4  ? '#E31A1C' :
+                   d > 3  ? '#FC4E2A' :
+                   d > 1   ? '#FED976' :
+                              '#FFEDA0';
+        }
+
+    function style(feature) { //asigna el estilo con el color de relleno de acuerdo a su densidad
+        return {
+            weight: 2,
+            opacity: 1,
+            color: 'white',
+            dashArray: '3',
+            fillOpacity: 0.7,
+            fillColor: getColor(feature.properties.nivel_riesgo)
+        };
+    }
+
     function popUpPersona(f,l){//Consulta por cada uno de los objetos     
          
 
         //console.log(f.geometry.coordinates);//
         //console.log(f);
-        l.bindPopup("<div id='wrapperCard'><img id='logoEstCard' src='./images/estchile.png' ><img id='imgQRCard' src='./images/estchile.png' ><div id='datosTrabajadorCard'><b>Nombre : </b>"+f.properties["nombre"]+"</br><b>Cargo : </b>"+f.properties["cargo"]+"</br><b>Fono : </b>"+f.properties["fono"]+"</br><b>Riesgo : </b>"+f.properties["nivel_riesgo"]+"</br><b>Fono Emergencia : </b>"+f.properties["nro_emergencia"]+"</br><b>Contacto : </b>"+f.properties["tipo_contacto"]+"</br></div><img id='imgTrabajadorCard' src="+defaultUrl+"/gps_tracking/src/"+f.properties["foto"]+"></div>"); 
+        //http://cloud1.estchile.cl/media/avatar/ALEXANDRA_PAIVA.jpg
+        l.bindPopup("<div id='wrapperCard'><img id='logoEstCard' src='./images/estchile.png' ><img id='imgQRCard' src='./images/estchile.png' ><div id='datosTrabajadorCard'><b>Nombre : </b>"+f.properties["nombre"]+"</br><b>Cargo : </b>"+f.properties["cargo"]+"</br><b>Fono : </b>"+f.properties["fono"]+"</br><b>Riesgo : </b>"+f.properties["nivel_riesgo"]+"</br><b>Fono Emergencia : </b>"+f.properties["nro_emergencia"]+"</br><b>Contacto : </b>"+f.properties["tipo_contacto"]+"</br></div><img id='imgTrabajadorCard' src="+defaultUrl+f.properties["foto"]+"></div>"); 
 
         if(f.properties["nivel_riesgo"] < 5 ){
             l.setIcon(hombreAmarillo);}
@@ -483,10 +504,10 @@ require([
             type: 'json'
         }, 
         {
-            interval: 20* 1000
-        ,        
-        onEachFeature:popUpPersona
-    }).addTo(map);
+            interval: 20* 1000,
+                   
+            onEachFeature:popUpPersona
+        }).addTo(map);
 
     realtime.on('update', function() {//
         if(!alerta) {
@@ -511,5 +532,5 @@ require([
 
 
     var urlGeoserverEdificios= defaultUrlGeoServer+"/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:est_zona&maxFeatures=50&outputFormat=application%2Fjson";
-    var jsonTest = new L.GeoJSON.AJAX([urlGeoserverEdificios/*,"counties.geojson"*/],{onEachFeature:popUpEdificios}).addTo(map);
+    var jsonTest = new L.GeoJSON.AJAX([urlGeoserverEdificios/*,"counties.geojson"*/],{style: style, onEachFeature:popUpEdificios}).addTo(map);
 });
