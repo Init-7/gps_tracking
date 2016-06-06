@@ -208,6 +208,14 @@ require([
                                             });
 */
                                             /**********************/
+                                            //.openPopup()
+
+
+                                            // Mediante un ciclo buscar el marcador con la propiedad nombre igual a la de arriba para desplegar su popUp
+
+
+
+
                                         }
                                     }, "trabajador").startup();
 
@@ -455,6 +463,7 @@ require([
         //console.log(f.properties["nivel_riesgo"]);w
         l.on('dblclick', onClick);
         l.addTo(trabajadores);
+        //console.log(l);
     }
 
     function onClick(e) {
