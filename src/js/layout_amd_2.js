@@ -21,17 +21,8 @@ require([
     "dojo/domReady!"
 ], function(on, mouse,BorderContainer,Toggler, coreFx, request, Memory, registry,ContentPane, DateTextBox,dom,domAttr,AccordionContainer,DataGrid,Button,ObjectStore, domConstruct, FilteringSelect){
    
-
-
-
-
-
-
     //coordenadas de interes...
     var coord = [];
-    coord.EST = [-36.778224,-73.080980];
-    coord.ENAP = [-36.780,-73.125];
-    coord.MAULE = [-35.607,-71.588];
     coord.CENTRAL = [-36.3,-72.3];
 
     var alerta= false;
@@ -356,10 +347,18 @@ require([
 
 /****TODO MAPA*****/
 
-    var osm = new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+    var osm = new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 25,
+            minZoom:2,
+            attribution: 'OpenStreetMap'
+            });
 
     var ctb = new L.tileLayer.wms('http://demo.opengeo.org/geoserver/ows?', {
-        layers: 'ne:ne_10m_admin_0_countries,ne:ne_10m_admin_0_boundary_lines_land'});
+        layers: 'ne:ne_10m_admin_0_countries,ne:ne_10m_admin_0_boundary_lines_land',
+            maxZoom: 25,
+            minZoom:2,
+            attribution: 'OpenStreetMap'
+            });
 
     var zonas = new L.LayerGroup();
 
@@ -384,17 +383,12 @@ require([
                 }
         );
 
-
-
-
-
-
     var styles = [{
           featureType: 'all',
           stylers: [{hue: '#ff0000'}]
         }];
 
-    var ggl = new L.Google('HYBRID', {
+    var ggl = new L.Google('SATELLITE', {
             mapOptions: {
             //styles: styles
         }});
@@ -504,7 +498,7 @@ require([
         console.log(urlRealTime);
         alerta=false;
 
-        document.getElementById("divALERTAS").innerHTML = "<div id='aviso'><img id='alertaImg' src='./images/ico/Alerta.png'><h2>¡¡ALERTA!!</h1>"+out2+"</div> ";
+        document.getElementById("divALERTAS").innerHTML = "<div id='aviso'><img id='alertaImg' src='./images/ico/aviso.png'><h2>¡¡ALERTA!!</h1>"+out2+"</div> ";
         var temp = [];
         out2= temp;
 
