@@ -20,7 +20,9 @@ require([
     "dijit/form/FilteringSelect", // Crear desplegables con información dijit.form.FilteringSelect({
     "dojo/domReady!"
 ], function(on, mouse,BorderContainer,Toggler, coreFx, request, Memory, registry,ContentPane, DateTextBox,dom,domAttr,AccordionContainer,DataGrid,Button,ObjectStore, domConstruct, FilteringSelect){
-   
+    
+    var markerTrabajador = L.markerClusterGroup(); 
+
     //coordenadas de interes...
     var coord = [];
     coord.CENTRAL = [-36.3,-72.3];
@@ -404,8 +406,8 @@ require([
     var overlays = {//Capa con marcadores 
             "Zonas": zonas,
             "Construcciones": edificios,
-            "Trabajadores": trabajadores
-
+            "Trabajadores": trabajadores,
+            "Cluster": markerTrabajador
         };
 
     //L.control.layers(baseLayers,overlays).addTo(map);
@@ -460,10 +462,9 @@ require([
             //out2.join("<br />");          
         }
         
-        //console.log(f.properties["nivel_riesgo"]);w
+        //console.log(f.properties["nivel_riesgo"]);
         l.on('dblclick', onClick);
         l.addTo(trabajadores);
-        //console.log(l);
     }
 
     function onClick(e) {
@@ -503,8 +504,6 @@ require([
 
     //L.marker([51.5, -0.09], {icon: hombreNormal}).addTo(map).bindPopup("I am a green leaf.");
 
-   
-
     //urlRealTime = "http://localhost:8000/gps/ESTThno/EST08/puntos2/";
     var urlRealTime = defaultUrl+"/gps/puntos3/";
     realtime = L.realtime({
@@ -516,15 +515,13 @@ require([
             interval: 20* 1000,
                    
             onEachFeature:popUpPersona
-        }).addTo(map);
+        });//.addTo(map);
 
     realtime.on('update', function() {//
         if(!alerta) {
             togglerAlerta.hide();
             //console.log(alerta);
         }
-        //console.log("PASO");
-        //console.log(out2);
         console.log(urlRealTime);
         alerta=false;
 
@@ -536,10 +533,54 @@ require([
 
     });
 
-    map.addLayer(zonas);
-    map.addLayer(trabajadores);
+    //map.addLayer(zonas);
+    //map.addLayer(trabajadores);
 
 
     var urlGeoserverEdificios= defaultUrlGeoServer+"/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:est_zona&maxFeatures=50&outputFormat=application%2Fjson";
     var jsonTest = new L.GeoJSON.AJAX([urlGeoserverEdificios/*,"counties.geojson"*/],{style: style, onEachFeature:popUpEdificios}).addTo(map);
+
+
+    var clusterLayer = new L.GeoJSON.AJAX([urlRealTime/*,"counties.geojson"*/],{style: style, onEachFeature:popUpPersona});
+
+
+         
+    /*var clusterLayer = new L.GeoJSON.AJAX(urlRealTime, {
+        pointToLayer: function(feature, latlng) {
+            var icon = L.icon({
+                            iconSize: [27, 27]//,
+                            //iconAnchor: [13, 27],
+                            //popupAnchor:  [1, -24],
+                            //iconUrl: 'icon/' + feature.properties.amenity + '.png'
+                            });
+            return L.marker(latlng, {icon: icon})
+        }, 
+        onEachFeature: function(feature, layer) {
+            layer.bindPopup(feature.properties.name + ': ' + feature.properties.opening_hours);
+        }
+    });*/
+
+
+    clusterLayer.on('data:loaded', function () {
+        markerTrabajador.addLayer(clusterLayer);
+        //console.log(markerTrabajador);
+        map.addLayer(markerTrabajador);
+        //map.removeLayer(trabajadores);
+    });
+
+    map.on('overlayadd', onOverlayAdd);
+    map.on('overlayremove', onOverlayRemove);
+    
+
+    function onOverlayAdd(e){
+        //do whatever
+            console.log("ACTIVADO "+ e.name);
+    }
+
+    function onOverlayRemove(e){
+        //do whatever
+            console.log("Desactivado "+e.name);
+    }
+
+
 });
