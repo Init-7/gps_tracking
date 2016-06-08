@@ -21,7 +21,7 @@ require([
 ], function(on, mouse,BorderContainer,Toggler, coreFx, request, Memory, registry,ContentPane, DateTextBox,dom,domAttr,AccordionContainer,DataGrid,Button,ObjectStore, domConstruct, FilteringSelect){
     
     var markerTrabajador = L.markerClusterGroup(); 
-
+    var clusterLayer;
     //coordenadas de interes...
     var coord = [];
     coord.CENTRAL = [-36.3,-72.3];
@@ -380,7 +380,8 @@ require([
     var overlays = {//Capa con marcadores 
             "Zonas": zonas,
             "Construcciones": edificios,
-            "Trabajadores": trabajadores,
+            "Trabajadores": trabajadores
+            ,
             "Cluster": markerTrabajador
         };
 
@@ -413,38 +414,32 @@ require([
     }
 
 
-
-
-
-
     function popUpPersona(f,l){//Consulta por cada uno de los objetos     
-         
-
         //console.log(f.geometry.coordinates);//
         //console.log(l);
 
-        var tempLatLng =l.getLatLng();    
+        //var tempLatLng =l.getLatLng();    
         //map.setView([tempLatLng.lat,tempLatLng.lng], 18);
 /*test popUp boton setView
         l.bindPopup("<button type='button' id='otroButton'>Mostrar Información </button><div id='wrapperCard'><img id='logoEstCard' src='./images/estchile.png' ><img id='imgQRCard' src='./images/estchile.png' ><div id='datosTrabajadorCard'><b>Nombre : </b>"+f.properties["nombre"]+"</br><b>Cargo : </b>"+f.properties["cargo"]+"</br><b>Fono : </b>"+f.properties["fono"]+"</br><b>Riesgo : </b>"+f.properties["nivel_riesgo"]+"</br><b>Fono Emergencia : </b>"+f.properties["nro_emergencia"]+"</br><b>Contacto : </b>"+f.properties["tipo_contacto"]+"</br></div><img id='imgTrabajadorCard' src="+defaultUrl+f.properties["foto"]+"></div>"); 
 */
         l.bindPopup("<div id='wrapperCard'><img id='logoEstCard' src='./images/estchile.png' ><img id='imgQRCard' src='./images/estchile.png' ><div id='datosTrabajadorCard'><b>Nombre : </b>"+f.properties["nombre"]+"</br><b>Cargo : </b>"+f.properties["cargo"]+"</br><b>Fono : </b>"+f.properties["fono"]+"</br><b>Riesgo : </b>"+f.properties["nivel_riesgo"]+"</br><b>Fono Emergencia : </b>"+f.properties["nro_emergencia"]+"</br><b>Contacto : </b>"+f.properties["tipo_contacto"]+"</br></div><img id='imgTrabajadorCard' src="+defaultUrl+f.properties["foto"]+"></div>"); 
         l.setIcon(hombreNormal);
-        /*if(f.properties["nivel_riesgo"] < 5 ){
+        if(f.properties["nivel_riesgo"] < 5 ){
             l.setIcon(hombreAmarillo);}
         if(f.properties["nivel_riesgo"] < 2 ){
-            l.setIcon(hombreNormal);}        */
+            l.setIcon(hombreNormal);}        
         if(f.properties["nivel_riesgo"] >= 5 ){
 
             alerta=true;
-            //l.setIcon(hombreRojo);
-            togglerAlerta.show();            
+            l.setIcon(hombreRojo);
+            //togglerAlerta.show();            
             out2.push( "<p>"+f.properties["nombre"]+"</p>");
         }
         
         //console.log(f.properties["nivel_riesgo"]);
         l.on('dblclick', onClick);
-        l.addTo(trabajadores);
+        //l.addTo(trabajadores);
     }
 
     function onClick(e) {
@@ -486,18 +481,20 @@ require([
 
     //urlRealTime = "http://localhost:8000/gps/ESTThno/EST08/puntos2/";
     var urlRealTime = defaultUrl+"/gps/puntos3/";
+    
+    var example= "example.geojson";
     realtime = L.realtime({
-            url: urlRealTime,
+            url: example,
             crossOrigin: true,
             type: 'json'
-        }, 
+        },
         {
-            interval: 20* 1000,
-                   
-            onEachFeature:popUpPersona
-        });//.addTo(map);
-
-
+            interval: 20* 1000
+            //,
+            //onEachFeature:popUpPersona
+        }
+        );//.addTo(map);
+    //console.log(realtime._featureLayers);
     realtime.on('update', function(e){
  /*       updateFeatureIcon = function (fId){
             var feature = e.features[fId];//, 
@@ -507,31 +504,41 @@ require([
         }; 
         Object.keys(e.update).forEach(updateFeatureIcon); 
 */
-        if(!alerta) {
-            togglerAlerta.hide();
+        if(out2.length>0) {
+            document.getElementById("divALERTAS").innerHTML = "<div id='aviso'><img id='alertaImg' src='./images/ico/aviso.png'><h2>¡¡ALERTA!!</h1>"+out2+"</div> ";
+            //togglerAlerta.hide();
             //console.log(alerta);
         }
-        console.log(urlRealTime);
-        alerta=false;
+        else{
+            document.getElementById("divALERTAS").innerHTML = "<div id=''></div> ";
 
-        document.getElementById("divALERTAS").innerHTML = "<div id='aviso'><img id='alertaImg' src='./images/ico/aviso.png'><h2>¡¡ALERTA!!</h1>"+out2+"</div> ";
+        }
+        //console.log(urlRealTime);
+        alerta=false;
+        //console.log(out2.length);
         var temp = [];
         out2= temp;
-
-
+        console.log("Actualizando");
+        //map.removeLayer(markerTrabajador);
+        markerTrabajador.clearLayers(); 
+        //markerTrabajador= null;
+        //markerTrabajador = L.markerClusterGroup(); 
+        //var clusterLayer= null;
+        clusterLayer = new L.GeoJSON.AJAX([urlRealTime/*,"counties.geojson"*/],{onEachFeature:popUpPersona});
+        clusterLayer.on('data:loaded', function () {
+            markerTrabajador.addLayer(clusterLayer);
+            //console.log(markerTrabajador);
+            map.addLayer(markerTrabajador);
+            //map.removeLayer(trabajadores);
+        });
     });
-
-
-    //map.addLayer(zonas);
-    //map.addLayer(trabajadores);
-
-
+    
     var urlGeoserverEdificios= defaultUrlGeoServer+"/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:est_zona&maxFeatures=50&outputFormat=application%2Fjson";
     var jsonTest = new L.GeoJSON.AJAX([urlGeoserverEdificios/*,"counties.geojson"*/],{style: style, onEachFeature:popUpEdificios});
 
 
-    var clusterLayer = new L.GeoJSON.AJAX([urlRealTime/*,"counties.geojson"*/],{style: style, onEachFeature:popUpPersona});
-
+    //var clusterLayer = new L.GeoJSON.AJAX([urlRealTime/*,"counties.geojson"*/],{onEachFeature:popUpPersona});
+    
     /*var clusterLayer = new L.GeoJSON.AJAX(urlRealTime, {
         pointToLayer: function(feature, latlng) {
             var icon = L.icon({
@@ -547,12 +554,7 @@ require([
         }
     });*/
 
-    clusterLayer.on('data:loaded', function () {
-        markerTrabajador.addLayer(clusterLayer);
-        //console.log(markerTrabajador);
-        map.addLayer(markerTrabajador);
-        //map.removeLayer(trabajadores);
-    });
+
 
     map.on('overlayadd', onOverlayAdd);
     map.on('overlayremove', onOverlayRemove);
