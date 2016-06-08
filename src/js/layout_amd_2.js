@@ -10,7 +10,6 @@ require([
     "dijit/layout/ContentPane", 
     "dijit/form/DateTextBox",
     "dojo/dom",
-
     "dojo/dom-attr",
     "dijit/layout/AccordionContainer", 
     "dojox/grid/DataGrid",
@@ -94,11 +93,7 @@ require([
             });
         url.leyendaPMaule_edificacion = url.wmsroot + L.Util.getParamString(ParamLydPMaule_edificacion);
 
-
-
-                    
-
-/********************************************/
+    /********************************************/
 
     /*Lista de Desplegables*/	
     /* Lectura archivo Json Plantas*/
@@ -116,7 +111,7 @@ require([
                 
                 var posicion = dijit.byId('planta').get('value');
                 var zoom;
-                if(data[posicion].name=== "Todos"){zoom=2;}
+                if(data[posicion].name=== "Todos"){zoom=5;}
                 else {zoom= 17;}
 
                 if(data[posicion].name=== "Maule"){
@@ -130,7 +125,7 @@ require([
                     togglerInfoEdificacion.hide();            
                 }
 
-                map.addLayer(edificios);
+                //map.addLayer(edificios);
                 map.setView([data[posicion].lat,data[posicion].lon], zoom);
                 //alert(dijit.byId('planta').get('value'));
                 //alert(dijit.byId('planta').get('displayedValue'));  
@@ -138,10 +133,7 @@ require([
                 /* Lectura archivo Json Negocios*/
                 var cn= dijit.byId('planta').get('displayedValue');
 
-
-
                 urlRealTime = defaultUrl+"/gps/trabajadores/"+cn+"/puntos2/";
-
 
                 request.get(defaultUrl+ "/gps/centrosdenegocio/"+cn+"/", {
                         handleAs: "json"
@@ -166,9 +158,7 @@ require([
                                 //urlRealTime = "http://localhost:8000/gps/trabajadores/CMMA01/puntos2/";
 
                                 /* Funcion Buscar si existe registro en caso afirmativo lo elimina 
-                                de lo contrario lo crea*/
-                                
-
+                                de lo contrario lo crea*/                              
                                        
                                 if(typeof registry.byId("trabajador") != "undefined"){
                                     registry.byId("trabajador").destroyRecursive();
@@ -212,15 +202,9 @@ require([
                                             /**********************/
                                             //.openPopup()
 
-
                                             // Mediante un ciclo buscar el marcador con la propiedad nombre igual a la de arriba para desplegar su popUp
-
-
-
-
                                         }
                                     }, "trabajador").startup();
-
                             });
                             }
                         }, "negocio").startup();
@@ -233,7 +217,7 @@ require([
 
     var urlINFORME;
 
-        /*consulta informes*/           
+    /*consulta informes*/           
     /* Lectura archivo Json Plantas*/
     request.get(defaultUrl+ "/gps/plantas/", {
             handleAs: "json"
@@ -291,20 +275,15 @@ require([
                                         style: "width: 150px;", 
                                         //value: data[0].id,                                   
                                         onChange: function(trabajador2){
-
-
-                                            
+                                           
                                             var posicion = dijit.byId('trabajador2').get('value');
                                             //map.setView([data[posicion].lat,data[posicion].lon], 18);                                            
 
                                             urlINFORME = defaultUrl+"/gps/datosinforme/ESTThno"+"/02/"+data[posicion].i+"/";
                     
                                             //var url3 = "http://localhost:8000/gps/datosinforme/ESTThno/02/29/2016-05-11/2016-05-30/";
-
-
                                          }
                                     }, "trabajador2").startup();
-
                             });
                             }
                         }, "negocio2").startup();
@@ -314,89 +293,84 @@ require([
     });
     /*Fin Listas Desplegables*/
 
+    /* Informe Fecha */
 
-/* Informe Fecha */
-
-            on(document.getElementById("qwerty"), "click", function(e){
-                    if(typeof registry.byId("gridDiv") != "undefined"){
-                            registry.byId("gridDiv").destroyRecursive();
-                        }
-                    var row = domConstruct.toDom("<div id='gridDiv'>    </div>");
-                            domConstruct.place(row, "divFecha");
-                    var grid, dataStore;
-                    var fechaFF,fechaII;
-                    
-                    // get value
-                    fechaII = date1.value
-                    //fechaII = "2016-03-01";
-                    fechaFF = date2.value
-                    //fechaFF = "2016-09-10";
-                    var url3 = urlINFORME+ fechaII +"/"+ fechaFF+"/";
-                    
-                    //var url3 = "http://localhost:8000/gps/datosinforme/ESTThno/02/29/2016-05-11/2016-05-30/";
-                    request.get(url3, {
-                        handleAs: "json"
-                    }).then(function(data){
-                        dataStore =  new ObjectStore({ objectStore:new Memory({ data: data }) });
-                        grid = new DataGrid({
-                            store: dataStore,
-                            query: { id: "*" },
-                            queryOptions: {},
-                            structure: [//nombre columnas
-                                { name: "Nombre", field: "name", width: "50%" },
-                                { name: "Tiempo", field: "id", width: "25%" }
-                                //{ name: "Horas", field: "horas", width: "25%" },
-                                //{ name: "Minutos", field: "minutos", width: "25%" }
-                            ]
-                        }//).placeAt("gridDiv");
-                        ,"gridDiv");
-                        grid.startup(); 
-                    });
-                    console.log(url3);
+    on(document.getElementById("qwerty"), "click", function(e){
+            if(typeof registry.byId("gridDiv") != "undefined"){
+                    registry.byId("gridDiv").destroyRecursive();
+                }
+            var row = domConstruct.toDom("<div id='gridDiv'>    </div>");
+                    domConstruct.place(row, "divFecha");
+            var grid, dataStore;
+            var fechaFF,fechaII;
+            
+            // get value
+            fechaII = date1.value
+            //fechaII = "2016-03-01";
+            fechaFF = date2.value
+            //fechaFF = "2016-09-10";
+            var url3 = urlINFORME+ fechaII +"/"+ fechaFF+"/";
+            
+            //var url3 = "http://localhost:8000/gps/datosinforme/ESTThno/02/29/2016-05-11/2016-05-30/";
+            request.get(url3, {
+                handleAs: "json"
+            }).then(function(data){
+                dataStore =  new ObjectStore({ objectStore:new Memory({ data: data }) });
+                grid = new DataGrid({
+                    store: dataStore,
+                    query: { id: "*" },
+                    queryOptions: {},
+                    structure: [//nombre columnas
+                        { name: "Nombre", field: "name", width: "50%" },
+                        { name: "Tiempo", field: "id", width: "25%" }
+                        //{ name: "Horas", field: "horas", width: "25%" },
+                        //{ name: "Minutos", field: "minutos", width: "25%" }
+                    ]
+                }//).placeAt("gridDiv");
+                ,"gridDiv");
+                grid.startup(); 
             });
+            console.log(url3);
+    });
 
 /****TODO MAPA*****/
 
     var osm = new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 25,
-            minZoom:2,
-            attribution: 'OpenStreetMap'
-            });
+        maxZoom: 25,
+        minZoom:2,
+        attribution: 'OpenStreetMap'
+        });
 
     var ctb = new L.tileLayer.wms('http://demo.opengeo.org/geoserver/ows?', {
         layers: 'ne:ne_10m_admin_0_countries,ne:ne_10m_admin_0_boundary_lines_land',
-            maxZoom: 25,
-            minZoom:2,
-            attribution: 'OpenStreetMap'
-            });
+        maxZoom: 25,
+        minZoom:2,
+        attribution: 'OpenStreetMap'
+        });
 
     var zonas = new L.LayerGroup();
 
     var trabajadores = new L.LayerGroup();
     
 /*
-        L.marker([39.61, -105.02]).bindPopup('This is Littleton, CO.').addTo(zonas),
-        L.marker([39.74, -104.99]).bindPopup('This is Denver, CO.').addTo(zonas),
-        L.marker([39.73, -104.8]).bindPopup('This is Aurora, CO.').addTo(zonas),
-        L.marker([39.77, -105.23]).bindPopup('This is Golden, CO.').addTo(zonas);
+    L.marker([39.61, -105.02]).bindPopup('This is Littleton, CO.').addTo(zonas),
+    L.marker([39.74, -104.99]).bindPopup('This is Denver, CO.').addTo(zonas),
+    L.marker([39.73, -104.8]).bindPopup('This is Aurora, CO.').addTo(zonas),
+    L.marker([39.77, -105.23]).bindPopup('This is Golden, CO.').addTo(zonas);
 */
+
 //Primera Forma de mostrar los edificios
     //var tempUrl= defaultUrlGeoServer+ 
     var edificios = new L.tileLayer.wms(defaultUrlGeoServer+'/geoserver/wms?', {
-                layers: 'est40516:Edificacion',
-                transparent: true,
-                format: 'image/png',
-                //styles: 'PMaule',
-                //attribution: 'Edificacion',
-                crs:L.CRS.EPSG4326,
-                opacity: 0.7
-                }
-        );
-
-    var styles = [{
-          featureType: 'all',
-          stylers: [{hue: '#ff0000'}]
-        }];
+        layers: 'est40516:Edificacion',
+        transparent: true,
+        format: 'image/png',
+        //styles: 'PMaule',
+        //attribution: 'Edificacion',
+        crs:L.CRS.EPSG4326,
+        opacity: 0.7
+        }
+    );
 
     var ggl = new L.Google('SATELLITE', {
             mapOptions: {
@@ -410,8 +384,6 @@ require([
             "Cluster": markerTrabajador
         };
 
-    //L.control.layers(baseLayers,overlays).addTo(map);
-
     map.addLayer(ggl);
     lcontrol = L.control.layers({'OSM':osm, 
         'Google':ggl, 
@@ -421,13 +393,13 @@ require([
   
     /**********************************/
     function getColor(d) { //retorna un color de acuerdo al valor de la variable d (density) ojo tambien se usa para el color de la leyenda
-            //console.log(d);
-            return d > 5 ? '#800026' : 
-                   d > 4  ? '#E31A1C' :
-                   d > 3  ? '#FC4E2A' :
-                   d > 1   ? '#FED976' :
-                              '#FFEDA0';
-        }
+        //console.log(d);
+        return d > 5 ? '#800026' : 
+               d > 4  ? '#E31A1C' :
+               d > 3  ? '#FC4E2A' :
+               d > 1   ? '#FED976' :
+                        '#FFEDA0';
+    }
 
     function style(feature) { //asigna el estilo con el color de relleno de acuerdo a su densidad
         return {
@@ -440,26 +412,34 @@ require([
         };
     }
 
+
+
+
+
+
     function popUpPersona(f,l){//Consulta por cada uno de los objetos     
          
 
         //console.log(f.geometry.coordinates);//
-        //console.log(f);
-        //http://cloud1.estchile.cl/media/avatar/ALEXANDRA_PAIVA.jpg
-        l.bindPopup("<div id='wrapperCard'><img id='logoEstCard' src='./images/estchile.png' ><img id='imgQRCard' src='./images/estchile.png' ><div id='datosTrabajadorCard'><b>Nombre : </b>"+f.properties["nombre"]+"</br><b>Cargo : </b>"+f.properties["cargo"]+"</br><b>Fono : </b>"+f.properties["fono"]+"</br><b>Riesgo : </b>"+f.properties["nivel_riesgo"]+"</br><b>Fono Emergencia : </b>"+f.properties["nro_emergencia"]+"</br><b>Contacto : </b>"+f.properties["tipo_contacto"]+"</br></div><img id='imgTrabajadorCard' src="+defaultUrl+f.properties["foto"]+"></div>"); 
+        //console.log(l);
 
-        if(f.properties["nivel_riesgo"] < 5 ){
+        var tempLatLng =l.getLatLng();    
+        //map.setView([tempLatLng.lat,tempLatLng.lng], 18);
+/*test popUp boton setView
+        l.bindPopup("<button type='button' id='otroButton'>Mostrar Información </button><div id='wrapperCard'><img id='logoEstCard' src='./images/estchile.png' ><img id='imgQRCard' src='./images/estchile.png' ><div id='datosTrabajadorCard'><b>Nombre : </b>"+f.properties["nombre"]+"</br><b>Cargo : </b>"+f.properties["cargo"]+"</br><b>Fono : </b>"+f.properties["fono"]+"</br><b>Riesgo : </b>"+f.properties["nivel_riesgo"]+"</br><b>Fono Emergencia : </b>"+f.properties["nro_emergencia"]+"</br><b>Contacto : </b>"+f.properties["tipo_contacto"]+"</br></div><img id='imgTrabajadorCard' src="+defaultUrl+f.properties["foto"]+"></div>"); 
+*/
+        l.bindPopup("<div id='wrapperCard'><img id='logoEstCard' src='./images/estchile.png' ><img id='imgQRCard' src='./images/estchile.png' ><div id='datosTrabajadorCard'><b>Nombre : </b>"+f.properties["nombre"]+"</br><b>Cargo : </b>"+f.properties["cargo"]+"</br><b>Fono : </b>"+f.properties["fono"]+"</br><b>Riesgo : </b>"+f.properties["nivel_riesgo"]+"</br><b>Fono Emergencia : </b>"+f.properties["nro_emergencia"]+"</br><b>Contacto : </b>"+f.properties["tipo_contacto"]+"</br></div><img id='imgTrabajadorCard' src="+defaultUrl+f.properties["foto"]+"></div>"); 
+        l.setIcon(hombreNormal);
+        /*if(f.properties["nivel_riesgo"] < 5 ){
             l.setIcon(hombreAmarillo);}
         if(f.properties["nivel_riesgo"] < 2 ){
-            l.setIcon(hombreNormal);}        
+            l.setIcon(hombreNormal);}        */
         if(f.properties["nivel_riesgo"] >= 5 ){
-            alerta=true;
-            l.setIcon(hombreRojo);
-            togglerAlerta.show();            
 
+            alerta=true;
+            //l.setIcon(hombreRojo);
+            togglerAlerta.show();            
             out2.push( "<p>"+f.properties["nombre"]+"</p>");
-            //document.getElementById("aviso").innerHTML = out2;
-            //out2.join("<br />");          
         }
         
         //console.log(f.properties["nivel_riesgo"]);
@@ -517,7 +497,16 @@ require([
             onEachFeature:popUpPersona
         });//.addTo(map);
 
-    realtime.on('update', function() {//
+
+    realtime.on('update', function(e){
+ /*       updateFeatureIcon = function (fId){
+            var feature = e.features[fId];//, 
+            //mynumber = feature.properties.mynumber; 
+            //status = feature.properties.status; 
+            realtime.getLayer(fId).setIcon(hombreRojo); 
+        }; 
+        Object.keys(e.update).forEach(updateFeatureIcon); 
+*/
         if(!alerta) {
             togglerAlerta.hide();
             //console.log(alerta);
@@ -530,21 +519,19 @@ require([
         out2= temp;
 
 
-
     });
+
 
     //map.addLayer(zonas);
     //map.addLayer(trabajadores);
 
 
     var urlGeoserverEdificios= defaultUrlGeoServer+"/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:est_zona&maxFeatures=50&outputFormat=application%2Fjson";
-    var jsonTest = new L.GeoJSON.AJAX([urlGeoserverEdificios/*,"counties.geojson"*/],{style: style, onEachFeature:popUpEdificios}).addTo(map);
+    var jsonTest = new L.GeoJSON.AJAX([urlGeoserverEdificios/*,"counties.geojson"*/],{style: style, onEachFeature:popUpEdificios});
 
 
     var clusterLayer = new L.GeoJSON.AJAX([urlRealTime/*,"counties.geojson"*/],{style: style, onEachFeature:popUpPersona});
 
-
-         
     /*var clusterLayer = new L.GeoJSON.AJAX(urlRealTime, {
         pointToLayer: function(feature, latlng) {
             var icon = L.icon({
@@ -560,7 +547,6 @@ require([
         }
     });*/
 
-
     clusterLayer.on('data:loaded', function () {
         markerTrabajador.addLayer(clusterLayer);
         //console.log(markerTrabajador);
@@ -571,7 +557,6 @@ require([
     map.on('overlayadd', onOverlayAdd);
     map.on('overlayremove', onOverlayRemove);
     
-
     function onOverlayAdd(e){
         //do whatever
             console.log("ACTIVADO "+ e.name);
@@ -581,6 +566,5 @@ require([
         //do whatever
             console.log("Desactivado "+e.name);
     }
-
 
 });
