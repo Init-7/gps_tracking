@@ -528,11 +528,11 @@ require([
         clusterLayer.on('data:loaded', function () {
             markerTrabajador.addLayer(clusterLayer);
             //console.log(markerTrabajador);
-            map.addLayer(markerTrabajador);
+            
             //map.removeLayer(trabajadores);
         });
     });
-    
+    //map.addLayer(markerTrabajador);
     var urlGeoserverEdificios= defaultUrlGeoServer+"/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:est_zona&maxFeatures=50&outputFormat=application%2Fjson";
     var jsonTest = new L.GeoJSON.AJAX([urlGeoserverEdificios/*,"counties.geojson"*/],{style: style, onEachFeature:popUpEdificios});
 
