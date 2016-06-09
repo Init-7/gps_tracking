@@ -73,7 +73,7 @@ require([
 
     statusOk = function(){
       dojo.animateProperty({
-        node: dojo.byId("aviso"), duration: 500,
+        node: dojo.byId("aviso"), duration: 2000,
         properties: {
           backgroundColor: { start: "yellow", end: "red" },
           //height: { end: 400, start:100 },
@@ -361,6 +361,7 @@ require([
         });
 
     var zonas = new L.LayerGroup();
+    var alertaL = new L.LayerGroup();
 
     var trabajadores = new L.LayerGroup();    
 
@@ -382,13 +383,16 @@ require([
             //styles: styles
         }});
 
-    var overlays = {//Capa con marcadores 
+    var overlays = {//Capa con marcadores                         
+            "Trabajadores": trabajadores,
+            "Cluster": markerTrabajador,
             "Zonas": zonas,
             "Construcciones": edificios,
-            "Trabajadores": trabajadores
-            ,
-            "Cluster": markerTrabajador
+            "Activar Alerta": alertaL
         };
+
+    map.addLayer(alertaL)
+    var activarAlerta=true;
 
     map.addLayer(ggl);
     lcontrol = L.control.layers({'OSM':osm, 
@@ -515,11 +519,9 @@ require([
         }; 
         Object.keys(e.update).forEach(updateFeatureIcon); 
 */
-        if(out2.length>0) {
+        if(out2.length>0 && activarAlerta == true) {
             document.getElementById("divALERTAS").innerHTML = "<div id='aviso'><img id='alertaImg' src='./images/ico/aviso.png'><h2>¡¡ALERTA!!</h1>"+out2+"</div> ";
             statusOk();
-
-
         }
         else{
             document.getElementById("divALERTAS").innerHTML = "<div id=''></div> ";
@@ -527,10 +529,11 @@ require([
         var temp = [];
         out2= temp;
         //console.log("Actualizando");
-
+        //console.log(showcluster);
+        var urlRealTime = defaultUrl+"/gps/puntos3/";//Redefinir la url porque por lo visto funciona como variable local
+        
         if(showcluster===true){
             markerTrabajador.clearLayers();         
-            var urlRealTime = defaultUrl+"/gps/puntos3/";//Redefinir la url porque por lo visto funciona como variable local
             clusterLayer = new L.GeoJSON.AJAX([urlRealTime/*,"counties.geojson"*/],{onEachFeature:popUpPersona});
             clusterLayer.on('data:loaded', function () {
                 markerTrabajador.addLayer(clusterLayer);
@@ -564,7 +567,7 @@ require([
     });*/
 
     map.on('overlayadd', function(eo) {
-        console.log(eo.name);
+        //console.log(eo.name);
         if (eo.name === 'Cluster') {
             setTimeout(function(){map.removeLayer(trabajadores)}, 10);
             showcluster= true;
@@ -573,20 +576,29 @@ require([
             setTimeout(function(){map.removeLayer(markerTrabajador)}, 10);
             showcluster=false;      
         }
-
-    });
-     map.on('overlayremove', function(eo) {
-        console.log(eo.name);
-        if (eo.name === 'Cluster') {
-            setTimeout(function(){map.addLayer(trabajadores)}, 10);
-            showcluster= true;
-        } 
-        else if (eo.name === 'Trabajadores') {
-            setTimeout(function(){map.addLayer(markerTrabajador)}, 10);
-            showcluster=false;      
+        else if (eo.name === 'Activar Alerta') {
+            alertaL=true;
+            if(out2.length>0) {
+                document.getElementById("divALERTAS").innerHTML = "<div id='aviso'><img id='alertaImg' src='./images/ico/aviso.png'><h2>¡¡ALERTA!!</h1>"+out2+"</div> ";
+                statusOk();
+            }
         }
 
     });
+     map.on('overlayremove', function(eo) {
+        //console.log(eo.name);
+        if (eo.name === 'Cluster') {
+            setTimeout(function(){map.addLayer(trabajadores)}, 10);
+            showcluster= false;
+        } 
+        else if (eo.name === 'Trabajadores') {
+            setTimeout(function(){map.addLayer(markerTrabajador)}, 10);
+            showcluster=true;      
+        }
+        else if (eo.name === 'Activar Alerta') {
+            alertaL=false;
+            document.getElementById("divALERTAS").innerHTML = "<div id=''></div> ";
+        }
+    });
 
-    
 });
