@@ -540,7 +540,8 @@ require([
             });
             map.addLayer(markerTrabajador);
         }
-        else {
+        else { 
+            trabajadores.clearLayers();
             var jsonTrabajadores = new L.GeoJSON.AJAX([urlRealTime/*,"counties.geojson"*/],{onEachFeature:popUpPersona});
         }
 
