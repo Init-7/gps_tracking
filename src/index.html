@@ -8,7 +8,15 @@
 
 		<!-- Load estilos-->
 		<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/dojo/1.10.4/dijit/themes/claro/claro.css" />
-		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+
+		<!--En Caso de existir problemas con el css leaflet usar el css local-->
+		<link rel="stylesheet" href="css/leaflet.css">
+		<!--<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />-->
+
+
+
+
+
 		<link rel="stylesheet" href="css/layout.css">
 		<link rel="stylesheet" href="css/Grid.css" />
 		<link rel="stylesheet" href="css/claroGrid.css" />
@@ -28,6 +36,8 @@
 		<link rel="stylesheet" href="js/markercluster/MarkerCluster.Default.css" />
 		<script src="js/markercluster/leaflet.markercluster-src.js"></script>
 		
+		<script src="js/leaflet-heat.js"></script>
+
 		<script src="js/leaflet-realtime.js"></script>
 		<script src="spin.js"></script>
 		<script src="leaflet.spin.js"></script>
@@ -39,11 +49,17 @@
 		<script src="js/layout_amd_2.js"></script>
 
 
+		<style>
+        .ghbtns { position: relative; top: 4px; margin-left: 5px; }
+    </style>
+
+
 	</head>
 	<body class="claro">
 
 		<div id="mainWindow" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'sidebar', gutters:false" style="width: 100%; height: 100%;">
 			<!--MAP-->
+
 			<div id="map" class="roundedCorners shadow" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'">
 				<!--CABECERA-->
 				<div id="header" class="roundedCorners shadow" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="minSize:800,region:'top'">

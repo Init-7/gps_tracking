@@ -26,8 +26,6 @@ require([
     var coord = [];
     coord.CENTRAL = [-36.3,-72.3];
 
-    var alerta= false;
-
     var out2 = [];
 
     var defaultUrl ="http://cloud1.estchile.cl";
@@ -72,6 +70,20 @@ require([
         togglerRightPanel.show();
 
     });
+
+    statusOk = function(){
+      dojo.animateProperty({
+        node: dojo.byId("aviso"), duration: 500,
+        properties: {
+          backgroundColor: { start: "yellow", end: "red" },
+          //height: { end: 400, start:100 },
+          color: { start: "black", end: "white" },
+        },
+        onEnd: function(){
+          //dojo.byId("aviso").innerHTML = "Granted";
+        }
+      }).play();
+    }
 
 /********************************************/
 
@@ -350,14 +362,7 @@ require([
 
     var zonas = new L.LayerGroup();
 
-    var trabajadores = new L.LayerGroup();
-    
-/*
-    L.marker([39.61, -105.02]).bindPopup('This is Littleton, CO.').addTo(zonas),
-    L.marker([39.74, -104.99]).bindPopup('This is Denver, CO.').addTo(zonas),
-    L.marker([39.73, -104.8]).bindPopup('This is Aurora, CO.').addTo(zonas),
-    L.marker([39.77, -105.23]).bindPopup('This is Golden, CO.').addTo(zonas);
-*/
+    var trabajadores = new L.LayerGroup();    
 
 //Primera Forma de mostrar los edificios
     //var tempUrl= defaultUrlGeoServer+ 
@@ -413,7 +418,6 @@ require([
         };
     }
 
-
     function popUpPersona(f,l){//Consulta por cada uno de los objetos     
         //console.log(f.geometry.coordinates);//
         //console.log(l);
@@ -430,16 +434,11 @@ require([
         if(f.properties["nivel_riesgo"] < 2 ){
             l.setIcon(hombreNormal);}        
         if(f.properties["nivel_riesgo"] >= 5 ){
-
-            alerta=true;
-            l.setIcon(hombreRojo);
-            //togglerAlerta.show();            
+            l.setIcon(hombreRojo);    
             out2.push( "<p>"+f.properties["nombre"]+"</p>");
-        }
-        
-        //console.log(f.properties["nivel_riesgo"]);
+        }        
         l.on('dblclick', onClick);
-        //l.addTo(trabajadores);
+        l.addTo(trabajadores);
     }
 
     function onClick(e) {
@@ -459,7 +458,6 @@ require([
         l.addTo(zonas);
     }
 
-
     /********ICONOS PERSONALIZADO***************/
     var LeafIcon = L.Icon.extend({
                 options: {
@@ -477,9 +475,22 @@ require([
         hombreRojo = new LeafIcon({iconUrl: './images/ico/peligro.png'});
     ///////////////****************////////////////
 
-    //L.marker([51.5, -0.09], {icon: hombreNormal}).addTo(map).bindPopup("I am a green leaf.");
 
-    //urlRealTime = "http://localhost:8000/gps/ESTThno/EST08/puntos2/";
+        var heat = L.heatLayer([
+            [-36.3,-72.3, "1257"], // lat, lng, intensity
+            [-36.3,-70.3, 999]
+        ], {radius: 50}).addTo(map);
+
+    /*request.get("realworld.10000.js", {
+        handleAs: "json"
+    }).then(function(data){ 
+        //console.log(data);
+        //addressPoints = addressPoints.map(function (p) { return [p[0], p[1]]; });
+        //var heat = L.heatLayer(addressPoints).addTo(map);
+    });*/
+    var showcluster=true;
+
+
     var urlRealTime = defaultUrl+"/gps/puntos3/";
     
     var example= "example.geojson";
@@ -506,33 +517,31 @@ require([
 */
         if(out2.length>0) {
             document.getElementById("divALERTAS").innerHTML = "<div id='aviso'><img id='alertaImg' src='./images/ico/aviso.png'><h2>¡¡ALERTA!!</h1>"+out2+"</div> ";
-            //togglerAlerta.hide();
-            //console.log(alerta);
+            statusOk();
+
+
         }
         else{
             document.getElementById("divALERTAS").innerHTML = "<div id=''></div> ";
-
         }
-        //console.log(urlRealTime);
-        alerta=false;
-        //console.log(out2.length);
         var temp = [];
         out2= temp;
-        console.log("Actualizando");
-        //map.removeLayer(markerTrabajador);
-        markerTrabajador.clearLayers(); 
-        //markerTrabajador= null;
-        //markerTrabajador = L.markerClusterGroup(); 
-        //var clusterLayer= null;
-        clusterLayer = new L.GeoJSON.AJAX([urlRealTime/*,"counties.geojson"*/],{onEachFeature:popUpPersona});
-        clusterLayer.on('data:loaded', function () {
-            markerTrabajador.addLayer(clusterLayer);
-            //console.log(markerTrabajador);
-            
-            //map.removeLayer(trabajadores);
-        });
+        //console.log("Actualizando");
+
+        if(showcluster===true){
+            markerTrabajador.clearLayers();         
+            var urlRealTime = defaultUrl+"/gps/puntos3/";//Redefinir la url porque por lo visto funciona como variable local
+            clusterLayer = new L.GeoJSON.AJAX([urlRealTime/*,"counties.geojson"*/],{onEachFeature:popUpPersona});
+            clusterLayer.on('data:loaded', function () {
+                markerTrabajador.addLayer(clusterLayer);
+            });
+            map.addLayer(markerTrabajador);
+        }
+        else {
+            var jsonTrabajadores = new L.GeoJSON.AJAX([urlRealTime/*,"counties.geojson"*/],{onEachFeature:popUpPersona});
+        }
+
     });
-    //map.addLayer(markerTrabajador);
     var urlGeoserverEdificios= defaultUrlGeoServer+"/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:est_zona&maxFeatures=50&outputFormat=application%2Fjson";
     var jsonTest = new L.GeoJSON.AJAX([urlGeoserverEdificios/*,"counties.geojson"*/],{style: style, onEachFeature:popUpEdificios});
 
@@ -554,19 +563,30 @@ require([
         }
     });*/
 
+    map.on('overlayadd', function(eo) {
+        console.log(eo.name);
+        if (eo.name === 'Cluster') {
+            setTimeout(function(){map.removeLayer(trabajadores)}, 10);
+            showcluster= true;
+        } 
+        else if (eo.name === 'Trabajadores') {
+            setTimeout(function(){map.removeLayer(markerTrabajador)}, 10);
+            showcluster=false;      
+        }
 
+    });
+     map.on('overlayremove', function(eo) {
+        console.log(eo.name);
+        if (eo.name === 'Cluster') {
+            setTimeout(function(){map.addLayer(trabajadores)}, 10);
+            showcluster= true;
+        } 
+        else if (eo.name === 'Trabajadores') {
+            setTimeout(function(){map.addLayer(markerTrabajador)}, 10);
+            showcluster=false;      
+        }
 
-    map.on('overlayadd', onOverlayAdd);
-    map.on('overlayremove', onOverlayRemove);
+    });
+
     
-    function onOverlayAdd(e){
-        //do whatever
-            console.log("ACTIVADO "+ e.name);
-    }
-
-    function onOverlayRemove(e){
-        //do whatever
-            console.log("Desactivado "+e.name);
-    }
-
 });
