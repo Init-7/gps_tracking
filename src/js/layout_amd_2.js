@@ -548,7 +548,7 @@ require([
             showcluster=false;      
         }
         else if (eo.name === 'Activar Alerta') {
-            alertaL=true;
+            activarAlerta=true;
             if(out2.length>0) {
                 document.getElementById("divALERTAS").innerHTML = "<div id='aviso'><img id='alertaImg' src='./images/ico/aviso.png'><h2>¡¡ALERTA!!</h1>"+out2+"</div> ";
                 statusOk();
@@ -556,13 +556,11 @@ require([
         }
         else if (eo.name === 'Heat Map') {            
             /**********HEATMAP************/   
-            var heat = L.heatLayer(heat_points, {radius: 100,
+            /*var heat = L.heatLayer(heat_points, {radius: 100,
                 blur:10,
                 maxZoom:2,
                 opacity: 0.8
-            }).addTo(map);
-
-            
+            }).addTo(map);*/           
 
             /*********Fin HEATMAP*******/        
         }
@@ -579,7 +577,7 @@ require([
             showcluster=true;      
         }
         else if (eo.name === 'Activar Alerta') {            
-            alertaL=false;
+            activarAlerta=false;
             document.getElementById("divALERTAS").innerHTML = "<div id=''></div> ";
         }
         else if (eo.name === 'Heat Map') {
