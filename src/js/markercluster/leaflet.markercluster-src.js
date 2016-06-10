@@ -10,7 +10,7 @@
 L.MarkerClusterGroup = L.FeatureGroup.extend({
 
 	options: {
-		maxClusterRadius: 80, //A cluster will cover at most this many pixels from its center
+		maxClusterRadius: 20, //A cluster will cover at most this many pixels from its center
 		iconCreateFunction: null,
 
 		spiderfyOnMaxZoom: true,
@@ -78,9 +78,11 @@ L.MarkerClusterGroup = L.FeatureGroup.extend({
 
 	addLayer: function (layer) {
 
+
 		if (layer instanceof L.LayerGroup) {
 			var array = [];
 			for (var i in layer._layers) {
+
 				array.push(layer._layers[i]);
 			}
 			return this.addLayers(array);
@@ -676,16 +678,38 @@ L.MarkerClusterGroup = L.FeatureGroup.extend({
 		}
 
 		this.fire(e.type, e);
+
 	},
 
 	//Default functionality
 	_defaultIconCreateFunction: function (cluster) {
-		var childCount = cluster.getChildCount();
-
+		/*
+		console.log(cluster);
 		var c = ' marker-cluster-';
+		//var n = 0;
+		for (var i = 0; i < cluster.length; i++) {
+			n += 100;//cluster[i].number;
+		}
+		var childCount = n;
+
+		//var childCount = cluster.getChildCount();
+
+		//var c = ' marker-cluster-';
 		if (childCount < 10) {
 			c += 'small';
 		} else if (childCount < 100) {
+			c += 'medium';
+		} else {
+			c += 'large';
+		}*/
+
+	
+		var childCount = cluster.getChildCount();
+		
+		var c = ' marker-cluster-';
+		if (childCount < 1) {
+			c += 'small';
+		} else if (childCount < 5) {
 			c += 'medium';
 		} else {
 			c += 'large';
@@ -1303,6 +1327,7 @@ L.MarkerCluster = L.Marker.extend({
 				new1.__parent = this;
 			}
 			this._childCount += new1._childCount;
+
 		} else {
 			if (!isNotificationFromChild) {
 				this._markers.push(new1);
@@ -1353,6 +1378,7 @@ L.MarkerCluster = L.Marker.extend({
 		    lngSum = 0,
 		    totalCount = this._childCount,
 		    i, child, childLatLng, childCount;
+		    
 
 		// Case where all markers are removed from the map and we are left with just an empty _topClusterLevel.
 		if (totalCount === 0) {

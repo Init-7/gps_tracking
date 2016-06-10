@@ -22,6 +22,8 @@ require([
     
     var markerTrabajador = L.markerClusterGroup(); 
     var clusterLayer;
+    var markerTrabajadorHeat = L.heatLayer();
+    var htLayer;
     //coordenadas de interes...
     var coord = [];
     coord.CENTRAL = [-36.3,-72.3];
@@ -348,8 +350,9 @@ require([
 /****TODO MAPA*****/
 
     var osm = new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 25,
+        maxZoom: 22,
         minZoom:2,
+        maxNativeZoom: 25,
         attribution: 'OpenStreetMap'
         });
 
@@ -357,6 +360,7 @@ require([
         layers: 'ne:ne_10m_admin_0_countries,ne:ne_10m_admin_0_boundary_lines_land',
         maxZoom: 25,
         minZoom:2,
+        maxNativeZoom: 25,
         attribution: 'OpenStreetMap'
         });
 
@@ -479,11 +483,11 @@ require([
         hombreRojo = new LeafIcon({iconUrl: './images/ico/peligro.png'});
     ///////////////****************////////////////
 
-
+/*
         var heat = L.heatLayer([
             [-36.3,-72.3, "1257"], // lat, lng, intensity
             [-36.3,-70.3, 999]
-        ], {radius: 50}).addTo(map);
+        ], {radius: 50}).addTo(map);*/
 
     /*request.get("realworld.10000.js", {
         handleAs: "json"
@@ -508,8 +512,8 @@ require([
             //,
             //onEachFeature:popUpPersona
         }
-        );//.addTo(map);
-    //console.log(realtime._featureLayers);
+        );
+    
     realtime.on('update', function(e){
  /*       updateFeatureIcon = function (fId){
             var feature = e.features[fId];//, 
@@ -532,6 +536,10 @@ require([
         //console.log(showcluster);
         var urlRealTime = defaultUrl+"/gps/puntos3/";//Redefinir la url porque por lo visto funciona como variable local
         
+
+        
+
+
         if(showcluster===true){
             markerTrabajador.clearLayers();         
             clusterLayer = new L.GeoJSON.AJAX([urlRealTime/*,"counties.geojson"*/],{onEachFeature:popUpPersona});
@@ -549,6 +557,25 @@ require([
     var urlGeoserverEdificios= defaultUrlGeoServer+"/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:est_zona&maxFeatures=50&outputFormat=application%2Fjson";
     var jsonTest = new L.GeoJSON.AJAX([urlGeoserverEdificios/*,"counties.geojson"*/],{style: style, onEachFeature:popUpEdificios});
 
+
+/**********HEATMAP************/
+    function geoJson2heat(geojson, intensity) {
+      return geojson.features.map(function(feature) {
+        return [
+          feature.geometry.coordinates[0][1],
+          feature.geometry.coordinates[0][0],
+          feature.properties[intensity]
+        ];
+      });
+    }
+    var geojson = new L.GeoJSON.AJAX([urlRealTime/*,"counties.geojson"*/],{onEachFeature:popUpPersona});
+    //console.log(geojson);
+    console.log(geojson._layers);
+    var geoData = geoJson2heat(htLayer, 30);
+    
+
+
+/*********Fin HEATMAP*******/
 
     //var clusterLayer = new L.GeoJSON.AJAX([urlRealTime/*,"counties.geojson"*/],{onEachFeature:popUpPersona});
     
