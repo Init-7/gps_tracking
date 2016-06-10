@@ -19,10 +19,10 @@ require([
     "dijit/form/FilteringSelect", // Crear desplegables con información dijit.form.FilteringSelect({
     "dojo/domReady!"
 ], function(on, mouse,BorderContainer,Toggler, coreFx, request, Memory, registry,ContentPane, DateTextBox,dom,domAttr,AccordionContainer,DataGrid,Button,ObjectStore, domConstruct, FilteringSelect){
-    
+    var heat_points = [];
     var markerTrabajador = L.markerClusterGroup(); 
     var clusterLayer;
-    var markerTrabajadorHeat = L.heatLayer();
+    var heat = L.heatLayer();
     var htLayer;
     //coordenadas de interes...
     var coord = [];
@@ -365,7 +365,8 @@ require([
         });
 
     var zonas = new L.LayerGroup();
-    var alertaL = new L.LayerGroup();
+    var alertaL = new L.LayerGroup();    
+    var heatMap = new L.LayerGroup();
 
     var trabajadores = new L.LayerGroup();    
 
@@ -392,11 +393,12 @@ require([
             "Cluster": markerTrabajador,
             "Zonas": zonas,
             "Construcciones": edificios,
+            "Heat Map": heatMap,
             "Activar Alerta": alertaL
         };
 
-    map.addLayer(alertaL)
-    var activarAlerta=true;
+    //map.addLayer(alertaL)
+    var activarAlerta=false;
 
     map.addLayer(ggl);
     lcontrol = L.control.layers({'OSM':osm, 
@@ -447,11 +449,14 @@ require([
         }        
         l.on('dblclick', onClick);
         l.addTo(trabajadores);
+
+        var tempLatLng =l.getLatLng(); //PARA HEATMAP
+        heat_points.push(tempLatLng);  
     }
 
     function onClick(e) {
         var tempLatLng =this.getLatLng();    
-        map.setView([tempLatLng.lat,tempLatLng.lng], 18);
+        map.setView([tempLatLng.lat,tempLatLng.lng], 100);
         //map.removeControl();
     }   
 
@@ -481,26 +486,9 @@ require([
     var hombreNormal = new LeafIcon({iconUrl: './images/ico/marker.png'}),
         hombreAmarillo = new LeafIcon({iconUrl: './images/ico/alerta.png'}),
         hombreRojo = new LeafIcon({iconUrl: './images/ico/peligro.png'});
-    ///////////////****************////////////////
 
-/*
-        var heat = L.heatLayer([
-            [-36.3,-72.3, "1257"], // lat, lng, intensity
-            [-36.3,-70.3, 999]
-        ], {radius: 50}).addTo(map);*/
-
-    /*request.get("realworld.10000.js", {
-        handleAs: "json"
-    }).then(function(data){ 
-        //console.log(data);
-        //addressPoints = addressPoints.map(function (p) { return [p[0], p[1]]; });
-        //var heat = L.heatLayer(addressPoints).addTo(map);
-    });*/
     var showcluster=true;
-
-
-    var urlRealTime = defaultUrl+"/gps/puntos3/";
-    
+    var urlRealTime = defaultUrl+"/gps/puntos3/";    
     var example= "example.geojson";
     realtime = L.realtime({
             url: example,
@@ -515,14 +503,9 @@ require([
         );
     
     realtime.on('update', function(e){
- /*       updateFeatureIcon = function (fId){
-            var feature = e.features[fId];//, 
-            //mynumber = feature.properties.mynumber; 
-            //status = feature.properties.status; 
-            realtime.getLayer(fId).setIcon(hombreRojo); 
-        }; 
-        Object.keys(e.update).forEach(updateFeatureIcon); 
-*/
+
+        //console.log(heat_points);
+
         if(out2.length>0 && activarAlerta == true) {
             document.getElementById("divALERTAS").innerHTML = "<div id='aviso'><img id='alertaImg' src='./images/ico/aviso.png'><h2>¡¡ALERTA!!</h1>"+out2+"</div> ";
             statusOk();
@@ -535,11 +518,7 @@ require([
         //console.log("Actualizando");
         //console.log(showcluster);
         var urlRealTime = defaultUrl+"/gps/puntos3/";//Redefinir la url porque por lo visto funciona como variable local
-        
-
-        
-
-
+               
         if(showcluster===true){
             markerTrabajador.clearLayers();         
             clusterLayer = new L.GeoJSON.AJAX([urlRealTime/*,"counties.geojson"*/],{onEachFeature:popUpPersona});
@@ -557,43 +536,6 @@ require([
     var urlGeoserverEdificios= defaultUrlGeoServer+"/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:est_zona&maxFeatures=50&outputFormat=application%2Fjson";
     var jsonTest = new L.GeoJSON.AJAX([urlGeoserverEdificios/*,"counties.geojson"*/],{style: style, onEachFeature:popUpEdificios});
 
-
-/**********HEATMAP************/
-    function geoJson2heat(geojson, intensity) {
-      return geojson.features.map(function(feature) {
-        return [
-          feature.geometry.coordinates[0][1],
-          feature.geometry.coordinates[0][0],
-          feature.properties[intensity]
-        ];
-      });
-    }
-    var geojson = new L.GeoJSON.AJAX([urlRealTime/*,"counties.geojson"*/],{onEachFeature:popUpPersona});
-    //console.log(geojson);
-    console.log(geojson._layers);
-    var geoData = geoJson2heat(htLayer, 30);
-    
-
-
-/*********Fin HEATMAP*******/
-
-    //var clusterLayer = new L.GeoJSON.AJAX([urlRealTime/*,"counties.geojson"*/],{onEachFeature:popUpPersona});
-    
-    /*var clusterLayer = new L.GeoJSON.AJAX(urlRealTime, {
-        pointToLayer: function(feature, latlng) {
-            var icon = L.icon({
-                            iconSize: [27, 27]//,
-                            //iconAnchor: [13, 27],
-                            //popupAnchor:  [1, -24],
-                            //iconUrl: 'icon/' + feature.properties.amenity + '.png'
-                            });
-            return L.marker(latlng, {icon: icon})
-        }, 
-        onEachFeature: function(feature, layer) {
-            layer.bindPopup(feature.properties.name + ': ' + feature.properties.opening_hours);
-        }
-    });*/
-
     map.on('overlayadd', function(eo) {
         //console.log(eo.name);
         if (eo.name === 'Cluster') {
@@ -602,6 +544,7 @@ require([
         } 
         else if (eo.name === 'Trabajadores') {
             setTimeout(function(){map.removeLayer(markerTrabajador)}, 10);
+            
             showcluster=false;      
         }
         else if (eo.name === 'Activar Alerta') {
@@ -609,7 +552,19 @@ require([
             if(out2.length>0) {
                 document.getElementById("divALERTAS").innerHTML = "<div id='aviso'><img id='alertaImg' src='./images/ico/aviso.png'><h2>¡¡ALERTA!!</h1>"+out2+"</div> ";
                 statusOk();
-            }
+            }   
+        }
+        else if (eo.name === 'Heat Map') {            
+            /**********HEATMAP************/   
+            var heat = L.heatLayer(heat_points, {radius: 100,
+                blur:10,
+                maxZoom:2,
+                opacity: 0.8
+            }).addTo(map);
+
+            
+
+            /*********Fin HEATMAP*******/        
         }
 
     });
@@ -623,10 +578,15 @@ require([
             setTimeout(function(){map.addLayer(markerTrabajador)}, 10);
             showcluster=true;      
         }
-        else if (eo.name === 'Activar Alerta') {
+        else if (eo.name === 'Activar Alerta') {            
             alertaL=false;
             document.getElementById("divALERTAS").innerHTML = "<div id=''></div> ";
         }
+        else if (eo.name === 'Heat Map') {
+            //heat.clearLayers();  
+            location.reload();//solucion preliminar desactivar heatmap
+        }
+
     });
 
 });
