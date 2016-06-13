@@ -20,7 +20,7 @@ require([
     "dojo/domReady!"
 ], function(on, mouse,BorderContainer,Toggler, coreFx, request, Memory, registry,ContentPane, DateTextBox,dom,domAttr,AccordionContainer,DataGrid,Button,ObjectStore, domConstruct, FilteringSelect){
     var heat_points = [];
-    var markerTrabajador = L.markerClusterGroup(); 
+    //var markerTrabajador = L.markerClusterGroup(); 
     var clusterLayer;
     var heat = L.heatLayer();
     var htLayer;
@@ -37,6 +37,8 @@ require([
     var urlRealTime;
 
 	var map = new L.Map('map', {center: coord.CENTRAL, zoom: 2});
+
+
 
     //TEST MOSTRAR OCULTAR
     var togglerInfoT = new Toggler({
@@ -390,7 +392,7 @@ require([
 
     var overlays = {//Capa con marcadores                         
             "Trabajadores": trabajadores,
-            "Cluster": markerTrabajador,
+            //"Cluster": markerTrabajador,
             "Zonas": zonas,
             "Construcciones": edificios,
             "Heat Map": heatMap,
@@ -520,14 +522,14 @@ require([
         var urlRealTime = defaultUrl+"/gps/puntos3/";//Redefinir la url porque por lo visto funciona como variable local
                
         if(showcluster===true){
-            markerTrabajador.clearLayers();         
-            clusterLayer = new L.GeoJSON.AJAX([urlRealTime/*,"counties.geojson"*/],{onEachFeature:popUpPersona});
-            clusterLayer.on('data:loaded', function () {
-                markerTrabajador.addLayer(clusterLayer);
-            });
-            map.addLayer(markerTrabajador);
+            //markerTrabajador.clearLayers();         
+            //clusterLayer = new L.GeoJSON.AJAX([urlRealTime/*,"counties.geojson"*/],{onEachFeature:popUpPersona});
+            //clusterLayer.on('data:loaded', function () {
+            //   markerTrabajador.addLayer(clusterLayer);
+            //});
+            //map.addLayer(markerTrabajador);
         }
-        else { 
+        else {
             trabajadores.clearLayers();
             var jsonTrabajadores = new L.GeoJSON.AJAX([urlRealTime/*,"counties.geojson"*/],{onEachFeature:popUpPersona});
         }
@@ -543,7 +545,7 @@ require([
             showcluster= true;
         } 
         else if (eo.name === 'Trabajadores') {
-            setTimeout(function(){map.removeLayer(markerTrabajador)}, 10);
+            //setTimeout(function(){map.removeLayer(markerTrabajador)}, 10);
             
             showcluster=false;      
         }
@@ -560,9 +562,39 @@ require([
                 blur:10,
                 maxZoom:2,
                 opacity: 0.8
-            }).addTo(map);*/           
+            }).addTo(map);        
+*/
+            /*********Fin HEATMAP*******/       
 
-            /*********Fin HEATMAP*******/        
+            //console.log(heat_points);
+            /*****************PRUNECLUSTER*************************/
+    // The GetClusterMarkers method is not working by default
+    PruneCluster.Cluster.ENABLE_MARKERS_LIST = true;
+
+    var leafletView = new PruneClusterForLeaflet();
+    console.log(heat_points);
+    for (var i = 0, l = heat_points.length; i < l; ++i) {
+        console.log(heat_points[i]);
+        console.log(heat_points[i].lat+","+ heat_points[i].lng);
+        
+        leafletView.RegisterMarker(new PruneCluster.Marker(heat_points[i].lat, heat_points[i].lng, {title: "HOLA"}));
+    }
+
+    leafletView.PrepareLeafletMarker = function (marker, data) {
+        if (marker.getPopup()) {
+            marker.setPopupContent(data.title);
+        } else {
+            marker.bindPopup(data.title);
+        }
+    };
+
+    map.addLayer(leafletView);
+/*****************PRUNECLUSTER*************************/
+
+
+
+
+
         }
 
     });
@@ -573,7 +605,7 @@ require([
             showcluster= false;
         } 
         else if (eo.name === 'Trabajadores') {
-            setTimeout(function(){map.addLayer(markerTrabajador)}, 10);
+            //setTimeout(function(){map.addLayer(markerTrabajador)}, 10);
             showcluster=true;      
         }
         else if (eo.name === 'Activar Alerta') {            
@@ -586,5 +618,25 @@ require([
         }
 
     });
+/*****************PRUNECLUSTER*************************/
+    // The GetClusterMarkers method is not working by default
+    //PruneCluster.Cluster.ENABLE_MARKERS_LIST = true;
 
+    //var leafletView = new PruneClusterForLeaflet();
+    /*console.log(heat_points);
+    for (var i = 0, l = heat_points.length; i < l; ++i) {
+        console.log(heat_points[i]);
+        //leafletView.RegisterMarker(new PruneCluster.Marker(addressPoints[i][0], addressPoints[i][1], {title: addressPoints[i][2]}));
+    }*/
+/*
+    leafletView.PrepareLeafletMarker = function (marker, data) {
+        if (marker.getPopup()) {
+            marker.setPopupContent(data.title);
+        } else {
+            marker.bindPopup(data.title);
+        }
+    };
+
+    map.addLayer(leafletView);*/
+/*****************PRUNECLUSTER*************************/
 });
