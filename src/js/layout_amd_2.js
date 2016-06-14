@@ -359,15 +359,13 @@ require([
     var osm = new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 22,
         minZoom:2,
-        maxNativeZoom: 25,
         attribution: 'OpenStreetMap'
         });
 
     var ctb = new L.tileLayer.wms('http://demo.opengeo.org/geoserver/ows?', {
         layers: 'ne:ne_10m_admin_0_countries,ne:ne_10m_admin_0_boundary_lines_land',
-        maxZoom: 25,
+        maxZoom: 30,
         minZoom:2,
-        maxNativeZoom: 25,
         attribution: 'OpenStreetMap'
         });
 
