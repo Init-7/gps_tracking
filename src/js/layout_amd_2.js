@@ -409,12 +409,15 @@ require([
     var activarAlerta=false;
 
     map.addLayer(ggl);
-    lcontrol = L.control.layers({'OSM':osm, 
+    /*lcontrol = L.control.layers({'OSM':osm, 
         'Google':ggl, 
         'Countries, then boundaries':ctb
     }, overlays).addTo(map);
-    
-  
+    */
+    lcontrol = L.control.layers({ 
+        'Google':ggl
+    }, overlays).addTo(map);
+
     /**********************************/
     function getColor(d) { //retorna un color de acuerdo al valor de la variable d (density) ojo tambien se usa para el color de la leyenda
         //console.log(d);
@@ -477,7 +480,7 @@ require([
 
     function onClick(e) {
         var tempLatLng =this.getLatLng();    
-        map.setView([tempLatLng.lat,tempLatLng.lng], 10);
+        map.setView([tempLatLng.lat,tempLatLng.lng], 18);
         //map.removeControl();
     }   
 
@@ -622,13 +625,36 @@ require([
 
     });
 
-    /*map.on('zoomend', function () {
-        if (map.getZoom() > 9 && map.hasLayer(markerTrabajador)) 
+    map.on('zoomend', function () {
+        if (map.getZoom() > 21 && map.hasLayer(osm))
         {
-            setTimeout(function(){map.removeLayer(markerTrabajador)}, 10);  
-            setTimeout(function(){map.removeLayer(leafletView)}, 10); 
-            setTimeout(function(){map.addLayer(trabajadores)}, 10);
+            map.removeLayer(osm);
+            map.addLayer(ctb);
+            //setTimeout(function(){map.removeLayer(markerTrabajador)}, 10);  
+            //setTimeout(function(){map.removeLayer(leafletView)}, 10); 
+            //setTimeout(function(){map.addLayer(trabajadores)}, 10);
         }
-    });*/ 
+        else if (map.getZoom() > 18 && map.hasLayer(ggl)) {
+            map.removeLayer(ggl);
+            map.addLayer(osm);
+        }
+
+       
+        if (map.getZoom() < 19 && map.hasLayer(ctb)|| map.getZoom() < 19 && map.hasLayer(osm)) 
+        {
+            map.removeLayer(ctb);
+            map.removeLayer(osm);
+            map.addLayer(ggl);
+        }
+        /*else if (map.getZoom() <= 19 && map.hasLayer(osm)) 
+        {
+            map.removeLayer(osm);
+            map.addLayer(ggl);
+            //setTimeout(function(){map.removeLayer(markerTrabajador)}, 10);  
+            //setTimeout(function(){map.removeLayer(leafletView)}, 10); 
+            //setTimeout(function(){map.addLayer(trabajadores)}, 10);
+        }*/
+
+    }); 
 
 });
