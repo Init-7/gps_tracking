@@ -450,22 +450,30 @@ require([
         var leyenda= "<div id='wrapperCard'><img id='logoEstCard' src='./images/estchile.png' ><img id='imgQRCard' src='./images/estchile.png' ><div id='datosTrabajadorCard'><b>Nombre : </b>"+f.properties["nombre"]+"</br><b>Cargo : </b>"+f.properties["cargo"]+"</br><b>Fono : </b>"+f.properties["fono"]+"</br><b>Riesgo : </b>"+f.properties["nivel_riesgo"]+"</br><b>Fono Emergencia : </b>"+f.properties["nro_emergencia"]+"</br><b>Contacto : </b>"+f.properties["tipo_contacto"]+"</br></div><img id='imgTrabajadorCard' src="+defaultUrl+f.properties["foto"]+"></div>";
         l.bindPopup(leyenda);
         l.setIcon(hombreNormal);
-        if(f.properties["nivel_riesgo"] < 5 ){
-            l.setIcon(hombreAmarillo);}
-        if(f.properties["nivel_riesgo"] < 2 ){
-            l.setIcon(hombreNormal);}        
-        if(f.properties["nivel_riesgo"] >= 5 ){
+        var tempRiesgo = f.properties["nivel_riesgo"];
+        var tempLatLng =l.getLatLng(); //PARA HEATMAP
+        heat_points.push(tempLatLng);  
+
+        if(tempRiesgo >= 5 ){
             l.setIcon(hombreRojo);    
             out2.push( "<p>"+f.properties["nombre"]+"</p>");
-        }        
+            leafletView.RegisterMarker(new PruneCluster.Marker(tempLatLng.lat, tempLatLng.lng, {title: leyenda, icono: hombreRojo}));
+ 
+        }
+        else if(tempRiesgo >= 3 ){
+            leafletView.RegisterMarker(new PruneCluster.Marker(tempLatLng.lat, tempLatLng.lng, {title: leyenda, icono: hombreAmarillo}));
+            l.setIcon(hombreAmarillo);}
+        else {
+            leafletView.RegisterMarker(new PruneCluster.Marker(tempLatLng.lat, tempLatLng.lng, {title: leyenda, icono: hombreNormal}));
+            l.setIcon(hombreNormal);}        
+                
         l.on('dblclick', onClick);
         l.addTo(trabajadores);
 
-        var tempLatLng =l.getLatLng(); //PARA HEATMAP
-        heat_points.push(tempLatLng);  
-        leafletView.RegisterMarker(new PruneCluster.Marker(tempLatLng.lat, tempLatLng.lng, {title: leyenda}));
- 
     }
+
+
+
 
     function onClick(e) {
         var tempLatLng =this.getLatLng();    
@@ -518,16 +526,9 @@ require([
     realtime.on('update', function(e){
         //console.log(leafletView);
         var temp = [];
-        out2= temp;
+        
         var urlRealTime = defaultUrl+"/gps/puntos3/";//Redefinir la url porque por lo visto funciona como variable local
-        //console.log(heat_points);
-        if(out2.length>0 && activarAlerta == true) {
-            document.getElementById("divALERTAS").innerHTML = "<div id='aviso'><img id='alertaImg' src='./images/ico/aviso.png'><h2>¡¡ALERTA!!</h1>"+out2+"</div> ";
-            statusOk();
-        }
-        else{
-            document.getElementById("divALERTAS").innerHTML = "<div id=''></div> ";
-        }     
+        //console.log(heat_points);         
         if(showcluster===true){
             leafletView.ProcessView();
             setTimeout(function(){map.addLayer(leafletView)}, 10);
@@ -535,10 +536,19 @@ require([
             //setTimeout(function(){leafletView.Cluster._markers = []}, 100); 
         } 
         trabajadores.clearLayers();
-        setTimeout(function(){leafletView.Cluster._markers = []}, 100); 
+        leafletView.Cluster._markers = []; 
         var jsonTrabajadores = new L.GeoJSON.AJAX([urlRealTime/*,"counties.geojson"*/],{onEachFeature:popUpPersona});
-     
+        console.log(out2.length);
+        if(out2.length>0 && activarAlerta == true) {
+            document.getElementById("divALERTAS").innerHTML = "<div id='aviso'><img id='alertaImg' src='./images/ico/aviso.png'><h2>¡¡ALERTA!!</h1>"+out2+"</div> ";
+            statusOk();
+        }
+        else{
+            document.getElementById("divALERTAS").innerHTML = "<div id=''></div> ";
+        }    
+        out2= temp;
     });
+
 
     leafletView.PrepareLeafletMarker = function (marker, data) {
         if (marker.getPopup()) {
@@ -546,7 +556,10 @@ require([
         } else {
             marker.bindPopup(data.title);
         }
+        marker.setIcon(data.icono);
     };
+
+
     var urlGeoserverEdificios= defaultUrlGeoServer+"/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:est_zona&maxFeatures=50&outputFormat=application%2Fjson";
     var jsonTest = new L.GeoJSON.AJAX([urlGeoserverEdificios/*,"counties.geojson"*/],{style: style, onEachFeature:popUpEdificios});
 
@@ -593,18 +606,9 @@ require([
             setTimeout(function(){map.removeLayer(markerTrabajador)}, 10);  
             //leafletView.Cluster._markers = [];
             setTimeout(function(){map.removeLayer(leafletView)}, 10); 
-
-
-            //setTimeout(function(){map.addLayer(leafletView)}, 10); 
-            //setTimeout(function(){map.addLayer(trabajadores)}, 10);
-            //leafletView.RemoveMarkers(); 
             showcluster= false;
         } 
-        else if (eo.name === 'Trabajadores') {
-
-
-            //setTimeout(function(){map.addLayer(leafletView)}, 10);       
-            //setTimeout(function(){map.addLayer(markerTrabajador)}, 10);       
+        else if (eo.name === 'Trabajadores') {     
             showcluster=true;      
         }
         else if (eo.name === 'Activar Alerta') {            
@@ -612,11 +616,19 @@ require([
             document.getElementById("divALERTAS").innerHTML = "<div id=''></div> ";
         }
         else if (eo.name === 'Heat Map') {
-            //heat.clearLayers();  
             location.reload();//solucion preliminar desactivar heatmap
             
         }
 
     });
+
+    /*map.on('zoomend', function () {
+        if (map.getZoom() > 9 && map.hasLayer(markerTrabajador)) 
+        {
+            setTimeout(function(){map.removeLayer(markerTrabajador)}, 10);  
+            setTimeout(function(){map.removeLayer(leafletView)}, 10); 
+            setTimeout(function(){map.addLayer(trabajadores)}, 10);
+        }
+    });*/ 
 
 });
