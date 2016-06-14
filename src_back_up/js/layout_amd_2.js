@@ -20,7 +20,7 @@ require([
     "dojo/domReady!"
 ], function(on, mouse,BorderContainer,Toggler, coreFx, request, Memory, registry,ContentPane, DateTextBox,dom,domAttr,AccordionContainer,DataGrid,Button,ObjectStore, domConstruct, FilteringSelect){
     var heat_points = [];
-    //var markerTrabajador = L.markerClusterGroup(); 
+    var markerTrabajador = L.markerClusterGroup(); 
     var clusterLayer;
     var heat = L.heatLayer();
     var htLayer;
@@ -37,8 +37,6 @@ require([
     var urlRealTime;
 
 	var map = new L.Map('map', {center: coord.CENTRAL, zoom: 2});
-
-
 
     //TEST MOSTRAR OCULTAR
     var togglerInfoT = new Toggler({
@@ -351,11 +349,6 @@ require([
 
 /****TODO MAPA*****/
 
-    PruneCluster.Cluster.ENABLE_MARKERS_LIST = true;
-    var leafletView = new PruneClusterForLeaflet();
-
-   
-
     var osm = new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 22,
         minZoom:2,
@@ -375,7 +368,6 @@ require([
     var alertaL = new L.LayerGroup();    
     var heatMap = new L.LayerGroup();
 
-    var markerTrabajador = new L.LayerGroup();
     var trabajadores = new L.LayerGroup();    
 
 //Primera Forma de mostrar los edificios
@@ -445,10 +437,7 @@ require([
 /*test popUp boton setView
         l.bindPopup("<button type='button' id='otroButton'>Mostrar Información </button><div id='wrapperCard'><img id='logoEstCard' src='./images/estchile.png' ><img id='imgQRCard' src='./images/estchile.png' ><div id='datosTrabajadorCard'><b>Nombre : </b>"+f.properties["nombre"]+"</br><b>Cargo : </b>"+f.properties["cargo"]+"</br><b>Fono : </b>"+f.properties["fono"]+"</br><b>Riesgo : </b>"+f.properties["nivel_riesgo"]+"</br><b>Fono Emergencia : </b>"+f.properties["nro_emergencia"]+"</br><b>Contacto : </b>"+f.properties["tipo_contacto"]+"</br></div><img id='imgTrabajadorCard' src="+defaultUrl+f.properties["foto"]+"></div>"); 
 */
-        //l.bindPopup("<div id='wrapperCard'><img id='logoEstCard' src='./images/estchile.png' ><img id='imgQRCard' src='./images/estchile.png' ><div id='datosTrabajadorCard'><b>Nombre : </b>"+f.properties["nombre"]+"</br><b>Cargo : </b>"+f.properties["cargo"]+"</br><b>Fono : </b>"+f.properties["fono"]+"</br><b>Riesgo : </b>"+f.properties["nivel_riesgo"]+"</br><b>Fono Emergencia : </b>"+f.properties["nro_emergencia"]+"</br><b>Contacto : </b>"+f.properties["tipo_contacto"]+"</br></div><img id='imgTrabajadorCard' src="+defaultUrl+f.properties["foto"]+"></div>"); 
-        
-        var leyenda= "<div id='wrapperCard'><img id='logoEstCard' src='./images/estchile.png' ><img id='imgQRCard' src='./images/estchile.png' ><div id='datosTrabajadorCard'><b>Nombre : </b>"+f.properties["nombre"]+"</br><b>Cargo : </b>"+f.properties["cargo"]+"</br><b>Fono : </b>"+f.properties["fono"]+"</br><b>Riesgo : </b>"+f.properties["nivel_riesgo"]+"</br><b>Fono Emergencia : </b>"+f.properties["nro_emergencia"]+"</br><b>Contacto : </b>"+f.properties["tipo_contacto"]+"</br></div><img id='imgTrabajadorCard' src="+defaultUrl+f.properties["foto"]+"></div>";
-        l.bindPopup(leyenda);
+        l.bindPopup("<div id='wrapperCard'><img id='logoEstCard' src='./images/estchile.png' ><img id='imgQRCard' src='./images/estchile.png' ><div id='datosTrabajadorCard'><b>Nombre : </b>"+f.properties["nombre"]+"</br><b>Cargo : </b>"+f.properties["cargo"]+"</br><b>Fono : </b>"+f.properties["fono"]+"</br><b>Riesgo : </b>"+f.properties["nivel_riesgo"]+"</br><b>Fono Emergencia : </b>"+f.properties["nro_emergencia"]+"</br><b>Contacto : </b>"+f.properties["tipo_contacto"]+"</br></div><img id='imgTrabajadorCard' src="+defaultUrl+f.properties["foto"]+"></div>"); 
         l.setIcon(hombreNormal);
         if(f.properties["nivel_riesgo"] < 5 ){
             l.setIcon(hombreAmarillo);}
@@ -463,13 +452,11 @@ require([
 
         var tempLatLng =l.getLatLng(); //PARA HEATMAP
         heat_points.push(tempLatLng);  
-        leafletView.RegisterMarker(new PruneCluster.Marker(tempLatLng.lat, tempLatLng.lng, {title: leyenda}));
- 
     }
 
     function onClick(e) {
         var tempLatLng =this.getLatLng();    
-        map.setView([tempLatLng.lat,tempLatLng.lng], 10);
+        map.setView([tempLatLng.lat,tempLatLng.lng], 100);
         //map.removeControl();
     }   
 
@@ -500,7 +487,7 @@ require([
         hombreAmarillo = new LeafIcon({iconUrl: './images/ico/alerta.png'}),
         hombreRojo = new LeafIcon({iconUrl: './images/ico/peligro.png'});
 
-    var showcluster=false;
+    var showcluster=true;
     var urlRealTime = defaultUrl+"/gps/puntos3/";    
     var example= "example.geojson";
     realtime = L.realtime({
@@ -516,52 +503,48 @@ require([
         );
     
     realtime.on('update', function(e){
-        //console.log(leafletView);
-        var temp = [];
-        out2= temp;
-        var urlRealTime = defaultUrl+"/gps/puntos3/";//Redefinir la url porque por lo visto funciona como variable local
+
         //console.log(heat_points);
+
         if(out2.length>0 && activarAlerta == true) {
             document.getElementById("divALERTAS").innerHTML = "<div id='aviso'><img id='alertaImg' src='./images/ico/aviso.png'><h2>¡¡ALERTA!!</h1>"+out2+"</div> ";
             statusOk();
         }
         else{
             document.getElementById("divALERTAS").innerHTML = "<div id=''></div> ";
-        }     
-        if(showcluster===true){
-            leafletView.ProcessView();
-            setTimeout(function(){map.addLayer(leafletView)}, 10);
-            leafletView.ProcessView();
-            //setTimeout(function(){leafletView.Cluster._markers = []}, 100); 
-        } 
-        trabajadores.clearLayers();
-        setTimeout(function(){leafletView.Cluster._markers = []}, 100); 
-        var jsonTrabajadores = new L.GeoJSON.AJAX([urlRealTime/*,"counties.geojson"*/],{onEachFeature:popUpPersona});
-     
-    });
-
-    leafletView.PrepareLeafletMarker = function (marker, data) {
-        if (marker.getPopup()) {
-            marker.setPopupContent(data.title);
-        } else {
-            marker.bindPopup(data.title);
         }
-    };
+        var temp = [];
+        out2= temp;
+        //console.log("Actualizando");
+        //console.log(showcluster);
+        var urlRealTime = defaultUrl+"/gps/puntos3/";//Redefinir la url porque por lo visto funciona como variable local
+               
+        if(showcluster===true){
+            markerTrabajador.clearLayers();         
+            clusterLayer = new L.GeoJSON.AJAX([urlRealTime/*,"counties.geojson"*/],{onEachFeature:popUpPersona});
+            clusterLayer.on('data:loaded', function () {
+                markerTrabajador.addLayer(clusterLayer);
+            });
+            map.addLayer(markerTrabajador);
+        }
+        else { 
+            trabajadores.clearLayers();
+            var jsonTrabajadores = new L.GeoJSON.AJAX([urlRealTime/*,"counties.geojson"*/],{onEachFeature:popUpPersona});
+        }
+
+    });
     var urlGeoserverEdificios= defaultUrlGeoServer+"/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:est_zona&maxFeatures=50&outputFormat=application%2Fjson";
     var jsonTest = new L.GeoJSON.AJAX([urlGeoserverEdificios/*,"counties.geojson"*/],{style: style, onEachFeature:popUpEdificios});
 
     map.on('overlayadd', function(eo) {
-        console.log("Activado "+ eo.name);
+        //console.log(eo.name);
         if (eo.name === 'Cluster') {
-            setTimeout(function(){map.addLayer(leafletView)}, 10);
-            leafletView.ProcessView();
             setTimeout(function(){map.removeLayer(trabajadores)}, 10);
             showcluster= true;
         } 
         else if (eo.name === 'Trabajadores') {
-            setTimeout(function(){map.removeLayer(markerTrabajador)}, 10);  
-            //leafletView.Cluster._markers = [];
-            setTimeout(function(){map.removeLayer(leafletView)}, 10);         
+            setTimeout(function(){map.removeLayer(markerTrabajador)}, 10);
+            
             showcluster=false;      
         }
         else if (eo.name === 'Activar Alerta') {
@@ -571,40 +554,26 @@ require([
                 statusOk();
             }   
         }
-        else if (eo.name === 'Heat Map') {        
-           
+        else if (eo.name === 'Heat Map') {            
             /**********HEATMAP************/   
             /*var heat = L.heatLayer(heat_points, {radius: 100,
                 blur:10,
                 maxZoom:2,
                 opacity: 0.8
-            }).addTo(map);        
-*/
-            /*********Fin HEATMAP*******/   
+            }).addTo(map);*/           
+
+            /*********Fin HEATMAP*******/        
         }
 
     });
-
-
-
      map.on('overlayremove', function(eo) {
-        console.log("Quitado "+eo.name);
+        //console.log(eo.name);
         if (eo.name === 'Cluster') {
-            setTimeout(function(){map.removeLayer(markerTrabajador)}, 10);  
-            //leafletView.Cluster._markers = [];
-            setTimeout(function(){map.removeLayer(leafletView)}, 10); 
-
-
-            //setTimeout(function(){map.addLayer(leafletView)}, 10); 
-            //setTimeout(function(){map.addLayer(trabajadores)}, 10);
-            //leafletView.RemoveMarkers(); 
+            setTimeout(function(){map.addLayer(trabajadores)}, 10);
             showcluster= false;
         } 
         else if (eo.name === 'Trabajadores') {
-
-
-            //setTimeout(function(){map.addLayer(leafletView)}, 10);       
-            //setTimeout(function(){map.addLayer(markerTrabajador)}, 10);       
+            setTimeout(function(){map.addLayer(markerTrabajador)}, 10);
             showcluster=true;      
         }
         else if (eo.name === 'Activar Alerta') {            
@@ -614,7 +583,6 @@ require([
         else if (eo.name === 'Heat Map') {
             //heat.clearLayers();  
             location.reload();//solucion preliminar desactivar heatmap
-            
         }
 
     });

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+		<link rel="icon" href="images/favicon2.png">
+		<title>::ESTChile:: SISTEMA DE MONITOREO DE SEGURIDAD GPS</title>
+
+		<!-- Load estilos-->
+		<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/dojo/1.10.4/dijit/themes/claro/claro.css" />
+		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+		<link rel="stylesheet" href="css/layout.css">
+		<link rel="stylesheet" href="js/Grid.css" />
+		<link rel="stylesheet" href="js/claroGrid.css" />
+		
+		<!-- Load externo-->
+		<script src="http://maps.google.com/maps/api/js?v=3"></script>
+		<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+		<script src="js/leaflet-realtime.js"></script>
+		<script src="js/leaflet.markercluster-src.js"></script>
+
+		<script src="http://ajax.googleapis.com/ajax/libs/dojo/1.10.4/dojo/dojo.js" data-dojo-config="async: true, parseOnLoad: true"></script>
+
+		<!--load interno-->
+		<script src="js/Bing.js"></script>
+		<script src="js/Google.js"></script>
+		<script src="js/layout_amd.js"></script>
+		<script>
+		require([
+			"dijit/form/ComboBox", 
+			"dojox/grid/DataGrid",
+			"dojo/store/Memory",
+			"dojo/on", 
+			"dojo/mouse",
+			"dojo/data/ObjectStore",
+			"dojo/request",
+			"dijit/form/DateTextBox",
+			"dijit/registry",
+			"dojo/dom-construct", 
+			"dijit/form/FilteringSelect",
+			"dojo/domReady!"
+		], function(ComboBox,DataGrid, Memory,on, mouse, ObjectStore, request,DateTextBox,registry,domConstruct,FilteringSelect){
+				
+
+
+				on(document.getElementById("qwerty"), "click", function(e){
+					if(typeof registry.byId("gridDiv") != "undefined"){
+                        	registry.byId("gridDiv").destroyRecursive();
+                        }
+                    var row = domConstruct.toDom("<div id='gridDiv'>	</div>");
+    						domConstruct.place(row, "divFecha");
+                    var grid, dataStore;
+					var fechaFF,fechaII;
+					
+					// get value
+					fechaII = date1.value
+					//fechaII = "2016-03-01";
+					fechaFF = date2.value
+					//fechaFF = "2016-09-10";
+					var url = "http://localhost:8000/gps/datosinforme/ESTThno/2/22/"+ fechaII +"/"+ fechaFF+"/";
+					request.get(url, {
+						handleAs: "json"
+					}).then(function(data){
+						dataStore =  new ObjectStore({ objectStore:new Memory({ data: data }) });
+						grid = new DataGrid({
+							store: dataStore,
+							query: { id: "*" },
+							queryOptions: {},
+							structure: [//nombre columnas
+								{ name: "Nombre", field: "nombre", width: "50%" },
+								{ name: "Horas", field: "horas", width: "25%" },
+								{ name: "Minutos", field: "minutos", width: "25%" }
+							]
+						}//).placeAt("gridDiv");
+						,"gridDiv");
+						grid.startup();	
+					});
+			    	console.log(url);
+			});
+
+		});
+		</script>
+
+	</head>
+
+	
+	<body class="claro">
+
+		<div id="mainWindow" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'sidebar', gutters:false" style="width: 100%; height: 100%;">
+		
+			<!--MAP-->
+			<div id="map" class="roundedCorners shadow" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'">
+			<!--CABECERA-->
+			<div id="header" class="roundedCorners shadow" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="minSize:800,region:'top'">
+				<a class="logoLeft" href="http://www.estchile.cl/" target="_blank">
+					<img id="h-logo-EST" src="./images/estchile.png" alt="EST Chile">
+				</a>
+				<div id="title">SISTEMA DE MONITOREO DE SEGURIDAD GPS</div>
+				<a class="logoRight" href="http://www.corfo.cl/" target="_blank">
+					<img id="h-logo-corfo" src="./images/logo-corfo.png"  alt="Corfo | Corporación de Fomento de la Producción">
+				</a>
+			</div>
+				<div id="divALERTAS"> <!--span id="aviso">ALERTA!!.</span>--> </div>
+					<img id="logoMap" src="./images/estchile.png" style="max-height: 75px;">
+					<img id="infoTrabajador" class="infoFlotante">
+					<img id="infoEdificacion" class="infoFlotante">
+			</div>
+			<!--PANEL Derecho -->
+			<button type="button"  id="showButton">Mostrar Información </button>
+			<div id="rightPanel" class="roundedCorners shadow" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'none'" >
+
+				<button type="button" id="hideButton">Ocultar Información </button>
+				<div id="AccordionPanel" data-dojo-type="dijit/layout/AccordionContainer" >
+					<!--Filtros de recorridos -->
+					<div id="filter" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="title:'Filtros y Leyenda'">
+						<div id="slider">
+							<!--Planta-->
+							<div id="SliderLabel">Planta:</div>
+							<div id="planta"></div>
+							<!--selector-->
+							<div id="SliderLabel">Centro de Negocio:</div>
+							<div id="centro"></div>
+							<!--Centro de Negocio-->
+							<div id="SliderLabel">Seleccionar Trabajador:</div>
+							<div id="trabajador"></div>
+						</div>
+						<div id="slider">&nbsp;</div>
+						<div id="slider">
+							<div id="SliderLabel">Leyenda:</div>
+							<p>Trabajadores</p>
+							<img id="job" src="./images/punto.png">
+							<p>Edificacion</p>
+							<img id="work" src="./images/punto.png">
+						</div>
+					</div>
+					<!--Info-->
+					<div id="info" class="fields" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="title:'Información', selected:true">
+						<div id="divInfoDB">&nbsp;</div>
+						<div id="divInfoGPS">&nbsp;</div>
+						<div id="divInfoWMS">&nbsp;</div>
+					</div>
+					<!--query-->
+					<div id="query" class="fields" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="title:'Consultas e Informes'" >
+						<div id="slider">
+							<!--Planta-->
+							<div id="SliderLabel">Planta:</div>
+							<div id="plantaQuery"></div>
+							<div id="slider">&nbsp;</div>
+							<button id="BtnHeatmap" type="button"></button>
+							<button id="BtnCluster" type="button"></button>
+							<div id="slider">
+								<p>Trabajadores:</p>
+								<img id="jobHM" src="./images/punto.png">
+								<p>Areas:</p>
+								<img id="workHM" src="./images/punto.png">
+							</div>
+							<div id="resultHeatmap"></div>
+							<div id="slider">&nbsp;</div>
+						</div>
+						<div id="slider" >
+							<H4 style="align:center">Informes Estadisticos</H4>
+							<!--Centro de Negocio-->
+							<div id="SliderLabel">Centro de Negocio:</div>
+							<div id="centroQuery"></div>
+							<!--trabajador-->
+							<div id="SliderLabel">Trabajador:</div>
+							<div id="trabajadorQuery"></div>
+							<!--rango de fechas-->
+							<div id="SliderLabel">Rango Fecha:</div>
+							<div>
+							<div id="divFecha" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'right'" > 
+								<label for="date1">Desde:</label>
+									<input type="text" name="date1" id="date1" value="2016-03-01"
+									data-dojo-id="fromDate"
+								    data-dojo-type="dijit/form/DateTextBox"
+								    constraints="{datePattern:'yyyy-MM-dd', strict:true}" 
+								    required="true"
+								    onChange="toDate.constraints.min = arguments[0];"
+								    /><br>
+							    <label for="date1">Hasta:</label>
+								<input type="text" name="date2" id="date2" value="now"
+							    data-dojo-type="dijit/form/DateTextBox"
+							    constraints="{datePattern:'yyyy-MM-dd', strict:true}" 
+							    required="true" 
+							    data-dojo-id="toDate" 
+							    onChange="fromDate.constraints.max = arguments[0];" />
+								<button type="button"  data-dojo-type="dijit/form/Button" id="qwerty">Mostrar Información </button>
+								
+							</div>
+
+							</div>
+							<div id="slider">&nbsp;</div>
+							<!--  <button id="BtnTiempoEnPlanta" type="button"></button> -->
+							<!--button id="BtnTiempoPorSector" type="button"></button-->
+							<div id="slider">&nbsp;</div>
+							<div id="resultJob"></div>
+							<div id="divInforme">&nbsp;</div>							
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--FIN PANEL DERECHO-->
+			
+		</div>
+	</body>
+</html>
