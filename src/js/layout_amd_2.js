@@ -549,19 +549,19 @@ require([
     realtime.on('update', function(e){
         //console.log(leafletView);
         var temp = [];
-        
         var urlRealTime = defaultUrl+"/gps/puntos3/";//Redefinir la url porque por lo visto funciona como variable local
-        //console.log(heat_points);         
+        //console.log(heat_points);
+        trabajadores.clearLayers();
+        var jsonTrabajadores = new L.GeoJSON.AJAX([urlRealTime/*,"counties.geojson"*/],{onEachFeature:popUpPersona});
+        console.log(out2.length);
         if(showcluster===true){
             leafletView.ProcessView();
             setTimeout(function(){map.addLayer(leafletView)}, 10);
             leafletView.ProcessView();
             //setTimeout(function(){leafletView.Cluster._markers = []}, 100); 
         } 
-        trabajadores.clearLayers();
+
         leafletView.Cluster._markers = []; 
-        var jsonTrabajadores = new L.GeoJSON.AJAX([urlRealTime/*,"counties.geojson"*/],{onEachFeature:popUpPersona});
-        console.log(out2.length);
         if(out2.length>0 && activarAlerta == true) {
             document.getElementById("divALERTAS").innerHTML = "<div id='aviso'><img id='alertaImg' src='./images/ico/aviso.png'><h2>¡¡ALERTA!!</h1>"+out2+"</div> ";
             statusOk();
@@ -809,7 +809,7 @@ leafletView.PrepareLeafletMarker = function (marker, data, category) {
      marker.setIcon(data.icono);
 };
 
-map.addLayer(leafletView);
+//map.addLayer(leafletView);
 
 
 
