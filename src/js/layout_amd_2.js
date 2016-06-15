@@ -201,19 +201,19 @@ require([
 
 
                                             var posicion = dijit.byId('trabajador').get('value');
-                                            map.setView([data[posicion].lat,data[posicion].lon], 18);
+                                            //map.setView([data[posicion].lat,data[posicion].lon], 18);
                                            /***FUNCION POSICION ACTUALIZADA FUNCIONAL PERO EXISTE TIEMPO DE ESPERA***/
                                             //alert(dijit.byId('trabajador').get('value'));
-/*                                          console.log(data);
+                                            //console.log(data);
                                             var url3= defaultUrl+ "/gps/trabajador/"+data[posicion].i+"/";
                                             //console.log(url3);
                                             request.get(url3, {
                                                     handleAs: "json"
-                                                }).then(function(data){    
+                                                }).then(function(data2){    
                                                         //console.log(data[0].lat);
-                                                        map.setView([data[0].lat,data[0].lon], 18);
+                                                        map.setView([data2[0].lat,data2[0].lon], 18);
                                             });
-*/
+
                                             /**********************/
                                             //.openPopup()
 
@@ -292,8 +292,20 @@ require([
                                         onChange: function(trabajador2){
                                            
                                             var posicion = dijit.byId('trabajador2').get('value');
-                                            map.setView([data[posicion].lat,data[posicion].lon], 18);                                        
+                                            //map.setView([data[posicion].lat,data[posicion].lon], 18);                                        
+                                            /***FUNCION POSICION ACTUALIZADA FUNCIONAL PERO EXISTE TIEMPO DE ESPERA***/
+                                            //alert(dijit.byId('trabajador').get('value'));
+                                            //console.log(data);
+                                            var url3= defaultUrl+ "/gps/trabajador/"+data[posicion].i+"/";
+                                            //console.log(url3);
+                                            request.get(url3, {
+                                                    handleAs: "json"
+                                                }).then(function(data2){    
+                                                        //console.log(data[0].lat);
+                                                        map.setView([data2[0].lat,data2[0].lon], 18);
+                                            });
 
+                                            /**********************/ 
                                             urlINFORME = defaultUrl+"/gps/datosinforme/ESTThno"+"/02/"+data[posicion].i+"/";
                     
                                             //var url3 = "http://localhost:8000/gps/datosinforme/ESTThno/02/29/2016-05-11/2016-05-30/";
