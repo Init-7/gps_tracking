@@ -183,9 +183,14 @@ h6{
     }
 #slider {
     color: #666;
+    text-align: end;
+
+
     }
 #SliderLabel { 
     padding: 5px 0 1px 0; 
+    style="width: 145px;" 
+
     }
 .dijitTextBox {
     border: solid black 1px;

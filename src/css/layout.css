@@ -14,51 +14,45 @@
     background-color: #C0C0C0!important;
 }
 
+#wrapperCard{
+    height: 170px;    
+    width: 325px;
+}   
 
-    #wrapperCard{
-        height: 170px;    
-        width: 325px;
+#logoEstCard{
+    display: flex;
+    float: left;
+    height: 50px;
+    width: 100px;
+    //margin-left: 5px;
+    //margin-top: 5px;
+}
 
+#imgTrabajadorCard{
+    float: left;
+    height: 120px;
+    //margin-left: 10px;
+    width: 90px;
+}
+#imgQRCard{
+    opacity: 0;
+    float: right;
+    height: 10px;
+    //margin-top: 20px;
+    padding-right: 20px;
+    width: 10px;
 
-    }   
+}
+#datosTrabajadorCard{
 
-
-
-
-    #logoEstCard{
-        display: flex;
-        float: left;
-        height: 50px;
-        width: 100px;
-        //margin-left: 5px;
-        //margin-top: 5px;
-    }
-
-    #imgTrabajadorCard{
-        float: left;
-        height: 120px;
-        //margin-left: 10px;
-        width: 90px;
-    }
-    #imgQRCard{
-        opacity: 0;
-        float: right;
-        height: 10px;
-        //margin-top: 20px;
-        padding-right: 20px;
-        width: 10px;
-
-    }
-    #datosTrabajadorCard{
-
-        color: #0167b4;
-        float: right;
-        font-family: Verdana;
-        font-size: 9pt;
-        height: 165px;
-        margin-top: 30px;
-        width: 170px;
-    }
+    color: #0167b4;
+    float: right;
+    font-family: Verdana;
+    font-size: 9pt;
+    height: 165px;
+    margin-top: 30px;
+    width: 170px;
+}
 
 /*Fin Card*/
 html,body {
@@ -157,23 +151,21 @@ body {
 #showButton{
     float: right;
     position: absolute;
-    top: 15px;
-    right: 20px;    
-    width: 272px;
+    top: 20px;
+    right: 28px;    
+    width: 287px;
     height: 30px;
     
 
 }
-
 #hideButton{
-    width: 272px;
+    width: 287px;
     height: 30px;
 
 }
 
-
 .leaflet-right .leaflet-control {
-    margin-right: 320px;
+    margin-right: 345px;
 }
 
 #rightPanel{
@@ -187,7 +179,7 @@ body {
     background-color:#E8E8E8;
     border:solid 2px #B8B8B8;
     //margin:5px; 
-    width:272px;
+    width:290px;
     //height: 80%;
     float: right !important;
     //spointer-events: auto;
@@ -238,10 +230,37 @@ h6{
     }
 #slider {
     color: #666;
+    text-align: end;
+
     }
+
+#slider label{
+    //color: #666;
+    //text-align: end;
+    //width: 145px;
+    margin-left: 10px;
+    //background: red;
+    }
+
+#slider321{
+    //color: #666;
+    text-align: end;
+    //width: 145px;
+    margin-left: 10px;
+    //background: red;
+    }
+
+#slider input{
+    //width: 200px;
+
+    //background: red;
+    }
+
 #SliderLabel { 
-    padding: 5px 0 1px 0; 
+    padding: 5px 0 1px 0;    
+   
     }
+
 .dijitTextBox {
     border: solid black 1px;
     #overflow: hidden;

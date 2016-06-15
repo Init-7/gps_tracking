@@ -91,12 +91,11 @@ require([
 
 /********************************************/
 
-        var url = {};
-        url.wmsroot = 'http://104.196.40.15:8080/geoserver/est40516/wms';
-        url.owsroot = 'http://104.196.40.15:8080/geoserver/est40516/ows';
+        //var url = {};
+        //url.wmsroot = 'http://104.196.40.15:8080/geoserver/est40516/wms';
 
         //generamos url de servicios de mapas, desde el servidor...
-        var ParamLydPMaule_edificacion = L.Util.extend({
+        /*var ParamLydPMaule_edificacion = L.Util.extend({
             request:'GetLegendGraphic',
             version:'1.1.0',
             format:'image/png',
@@ -108,7 +107,7 @@ require([
             style:'PMaule'
             });
         url.leyendaPMaule_edificacion = url.wmsroot + L.Util.getParamString(ParamLydPMaule_edificacion);
-
+    */
     /********************************************/
 
     /*Lista de Desplegables*/	
@@ -130,16 +129,16 @@ require([
                 if(data[posicion].name=== "Todos"){zoom=5;}
                 else {zoom= 17;}
 
-                if(data[posicion].name=== "Maule"){
+                /*if(data[posicion].name=== "Maule"){
                     domAttr.set(dom.byId('work'), "src", url.leyendaPMaule_edificacion);
                     domAttr.set(dom.byId('infoEdificacion'), "src", url.leyendaPMaule_edificacion);
-                    togglerInfoEdificacion.show();
+                    //togglerInfoEdificacion.show();
                 }
                 else {  
                     domAttr.set(dom.byId('infoEdificacion'), "src","" );
                     
-                    togglerInfoEdificacion.hide();            
-                }
+                    //togglerInfoEdificacion.hide();            
+                }*/
 
                 //map.addLayer(edificios);
                 map.setView([data[posicion].lat,data[posicion].lon], zoom);
@@ -293,7 +292,7 @@ require([
                                         onChange: function(trabajador2){
                                            
                                             var posicion = dijit.byId('trabajador2').get('value');
-                                            //map.setView([data[posicion].lat,data[posicion].lon], 18);                                            
+                                            map.setView([data[posicion].lat,data[posicion].lon], 18);                                        
 
                                             urlINFORME = defaultUrl+"/gps/datosinforme/ESTThno"+"/02/"+data[posicion].i+"/";
                     
@@ -450,26 +449,34 @@ require([
         
         var leyenda= "<div id='wrapperCard'><img id='logoEstCard' src='./images/estchile.png' ><img id='imgQRCard' src='./images/estchile.png' ><div id='datosTrabajadorCard'><b>Nombre : </b>"+f.properties["nombre"]+"</br><b>Cargo : </b>"+f.properties["cargo"]+"</br><b>Fono : </b>"+f.properties["fono"]+"</br><b>Riesgo : </b>"+f.properties["nivel_riesgo"]+"</br><b>Fono Emergencia : </b>"+f.properties["nro_emergencia"]+"</br><b>Contacto : </b>"+f.properties["tipo_contacto"]+"</br></div><img id='imgTrabajadorCard' src="+defaultUrl+f.properties["foto"]+"></div>";
         l.bindPopup(leyenda);
-        l.setIcon(hombreNormal);
+        //l.setIcon(hombreNormal);
         var tempRiesgo = f.properties["nivel_riesgo"];
         var tempLatLng =l.getLatLng(); //PARA HEATMAP
         heat_points.push(tempLatLng);  
+        var tempIcon;
 
         if(tempRiesgo >= 5 ){
-            l.setIcon(hombreRojo);    
+            //l.setIcon(hombreRojo);    
             out2.push( "<p>"+f.properties["nombre"]+"</p>");
+            tempIcon = hombreRojo;
             //leafletView.RegisterMarker(new PruneCluster.Marker(tempLatLng.lat, tempLatLng.lng, {title: leyenda, icono: hombreRojo}));
  
         }
         else if(tempRiesgo >= 3 ){
             //leafletView.RegisterMarker(new PruneCluster.Marker(tempLatLng.lat, tempLatLng.lng, {title: leyenda, icono: hombreAmarillo}));
-            l.setIcon(hombreAmarillo);}
+            //l.setIcon(hombreAmarillo);
+            tempIcon = hombreAmarillo;
+        }
         else {
             //leafletView.RegisterMarker(new PruneCluster.Marker(tempLatLng.lat, tempLatLng.lng, {title: leyenda, icono: hombreNormal}));
-            l.setIcon(hombreNormal);}       
+            
+            tempIcon = hombreNormal;
+        }       
+        
+        l.setIcon(tempIcon);
+        var m = new PruneCluster.Marker(tempLatLng.lat, tempLatLng.lng, {title: leyenda,  icono: tempIcon},tempRiesgo);
         
 
-        var m = new PruneCluster.Marker(tempLatLng.lat, tempLatLng.lng, {title: leyenda,  icono: hombreNormal},tempRiesgo);
         leafletView.RegisterMarker(m);
         
 

@@ -31,9 +31,7 @@
 <!-- 			<link rel="stylesheet" href="js/markercluster/MarkerCluster.css" />
 			<link rel="stylesheet" href="js/markercluster/MarkerCluster.Default.css" /> -->
 
-
 		<script src="js/leaflet-heat.js"></script>
-
 		
 <!-- 		<script src="js/markercluster/leaflet.markercluster-src.js"></script> -->
 		
@@ -81,14 +79,12 @@
 				<div id="AccordionPanel" data-dojo-type="dijit/layout/AccordionContainer" >
 					<!--Filtros de recorridos -->
 					<div id="filter" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="title:'Filtros y Leyenda'">
-						<div id="slider">
-							<label id="labelPlanta" for="planta">Plantas:</label>
+						<div id="slider" >
+							<label id="labelPlanta" for="planta"  >Plantas:</label>
 							<input id="planta" />
 							<label id="CN" for="negocio">Centros:</label>
 							<label id="TB" for="trabajador">Trabajadores:</label>
-						</div>
-						<div id="slider">&nbsp;</div>
-						
+						</div>						
 					</div>
 					<!--Info-->
 					<div id="info" class="fields" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="title:'Información', selected:true">						
@@ -125,11 +121,6 @@
 							    onChange="fromDate.constraints.max = arguments[0];" />
 								<button type="button" id="qwerty">Mostrar Información </button>
 							</div>	
-								<!--Planta-->							
-								<!--<button id="BtnHeatmap" type="button"></button>
-								<button id="BtnCluster" type="button"></button>							
-								<div id="resultHeatmap"></div>
-								<div id="slider">&nbsp;</div>-->
 					</div>
 				</div>
 			</div>
