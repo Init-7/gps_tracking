@@ -553,7 +553,7 @@ require([
         //console.log(heat_points);
         trabajadores.clearLayers();
         var jsonTrabajadores = new L.GeoJSON.AJAX([urlRealTime/*,"counties.geojson"*/],{onEachFeature:popUpPersona});
-        console.log(out2.length);
+        //console.log(out2.length);
         if(showcluster===true){
             leafletView.ProcessView();
             setTimeout(function(){map.addLayer(leafletView)}, 10);
@@ -689,7 +689,7 @@ require([
 
         L.Icon.MarkerCluster = L.Icon.extend({
             options: {
-                iconSize: new L.Point(44, 44),
+                iconSize: new L.Point(100, 100),
                 className: 'prunecluster leaflet-markercluster-icon'
             },
 
@@ -718,7 +718,7 @@ require([
 
         draw: function(canvas, width, height) {
 
-            var xa = 2, xb = 50, ya = 18, yb = 21;
+            var xa = 200, xb = 500, ya = 18, yb = 21;
 
             var r = ya + (this.population - xa) * ((yb - ya) / (xb - xa));
 
