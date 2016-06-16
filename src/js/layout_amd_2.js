@@ -120,7 +120,7 @@ require([
             store: new Memory({ idProperty: "id", data: data }),
             autoComplete: true,
             //value: data[0].id,          
-            style: "width: 150px;",
+            style: "width: 165px; margin-top: 5px;",
             onChange: function(planta){ 
                                 
                 
@@ -165,7 +165,7 @@ require([
                             id: "negocio",
                             store: new Memory({idProperty:"id", data: data }),
                             autoComplete: true,
-                            style: "width: 150px;",
+                            style: "width: 165px; margin-top: 5px;",
                             required: true,
                             //value: data[0].id,
                             searchAttr: "name",
@@ -195,7 +195,7 @@ require([
                                         id: "trabajador",
                                         store: new Memory({idProperty: "id", data: data }),
                                         autoComplete: true,
-                                        style: "width: 150px;", 
+                                        style: "width: 165px; margin-top: 5px;", 
                                         //value: data[0].id,                                   
                                         onChange: function(trabajador){
 
@@ -242,7 +242,7 @@ require([
             store: new Memory({ idProperty: "id", data: data }),
             autoComplete: true,
             //value: data[0].id,          
-            style: "width: 150px;",
+            style: "width: 165px; margin-top: 5px;",
             onChange: function(planta2){ 
                 var posicion = dijit.byId('planta2').get('value');
                 /* Lectura archivo Json Negocios*/
@@ -262,7 +262,7 @@ require([
                             id: "negocio2",
                             store: new Memory({idProperty:"id", data: data }),
                             autoComplete: true,
-                            style: "width: 150px;",
+                            style: "width: 165px; margin-top: 5px;",
                             required: true,
                             //value: data[0].id,
                             searchAttr: "name",
@@ -287,7 +287,7 @@ require([
                                         id: "trabajador2",
                                         store: new Memory({idProperty: "id", data: data }),
                                         autoComplete: true,
-                                        style: "width: 150px;", 
+                                        style: "width: 165px; margin-top: 5px;",
                                         //value: data[0].id,                                   
                                         onChange: function(trabajador2){
                                            
@@ -306,7 +306,7 @@ require([
                                             });
 
                                             /**********************/ 
-                                            urlINFORME = defaultUrl+"/gps/datosinforme/ESTThno"+"/02/"+data[posicion].i+"/";
+                                            urlINFORME = defaultUrl+"/gps/datosinforme/"+cn+"/02/"+data[posicion].i+"/";
                     
                                             //var url3 = "http://localhost:8000/gps/datosinforme/ESTThno/02/29/2016-05-11/2016-05-30/";
                                          }
@@ -585,10 +585,6 @@ require([
     };
 */
 
-    
-
-
-
     //var urlGeoserverEdificios= defaultUrlGeoServer+"/geoserver/est40516/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=est40516:est_zona&maxFeatures=50&outputFormat=application%2Fjson";
     var urlEdificios= "edificio.json";
     
@@ -629,8 +625,6 @@ require([
         }
 
     });
-
-
 
      map.on('overlayremove', function(eo) {
         console.log("Quitado "+eo.name);
@@ -681,10 +675,6 @@ require([
         }*/
 
     }); 
-
-
-
-
 
   leafletView.BuildLeafletClusterIcon = function(cluster) {
             var e = new L.Icon.MarkerCluster();

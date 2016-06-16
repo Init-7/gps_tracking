@@ -415,7 +415,7 @@
 	float:right;
 }
 .claro .dojoxGridArrowButtonNode {
-	background:transparent url("../../../dijit/themes/claro/images/spriteArrows.png") no-repeat scroll left center;
+	background:transparent url("images/themes/claro/spriteArrows.gif") no-repeat scroll left center;
 	display:block;
 	float:right;
 	height:1em;
