@@ -19,8 +19,7 @@ require([
     "dijit/form/FilteringSelect", // Crear desplegables con información dijit.form.FilteringSelect({
     "dojo/domReady!"
 ], function(on, mouse,BorderContainer,Toggler, coreFx, request, Memory, registry,ContentPane, DateTextBox,dom,domAttr,AccordionContainer,DataGrid,Button,ObjectStore, domConstruct, FilteringSelect){
-    var heat_points = [];
-    //var markerTrabajador = L.markerClusterGroup(); 
+    var heat_points = []; 
     var clusterLayer;
     var heat = L.heatLayer();
     var htLayer;
@@ -689,7 +688,7 @@ require([
 
         L.Icon.MarkerCluster = L.Icon.extend({
             options: {
-                iconSize: new L.Point(100, 100),
+                iconSize: new L.Point(44, 44),
                 className: 'prunecluster leaflet-markercluster-icon'
             },
 
@@ -718,12 +717,12 @@ require([
 
         draw: function(canvas, width, height) {
 
-            var xa = 200, xb = 500, ya = 18, yb = 21;
+            var xa = 2, xb = 50, ya = 18, yb = 21;
 
-            var r = ya + (this.population - xa) * ((yb - ya) / (xb - xa));
+            var r = 100 + (ya + (this.population - xa) * ((yb - ya) / (xb - xa)));
 
-            var radiusMarker = Math.min(r, 21),
-            radiusCenter = 11,
+            var radiusMarker = Math.min(r, 210),
+            radiusCenter = 7,
             center = width / 2;
 
             if (L.Browser.retina) {
@@ -796,7 +795,9 @@ leafletView.PrepareLeafletMarker = function (marker, data, category) {
     } else {
         marker.bindPopup(data.title + " - " + category);
     }
-     marker.setIcon(data.icono);
+    marker.setIcon(data.icono);
+    //marker.weight = 100;
+
 };
 
 //map.addLayer(leafletView);
