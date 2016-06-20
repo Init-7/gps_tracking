@@ -191,7 +191,7 @@ var PruneCluster;
             this._markers = [];
             this._nbChanges = 0;
             this._clusters = [];
-            this.Size = 166;
+            this.Size = 100;
             this.ViewPadding = 0.2;
         }
         PruneCluster.prototype.RegisterMarker = function (marker) {
@@ -384,7 +384,7 @@ var PruneCluster;
 var PruneClusterForLeaflet = (L.Layer ? L.Layer : L.Class).extend({
     initialize: function (size, clusterMargin) {
         var _this = this;
-        if (size === void 0) { size = 60; }
+        if (size === void 0) { size = 80; }
         if (clusterMargin === void 0) { clusterMargin = 20; }
         this.Cluster = new PruneCluster.PruneCluster();
         this.Cluster.Size = size;

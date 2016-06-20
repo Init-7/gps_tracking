@@ -469,19 +469,21 @@ require([
         if(tempRiesgo >= 5 ){
             //l.setIcon(hombreRojo);    
             out2.push( "<p>"+f.properties["nombre"]+"</p>");
-            tempIcon = hombreRojo;
+            tempIcon = hombre5;
             //leafletView.RegisterMarker(new PruneCluster.Marker(tempLatLng.lat, tempLatLng.lng, {title: leyenda, icono: hombreRojo}));
  
         }
-        else if(tempRiesgo >= 3 ){
-            //leafletView.RegisterMarker(new PruneCluster.Marker(tempLatLng.lat, tempLatLng.lng, {title: leyenda, icono: hombreAmarillo}));
-            //l.setIcon(hombreAmarillo);
-            tempIcon = hombreAmarillo;
+        else if(tempRiesgo == 4 ){
+            tempIcon = hombre4;
+        }
+        else if(tempRiesgo == 3 ){
+            tempIcon = hombre3;
+        }
+        else if(tempRiesgo == 2 ){
+            tempIcon = hombre2;
         }
         else {
-            //leafletView.RegisterMarker(new PruneCluster.Marker(tempLatLng.lat, tempLatLng.lng, {title: leyenda, icono: hombreNormal}));
-            
-            tempIcon = hombreNormal;
+            tempIcon = hombre1;
         }       
         
         l.setIcon(tempIcon);
@@ -526,9 +528,11 @@ require([
                 }
             });
 
-    var hombreNormal = new LeafIcon({iconUrl: './images/ico/marker.png'}),
-        hombreAmarillo = new LeafIcon({iconUrl: './images/ico/alerta.png'}),
-        hombreRojo = new LeafIcon({iconUrl: './images/ico/peligro.png'});
+    var hombre1 = new LeafIcon({iconUrl: './images/ico/marker-1.png'}),
+        hombre2 = new LeafIcon({iconUrl: './images/ico/marker-2.png'}),
+        hombre3 = new LeafIcon({iconUrl: './images/ico/marker-3.png'}),
+        hombre5 = new LeafIcon({iconUrl: './images/ico/marker-5.png'}),
+        hombre4 = new LeafIcon({iconUrl: './images/ico/marker-4.png'});
 
     var showcluster=false;
     var urlRealTime = defaultUrl+"/gps/puntos3/";    
@@ -597,6 +601,8 @@ require([
             leafletView.ProcessView();
             setTimeout(function(){map.removeLayer(trabajadores)}, 10);
             showcluster= true;
+            legend.addTo(map);
+
         } 
         else if (eo.name === 'Trabajadores') {
             setTimeout(function(){map.removeLayer(markerTrabajador)}, 10);  
@@ -665,17 +671,9 @@ require([
             map.removeLayer(osm);
             map.addLayer(ggl);
         }
-        /*else if (map.getZoom() <= 19 && map.hasLayer(osm)) 
-        {
-            map.removeLayer(osm);
-            map.addLayer(ggl);
-            //setTimeout(function(){map.removeLayer(markerTrabajador)}, 10);  
-            //setTimeout(function(){map.removeLayer(leafletView)}, 10); 
-            //setTimeout(function(){map.addLayer(trabajadores)}, 10);
-        }*/
 
     }); 
-
+  var colors = ['#2c9223', '#2c9223', '#0096e4', '#999900', '#ffa200', '#ff0000', '#ff0000', '#ff0000'];
   leafletView.BuildLeafletClusterIcon = function(cluster) {
             var e = new L.Icon.MarkerCluster();
 
@@ -684,7 +682,7 @@ require([
             return e;
         };
 
-        var colors = ['#007aff', '#007aff', '#007aff', '#f57300', '#f57300', '#ff0000', '#ff0000', '#ff0000'],
+        
         pi2 = Math.PI * 2;
 
         L.Icon.MarkerCluster = L.Icon.extend({
@@ -717,7 +715,6 @@ require([
         },
 
         draw: function(canvas, width, height) {
-
             var xa = 2, xb = 50, ya = 18, yb = 21;
 
             //var r =  ya + (this.population - xa) * ((yb - ya) / (xb - xa));
@@ -736,24 +733,19 @@ require([
 
             var start = 0, stroke = true;
             for (var i = 0, l = colors.length; i < l; ++i) {
-
                 var size = this.stats[i] / this.population;
-
                 if (size > 0) {
-
                     stroke = size != 1;
-
                     canvas.beginPath();
                     canvas.moveTo(center, center);
                     canvas.fillStyle = colors[i];
-                    var from = start + 0.14,
+                    var from = start + 0.10,
                     to = start + size * pi2;
 
                     if (to < from || size == 1) {
                         from = start;
                     }
                     canvas.arc(center, center, radiusMarker * 1.5 , from, to);//cluster contorno
-
                     start = start + size * pi2;
                     canvas.lineTo(center, center);
                     canvas.fill();
@@ -764,7 +756,6 @@ require([
                 }
 
             }
-
             if (!stroke) {
                 canvas.beginPath();
                 canvas.arc(center, center, radiusMarker, 0, Math.PI * 2);
@@ -778,7 +769,6 @@ require([
             canvas.arc(center, center, radiusMarker, 0, Math.PI * 2);//recuadro interior
             canvas.fill();
             canvas.closePath();
-
 
             canvas.fillStyle = '#454545';
             canvas.textAlign = 'center';
@@ -803,14 +793,11 @@ require([
     };
 
     function getColor2(d) { //retorna un color de acuerdo al valor de la variable d (density) ojo tambien se usa para el color de la leyenda
-        return d > 100 ? '#800026' : 
-               d > 50  ? '#BD0026' :
-               d > 20  ? '#E31A1C' :
-               d > 10  ? '#FC4E2A' :
-               d > 5   ? '#FD8D3C' :
-               d > 2   ? '#FEB24C' :
-               d > 1   ? '#FED976' :
-                          '#FFEDA0';
+        return d == 5 ? colors[5] : 
+               d == 4  ?  colors[4] :
+               d == 3   ?  colors[3] :
+               d == 2   ?  colors[2] :
+                            colors[1];
     }
 
     //Control con la leyenda 
@@ -819,21 +806,24 @@ require([
     legend.onAdd = function (map) {
 
         var div = L.DomUtil.create('div', 'info legend'),//crea el div "info legend"
-            grades = [0, 1, 2, 3, 4, 5],
+            grades = [ 1, 2, 3, 4, 5],
             labels = [],
             from, to;
+        labels.push('Riesgo :');
         for (var i = 0; i < grades.length; i++) {
             from = grades[i];
             to = grades[i + 1];
             labels.push(
-                '<i style="background:' + getColor2(from + 1) + '"></i> ' +
-                from + (to ? '&ndash;' + to : '+'));
+                '<i style="background:'+ getColor2(from ) + '"></i> ' +
+                from );
+
+            /*labels.push(
+                '<i style="background:'+ getColor2(from ) + '"></i> ' +
+                from + (to ? '&ndash;' + to : '+'));*/
         }
         div.innerHTML = labels.join('<br>');
         return div;
     };
-    legend.addTo(map);
-
 //map.addLayer(leafletView);
 
 
