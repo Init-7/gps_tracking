@@ -539,7 +539,7 @@ require([
             type: 'json'
         },
         {
-            interval: 20* 1000
+            interval: 2000* 1000
             //,
             //onEachFeature:popUpPersona
         }
@@ -632,6 +632,7 @@ require([
             //leafletView.Cluster._markers = [];
             setTimeout(function(){map.removeLayer(leafletView)}, 10); 
             showcluster= false;
+            map.removeControl(legend);
         } 
         else if (eo.name === 'Trabajadores') {     
             showcluster=true;      
@@ -683,12 +684,12 @@ require([
             return e;
         };
 
-        var colors = ['#ff4b00', '#bac900', '#EC1813', '#55BCBE', '#D2204C', '#FF0000', '#ada59a', '#3e647e'],
+        var colors = ['#007aff', '#007aff', '#007aff', '#f57300', '#f57300', '#ff0000', '#ff0000', '#ff0000'],
         pi2 = Math.PI * 2;
 
         L.Icon.MarkerCluster = L.Icon.extend({
             options: {
-                iconSize: new L.Point(44, 44),
+                iconSize: new L.Point(200, 200),
                 className: 'prunecluster leaflet-markercluster-icon'
             },
 
@@ -719,10 +720,10 @@ require([
 
             var xa = 2, xb = 50, ya = 18, yb = 21;
 
-            var r = 100 + (ya + (this.population - xa) * ((yb - ya) / (xb - xa)));
-
-            var radiusMarker = Math.min(r, 210),
-            radiusCenter = 7,
+            //var r =  ya + (this.population - xa) * ((yb - ya) / (xb - xa));
+            var r =  40;
+            var radiusMarker =  r,//Math.min(r, 21),
+            radiusCenter = 100,
             center = width / 2;
 
             if (L.Browser.retina) {
@@ -751,7 +752,7 @@ require([
                     if (to < from || size == 1) {
                         from = start;
                     }
-                    canvas.arc(center, center, radiusMarker, from, to);
+                    canvas.arc(center, center, radiusMarker * 1.5 , from, to);//cluster contorno
 
                     start = start + size * pi2;
                     canvas.lineTo(center, center);
@@ -774,7 +775,7 @@ require([
             canvas.beginPath();
             canvas.fillStyle = 'white';
             canvas.moveTo(center, center);
-            canvas.arc(center, center, radiusCenter, 0, Math.PI * 2);
+            canvas.arc(center, center, radiusMarker, 0, Math.PI * 2);//recuadro interior
             canvas.fill();
             canvas.closePath();
 
@@ -782,23 +783,56 @@ require([
             canvas.fillStyle = '#454545';
             canvas.textAlign = 'center';
             canvas.textBaseline = 'middle';
-            canvas.font = 'bold '+(this.population < 100 ? '12' : (this.population < 1000 ? '11' : '9'))+'px sans-serif';
 
-            canvas.fillText(this.population, center, center, radiusCenter*2);
+            canvas.font = 'bold '+(this.population < 2 ? '12' : (this.population < 4 ? '11' : '9'))+'px sans-serif';
+
+            canvas.fillText("Total "+ this.population, center, center, radiusCenter*2);
         }
     });
 
 
-leafletView.PrepareLeafletMarker = function (marker, data, category) {
-    if (marker.getPopup()) {
-        marker.setPopupContent(data.title + " - " + category);
-    } else {
-        marker.bindPopup(data.title + " - " + category);
-    }
-    marker.setIcon(data.icono);
-    //marker.weight = 100;
+    leafletView.PrepareLeafletMarker = function (marker, data, category) {
+        if (marker.getPopup()) {
+            marker.setPopupContent(data.title + " - " + category);
+        } else {
+            marker.bindPopup(data.title + " - " + category);
+        }
+        marker.setIcon(data.icono);
+        //marker.weight = 100;
 
-};
+    };
+
+    function getColor2(d) { //retorna un color de acuerdo al valor de la variable d (density) ojo tambien se usa para el color de la leyenda
+        return d > 100 ? '#800026' : 
+               d > 50  ? '#BD0026' :
+               d > 20  ? '#E31A1C' :
+               d > 10  ? '#FC4E2A' :
+               d > 5   ? '#FD8D3C' :
+               d > 2   ? '#FEB24C' :
+               d > 1   ? '#FED976' :
+                          '#FFEDA0';
+    }
+
+    //Control con la leyenda 
+    var legend = L.control({position: 'bottomright'});
+
+    legend.onAdd = function (map) {
+
+        var div = L.DomUtil.create('div', 'info legend'),//crea el div "info legend"
+            grades = [0, 1, 2, 3, 4, 5],
+            labels = [],
+            from, to;
+        for (var i = 0; i < grades.length; i++) {
+            from = grades[i];
+            to = grades[i + 1];
+            labels.push(
+                '<i style="background:' + getColor2(from + 1) + '"></i> ' +
+                from + (to ? '&ndash;' + to : '+'));
+        }
+        div.innerHTML = labels.join('<br>');
+        return div;
+    };
+    legend.addTo(map);
 
 //map.addLayer(leafletView);
 
