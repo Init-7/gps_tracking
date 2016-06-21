@@ -687,7 +687,7 @@ require([
 
         L.Icon.MarkerCluster = L.Icon.extend({
             options: {
-                iconSize: new L.Point(200, 200),
+                iconSize: new L.Point(120, 120),
                 className: 'prunecluster leaflet-markercluster-icon'
             },
 
